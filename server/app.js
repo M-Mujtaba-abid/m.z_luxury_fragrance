@@ -22,7 +22,13 @@ dotenv.config();
 
 
 app.use(cors({
-  origin: ["https://luxuryfragrancemz.vercel.app" , "http://localhost:5173"],
+  origin: [
+    process.env.CLIENT_URL,
+    process.env.LOCAL_URL,
+    "https://m-z-luxury-fragrance-61m9.vercel.app",
+    "https://luxuryfragrancemz.vercel.app",
+    "http://localhost:5173"
+  ].filter(Boolean),
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true
 }));
