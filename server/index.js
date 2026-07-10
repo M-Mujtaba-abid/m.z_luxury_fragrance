@@ -1,13 +1,27 @@
 import dotenv from "dotenv"
 import app from "./app.js"
-import { connectDB } from "./config/db.js";
+import { connectDB, sequelize } from "./config/db.js";
 dotenv.config()
 
+const port = process.env.PORT || 8000;
 
- const port=process.env.PORT
+const startServer = async () => {
+  try {
+    // Connect to database
+    await connectDB();
 
-connectDB();
+    // Sync all models
+    await sequelize.sync({ alter: true });
+    console.log("All models synced successfully");
 
-app.listen(port,()=>{
-    console.log("server is running on port ",port)
-})
+    // Start Express app
+    app.listen(port, () => {
+      console.log("Server is running on port", port);
+    });
+  } catch (err) {
+    console.error("Unable to start server:", err);
+    process.exit(1);
+  }
+};
+
+startServer();

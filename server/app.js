@@ -51,24 +51,6 @@ app.get("/", (req, res) => {
 app.use(errorMiddleware);
 
 // ------------------- Database & Server -------------------
-
-const startServer = async () => {
-  try {
-    await sequelize.authenticate(); // Test DB connection
-    console.log("Postgres + Sequelize connected successfully");
-
-    await sequelize.sync({ alter: true }); // Sync all models
-    console.log("All models synced successfully");
-
-    const PORT = process.env.PORT || 8000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-  } catch (err) {
-    console.error("Unable to connect to the database:", err);
-    process.exit(1); // stop server if DB fails
-  }
-};
-
-startServer();
+// Note: Database connection, sync, and server listening are managed in index.js
 
 export default app;
