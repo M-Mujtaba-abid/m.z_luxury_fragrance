@@ -100,6 +100,25 @@ export const fetchOrderById = createAsyncThunk(
   }
 );
 
+// 🔹 Guest order tracking (Order ID + email, no login required)
+export const trackGuestOrder = createAsyncThunk(
+  "order/trackGuest",
+  async (
+    { id, email }: { id: number | string; email: string },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      dispatch(showLoader());
+      const response = await API.get(`/order/track/${id}`, { params: { email } });
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Order not found");
+    } finally {
+      dispatch(hideLoader());
+    }
+  }
+);
+
 // 🔹 Get total number of orders at dashboar
 export const fetchTotalOrders = createAsyncThunk(
   "order/fetchTotal",

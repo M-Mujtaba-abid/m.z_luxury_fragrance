@@ -128,11 +128,13 @@ import {
   fetchAllOrders,
   fetchOrderById,
   fetchTotalOrders,
+  trackGuestOrder,
 } from "../../Admin/AdminThunk/OrderThunk";
 
 interface OrderState {
   orders: any[];
   order: any | null;
+  trackedOrder: any | null;
   totalOrders: number;
   loading: boolean;
   error: string | null;
@@ -142,6 +144,7 @@ interface OrderState {
 const initialState: OrderState = {
   orders: [],
   order: null,
+  trackedOrder: null,
   totalOrders: 0,
   loading: false,
   error: null,
@@ -157,6 +160,10 @@ const orderSlice = createSlice({
     },
     clearOrderSuccess: (state) => {
       state.success = null;
+    },
+    clearTrackedOrder: (state) => {
+      state.trackedOrder = null;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -284,8 +291,26 @@ const orderSlice = createSlice({
       state.loading = false;
       state.error = action.payload as string;
     });
+
+    // ========================
+    // 🔹 Track Guest Order (Order ID + email)
+    // ========================
+    builder.addCase(trackGuestOrder.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.trackedOrder = null;
+    });
+    builder.addCase(trackGuestOrder.fulfilled, (state, action) => {
+      state.loading = false;
+      state.trackedOrder = action.payload;
+    });
+    builder.addCase(trackGuestOrder.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+      state.trackedOrder = null;
+    });
   },
 });
 
-export const { clearOrderError, clearOrderSuccess } = orderSlice.actions;
+export const { clearOrderError, clearOrderSuccess, clearTrackedOrder } = orderSlice.actions;
 export default orderSlice.reducer;
