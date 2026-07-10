@@ -1,9 +1,12 @@
+import { Op } from "sequelize";
 import Order from "../models/order.model.js";
 import User from "../models/user.model.js";
 import CartItem from "../models/CartItem.model.js";
 import Product from "../models/product.model.js";
 import OrderItem from "../models/orderItem.model.js";
 import ApiError from "../utils/apiError.js";
+import resolveOwner from "../utils/resolveOwner.js";
+import sendOrderConfirmationEmail from "../utils/sendOrderConfirmationEmail.js";
 
 const orderIncludes = [
   { model: User, attributes: ["id", "firstName", "email"] },
@@ -16,6 +19,7 @@ const orderIncludes = [
 // Create new order (with cart -> orderItems mapping)
 export const createOrder = async ({
   userId,
+  guestId,
   customerName,
   customerEmail,
   customerPhone,
@@ -26,8 +30,10 @@ export const createOrder = async ({
   shippingCountry,
   paymentMethod,
 }) => {
+  const owner = resolveOwner(userId, guestId);
+
   const cartItems = await CartItem.findAll({
-    where: { userId, status: "active" },
+    where: { ...owner, status: "active" },
     include: [Product],
   });
 
@@ -41,7 +47,9 @@ export const createOrder = async ({
   );
 
   const order = await Order.create({
-    userId,
+    userId: userId || null,
+    guestId: userId ? null : guestId,
+    guestEmail: userId ? null : customerEmail,
     customerName,
     customerEmail,
     customerPhone,
@@ -67,13 +75,37 @@ export const createOrder = async ({
     });
   }
 
-  await CartItem.destroy({ where: { userId } });
+  await CartItem.destroy({ where: owner });
+
+  try {
+    await sendOrderConfirmationEmail({ order, items: cartItems });
+  } catch (error) {
+    // order is already placed successfully - a failed email shouldn't fail the request
+    console.error("Failed to send order confirmation email:", error);
+  }
 
   return order;
 };
 
 export const getUserOrders = async ({ userId }) => {
   return Order.findAll({ where: { userId }, include: orderIncludes });
+};
+
+// Guest order tracking: Order ID + email, no login required.
+// Restricted to userId: null so a guest can't use this to snoop on a
+// registered customer's order just by guessing their email.
+export const getGuestOrder = async ({ id, email }) => {
+  const order = await Order.findOne({
+    where: {
+      id,
+      userId: null,
+      [Op.or]: [{ guestEmail: email }, { customerEmail: email }],
+    },
+    include: orderIncludes,
+  });
+
+  if (!order) throw new ApiError(404, "Order not found");
+  return order;
 };
 
 export const updateOrderStatus = async ({ id, status }) => {

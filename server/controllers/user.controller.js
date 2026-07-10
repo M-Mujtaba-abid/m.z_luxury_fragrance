@@ -5,11 +5,19 @@ import asyncHandler from "../utils/asyncHandler.js";
 const registerUser = asyncHandler(async (req, res) => {
   const user = await userService.registerUser({ ...req.body, file: req.file });
 
+  const guestId = req.cookies?.guestId;
+  await userService.mergeGuestData({ guestId, email: user.email, userId: user.id });
+  if (guestId) res.clearCookie("guestId", { path: "/" });
+
   res.status(201).json(new ApiResponse(201, user, "User registered successfully"));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
   const { token, user } = await userService.loginUser(req.body);
+
+  const guestId = req.cookies?.guestId;
+  await userService.mergeGuestData({ guestId, email: user.email, userId: user.id });
+  if (guestId) res.clearCookie("guestId", { path: "/" });
 
   const isProd = process.env.NODE_ENV === "production";
 

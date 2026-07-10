@@ -1,6 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
 import User from "../models/user.model.js";
+import CartItem from "../models/CartItem.model.js";
+import Order from "../models/order.model.js";
 import ApiError from "../utils/apiError.js";
 import uploadBufferToCloudinary from "../utils/cloudinaryUpload.js";
 import sendEmail from "../utils/sendEmail.js";
@@ -141,4 +144,44 @@ export const resetPassword = async ({ email, newPassword }) => {
 
   user.password = await bcrypt.hash(newPassword, 10);
   await user.save();
+};
+
+// Called after a successful register/login. Links this guest's cart
+// (via the guestId cookie from the current session) and any past guest
+// orders (matched by guestId or guestEmail) to the newly authenticated
+// account.
+export const mergeGuestData = async ({ guestId, email, userId }) => {
+  if (guestId) {
+    const guestCartItems = await CartItem.findAll({ where: { guestId } });
+
+    for (const item of guestCartItems) {
+      const existing = await CartItem.findOne({ where: { userId, productId: item.productId } });
+      if (existing) {
+        // same product already in the account's cart - merge quantities
+        existing.quantity += item.quantity;
+        await existing.save();
+        await item.destroy();
+      } else {
+        item.userId = userId;
+        item.guestId = null;
+        await item.save();
+      }
+    }
+  }
+
+  const guestOrderConditions = [];
+  if (guestId) guestOrderConditions.push({ guestId });
+  if (email) guestOrderConditions.push({ guestEmail: email });
+
+  if (guestOrderConditions.length > 0) {
+    await Order.update(
+      { userId },
+      {
+        where: {
+          userId: null,
+          [Op.or]: guestOrderConditions,
+        },
+      }
+    );
+  }
 };
