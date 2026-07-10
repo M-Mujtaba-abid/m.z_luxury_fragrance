@@ -2,13 +2,25 @@ import * as ordersService from "../services/orders.service.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-// Create new order (with cart -> orderItems mapping)
+// Create new order (with cart -> orderItems mapping) - works for both
+// logged-in users and guests (identifyUser sets req.user or req.guestId)
 export const createOrder = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  const guestId = req.user ? undefined : req.guestId;
 
-  const order = await ordersService.createOrder({ userId, ...req.body });
+  const order = await ordersService.createOrder({ ...req.body, userId, guestId });
 
   res.status(201).json(new ApiResponse(201, order, "Order created successfully"));
+});
+
+// Guest order tracking by order id + email, no login required
+export const trackOrder = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { email } = req.query;
+
+  const order = await ordersService.getGuestOrder({ id, email });
+
+  res.status(200).json(new ApiResponse(200, order, "Order fetched successfully"));
 });
 
 // Get all orders of logged-in user
