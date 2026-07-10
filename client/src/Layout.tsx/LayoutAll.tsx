@@ -32,6 +32,7 @@ import CheckOut from "../user_side/pages/cart/CheckOut";
 import AllProductsRender from "../user_side/pages/AllProductsRender";
 import ThankYouContent from "../user_side/pages/cart/ThankYouContent";
 import MyOrders from "../user_side/pages/cart/oder/MyOrders";
+import OrderTracking from "../user_side/pages/OrderTracking";
 import SearchResults from "../user_side/component/SearchResults";
 import Success from "../payment/Success";
 import Cancel from "../payment/Cancel";
@@ -100,6 +101,7 @@ const LayoutAll = () => {
           <Route path="all-products" element={<AllProductsRender />} />
           <Route path="thankyou" element={<ThankYouContent />} />
           <Route path="myorders" element={<MyOrders />} />
+          <Route path="track-order" element={<OrderTracking />} />
           <Route path="search" element={<SearchResults />} />
           <Route path="success" element={<Success />} />
           <Route path="cancel" element={<Cancel />} />

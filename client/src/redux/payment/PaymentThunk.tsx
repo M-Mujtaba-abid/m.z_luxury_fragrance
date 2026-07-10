@@ -11,7 +11,6 @@ interface CheckoutItem {
 
 interface CheckoutPayload {
   items: CheckoutItem[];
-  userId: number;
   customerName: string;
   customerEmail: string;
   customerPhone: string;

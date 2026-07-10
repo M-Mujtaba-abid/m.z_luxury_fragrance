@@ -2,10 +2,9 @@
 
 // AddToCartButton.tsx
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/user/cart/CartThunk";
-import type { AppDispatch, RootState } from "../../redux/store";
+import type { AppDispatch } from "../../redux/store";
 import { toast } from "react-hot-toast"; // toast library
 
 type AddToCartButtonProps = {
@@ -22,19 +21,8 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   className,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  // ✅ Get user token from redux
-  const { token } = useSelector((state: RootState) => state.user);
 
   const handleAddToCart = async () => {
-    if (!token) {
-      // ✅ User not logged in
-      toast.error("Please login first to add product to cart");
-      navigate("/login");
-      return;
-    }
-
     try {
       await dispatch(addToCart({ productId, quantity })).unwrap();
       toast.success("Product added to cart!");
