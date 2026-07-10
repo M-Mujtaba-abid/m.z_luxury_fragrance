@@ -7,13 +7,18 @@ import {
   clearCart,
 } from "../controllers/cartItem.controller.js";
 import { isAuthenticated } from "../middleware/isAuthenticated.js";
+import {
+  validateAddToCart,
+  validateUpdateCartItem,
+  validateCartItemId,
+} from "../validators/cartItem.validator.js";
 
 const router = express.Router();
 
-router.post("/addtocart/:productId", isAuthenticated, addToCart);
+router.post("/addtocart/:productId", isAuthenticated, validateAddToCart, addToCart);
 router.get("/getallcartproduct", isAuthenticated, getUserCart);
-router.patch("/updatecart/:id", isAuthenticated, updateCartItem);
-router.delete("/deletecartitem/:id", isAuthenticated, removeCartItem);
+router.patch("/updatecart/:id", isAuthenticated, validateUpdateCartItem, updateCartItem);
+router.delete("/deletecartitem/:id", isAuthenticated, validateCartItemId, removeCartItem);
 router.delete("/deletcart", isAuthenticated, clearCart);
 
 export default router;
