@@ -12,7 +12,11 @@ const CartItem = sequelize.define("CartItem", {
   },
   userId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
+  },
+  guestId: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   productId: {
     type: DataTypes.INTEGER,
@@ -35,7 +39,16 @@ const CartItem = sequelize.define("CartItem", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  validate: {
+    hasOwner() {
+      if (!this.userId && !this.guestId) {
+        throw new Error("CartItem must belong to either a userId or a guestId");
+      }
+    },
+  },
+});
 
 // relations
 User.hasMany(CartItem, { foreignKey: "userId" });
