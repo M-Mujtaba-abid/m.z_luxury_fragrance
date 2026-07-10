@@ -4,6 +4,7 @@ import ApiError from "../utils/apiError.js";
 export const createCheckoutSession = async ({
   items,
   userId,
+  guestId,
   customerName,
   customerEmail,
   customerPhone,
@@ -36,7 +37,8 @@ export const createCheckoutSession = async ({
 
     // metadata bhejna bohot important hai
     metadata: {
-      userId,
+      userId: userId || "",
+      guestId: userId ? "" : guestId || "",
       customerName,
       customerEmail,
       customerPhone,
