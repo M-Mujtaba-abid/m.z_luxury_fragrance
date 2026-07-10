@@ -1,0 +1,25 @@
+{
+  "development": {
+    "username": "root",
+    "password": "1234",
+    "database": "Ecommerce_web",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+  "username": "luxuryfragrance_db_user",
+  "password": "ZFSQPZYoBL6Mr9sfD5Av0pPEPSdjbcC2",
+  "database": "luxuryfragrance_db",
+  "host": "dpg-d2tbhj6uk2gs73cnegsg-a.oregon-postgres.render.com",
+  "port": 5432,
+  "dialect": "postgres"
+}
+
+}
