@@ -5,23 +5,25 @@ dotenv.config()
 
 const port = process.env.PORT || 8000;
 
-const startServer = async () => {
+// Connect to database and sync models
+const initDb = async () => {
   try {
-    // Connect to database
     await connectDB();
-
-    // Sync all models
     await sequelize.sync({ alter: true });
     console.log("All models synced successfully");
-
-    // Start Express app
-    app.listen(port, () => {
-      console.log("Server is running on port", port);
-    });
   } catch (err) {
-    console.error("Unable to start server:", err);
-    process.exit(1);
+    console.error("Database initialization failed:", err);
   }
 };
 
-startServer();
+initDb();
+
+// Only start the Express listener when running outside Vercel's serverless environment
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log("Server is running on port", port);
+  });
+}
+
+// Export default app for Vercel compatibility
+export default app;
