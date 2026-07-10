@@ -1,21 +1,24 @@
 
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../../redux/store";
 import { CreditCard, MapPin, User } from "lucide-react";
 import { createOrder } from "../../../redux/Admin/AdminThunk/OrderThunk";
 import { createCheckoutSession } from "../../../redux/payment/PaymentThunk";
+import { getUserCart } from "../../../redux/user/cart/CartThunk";
 
 const CheckOut = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const { cartItems } = useSelector((state: RootState) => state.cart);
-  const { user } = useSelector((state: RootState) => state.user);
-  const { loading, success, error } = useSelector(
-    (state: RootState) => state.order
-  );
+  const { user, token } = useSelector((state: RootState) => state.user);
+  const { loading, error } = useSelector((state: RootState) => state.order);
+
+  // Non-logged-in users see a Guest/Login choice first; logged-in users skip straight to the form
+  const [guestCheckoutStarted, setGuestCheckoutStarted] = useState(false);
+  const showChoiceScreen = !token && !guestCheckoutStarted;
 
   const [formData, setFormData] = useState({
     customerName: `${user?.firstName || ""} ${user?.lastName || ""}`,
@@ -34,12 +37,6 @@ const CheckOut = () => {
       navigate("/web/cart");
     }
   }, [cartItems, navigate]);
-
-  useEffect(() => {
-    if (success && formData.paymentMethod === "COD") {
-      navigate("/web/thankyou");
-    }
-  }, [success, navigate, formData.paymentMethod]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -60,12 +57,26 @@ const CheckOut = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (formData.paymentMethod === "COD") {
       // 🔹 Normal COD order flow
-      dispatch(createOrder({ ...formData, cartItems }));
+      try {
+        const result = await dispatch(
+          createOrder({ ...formData, cartItems })
+        ).unwrap();
+        const orderId = result?.data?.id;
+
+        // reflect the backend clearing the cart after order creation
+        dispatch(getUserCart());
+
+        navigate("/web/thankyou", {
+          state: { orderId, email: formData.customerEmail },
+        });
+      } catch (err) {
+        console.error("Failed to create order:", err);
+      }
     } else if (formData.paymentMethod === "CreditCard") {
-      // 🔹 Stripe Payment Flow
+      // 🔹 Stripe Payment Flow - userId/guestId are derived server-side, no need to send them
       const resultAction = await dispatch(
         createCheckoutSession({
           items: cartItems.map((item: any) => ({
@@ -73,7 +84,6 @@ const CheckOut = () => {
             price: item.totalPrice / item.quantity,
             quantity: item.quantity,
           })),
-          userId: user.id,
           customerName: formData.customerName,
           customerEmail: formData.customerEmail,
           customerPhone: formData.customerPhone,
@@ -88,8 +98,7 @@ const CheckOut = () => {
           ),
         })
       );
-      
-  
+
       if (createCheckoutSession.fulfilled.match(resultAction)) {
         window.location.href = resultAction.payload.url; // ✅ Stripe checkout page
       }
@@ -97,10 +106,37 @@ const CheckOut = () => {
       alert("Other payment methods not yet implemented.");
     }
   };
-  
-
 
   if (cartItems.length === 0) return null;
+
+  if (showChoiceScreen) {
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 flex items-center justify-center px-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 max-w-md w-full text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+            Checkout
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            How would you like to continue?
+          </p>
+
+          <button
+            onClick={() => setGuestCheckoutStarted(true)}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold mb-4"
+          >
+            Continue as Guest
+          </button>
+
+          <Link
+            to="/login"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:underline"
+          >
+            Already have an account? Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-12">
@@ -127,6 +163,7 @@ const CheckOut = () => {
                   placeholder="Full Name"
                   value={formData.customerName}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-3 py-2 border rounded-md"
                 />
                 <input
@@ -135,6 +172,7 @@ const CheckOut = () => {
                   placeholder="Email"
                   value={formData.customerEmail}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-3 py-2 border rounded-md"
                 />
                 <input
@@ -143,6 +181,7 @@ const CheckOut = () => {
                   placeholder="Phone"
                   value={formData.customerPhone}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
@@ -160,6 +199,7 @@ const CheckOut = () => {
                   placeholder="Street Address"
                   value={formData.shippingStreet}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-3 py-2 border rounded-md"
                 />
                 <div className="grid grid-cols-2 gap-4">
@@ -169,6 +209,7 @@ const CheckOut = () => {
                     placeholder="City"
                     value={formData.shippingCity}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-3 py-2 border rounded-md"
                   />
                   <input
@@ -194,6 +235,7 @@ const CheckOut = () => {
                   placeholder="Country"
                   value={formData.shippingCountry}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-3 py-2 border rounded-md"
                 />
               </div>

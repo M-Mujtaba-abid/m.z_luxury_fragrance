@@ -27,13 +27,17 @@ export const createCheckoutSession = async ({
     quantity: item.quantity,
   }));
 
+  // FRONTEND_URL lets local dev point back to localhost instead of the
+  // hardcoded production domain; falls back to CLIENT_URL if not set
+  const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL;
+
   // Checkout Session create
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items,
     mode: "payment",
-    success_url: `${process.env.CLIENT_URL}/web/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.CLIENT_URL}/web/cancel?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${frontendUrl}/web/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${frontendUrl}/web/cancel?session_id={CHECKOUT_SESSION_ID}`,
 
     // metadata bhejna bohot important hai
     metadata: {
