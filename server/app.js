@@ -21,7 +21,12 @@ dotenv.config();
 
 
 
-const allowedOrigins = ["https://luxuryfragrancemz.vercel.app"];
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.LOCAL_URL,
+  "https://luxuryfragrancemz.vercel.app",
+  "https://m-z-luxury-fragrance-61m9.vercel.app",
+].filter(Boolean);
 const isLocalhostOrigin = (origin) => /^http:\/\/localhost:\d+$/.test(origin);
 
 app.use(cors({
