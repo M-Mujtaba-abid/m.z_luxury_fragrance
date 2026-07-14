@@ -1,8 +1,8 @@
 
 
 import { BrowserRouter as Router } from "react-router-dom";
-import LayoutAll from "./Layout.tsx/LayoutAll";
-import Loader from "./user_side/component/Loader";
+import LayoutAll from "./layouts/LayoutAll";
+import Loader from "./components/user/Loader";
 import { useSelector } from "react-redux";
 import type { RootState } from "./redux/store"; // apne path ke hisaab se
 

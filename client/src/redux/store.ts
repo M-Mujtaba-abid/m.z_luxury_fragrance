@@ -2,12 +2,12 @@
 
 
 import { configureStore } from "@reduxjs/toolkit";
-import productReducer from "./Admin/AdminSlice/ProductSlice";
-import userReducer from "./auth/AuthSlice";
-import cartReducer from "./user/cart/CartSlice";
-import orderReducer from "./Admin/AdminSlice/OrderSlice";
-import loaderReducer from "./LoaderSlice";
-import paymentReducer from "./payment/PaymentSlice";
+import productReducer from "./slices/ProductSlice";
+import userReducer from "./slices/AuthSlice";
+import cartReducer from "./slices/CartSlice";
+import orderReducer from "./slices/OrderSlice";
+import loaderReducer from "./slices/LoaderSlice";
+import paymentReducer from "./slices/PaymentSlice";
 
 
 
