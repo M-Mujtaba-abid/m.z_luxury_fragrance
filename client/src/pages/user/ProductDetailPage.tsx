@@ -29,8 +29,8 @@ const ProductDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-xl font-semibold text-gray-600 dark:text-gray-300">
+      <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
+        <div className="text-xl font-semibold text-luxury-cream/70">
           Loading product details...
         </div>
       </div>
@@ -39,16 +39,16 @@ const ProductDetailPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-xl font-semibold text-red-600">{error}</div>
+      <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
+        <div className="text-xl font-semibold text-red-400">{error}</div>
       </div>
     );
   }
 
   if (!currentProduct) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-xl font-semibold text-gray-600 dark:text-gray-300">
+      <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
+        <div className="text-xl font-semibold text-luxury-cream/70">
           Product not found
         </div>
       </div>
@@ -56,18 +56,18 @@ const ProductDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen py-8  bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen py-8  bg-luxury-ink">
       <div className="max-w-4xl pt-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div className="bg-luxury-ink border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden">
           {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+          <div className="px-6 py-4 border-b border-luxury-gold/10">
             <div className="flex justify-between items-center">
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+              <h1 className="font-logo text-3xl font-bold text-luxury-cream">
                 Product Details
               </h1>
               <button
                 onClick={() => navigate(-1)}
-                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-4 py-2 border border-luxury-gold/20 bg-luxury-ink text-luxury-cream rounded-md transition-colors duration-300 hover:bg-luxury-gold/10 hover:text-luxury-gold"
               >
                 Back
               </button>
@@ -79,11 +79,11 @@ const ProductDetailPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Product Image */}
               <div className="space-y-4">
-                <div className="aspect-w-1 pt-10 aspect-h-1 w-full overflow-hidden rounded-lg">
+                <div className="aspect-w-1 pt-10 aspect-h-1 w-full overflow-hidden rounded-lg border border-luxury-gold/15 bg-[#141414]">
                   <img
                     src={currentProduct.productImage}
                     alt={currentProduct.title}
-                    className="w-full lg:h-[500px] object-cover rounded-lg shadow-md"
+                    className="w-full lg:h-[500px] object-cover rounded-lg"
                   />
                 </div>
               </div>
@@ -91,35 +91,35 @@ const ProductDetailPage = () => {
               {/* Product Information */}
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                  <h2 className="font-logo text-2xl font-bold text-luxury-cream mb-2">
                     {currentProduct.title}
                   </h2>
-                  <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                  <p className="text-luxury-cream/70 text-lg leading-relaxed">
                     {currentProduct.description}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   {/* Price */}
-                  <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/40 rounded-lg">
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                    <span className="text-lg font-semibold text-luxury-gold">
                       Price:
                     </span>
-                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <span className="text-2xl font-bold text-luxury-cream">
                       Rs. {currentProduct.price}
                     </span>
                   </div>
 
                   {/* Status */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                    <span className="text-lg font-semibold text-luxury-gold">
                       Status:
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
                         currentProduct.status === "available"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                          : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                          ? "bg-luxury-gold/15 text-luxury-gold border border-luxury-gold/30"
+                          : "bg-red-950/40 text-red-300 border border-red-900/40"
                       }`}
                     >
                       {currentProduct.status}
@@ -127,31 +127,31 @@ const ProductDetailPage = () => {
                   </div>
 
                   {/* Stock */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                    <span className="text-lg font-semibold text-luxury-gold">
                       Stock:
                     </span>
-                    <span className="text-lg font-medium text-gray-800 dark:text-gray-100">
+                    <span className="text-lg font-medium text-luxury-cream">
                       {currentProduct.stock} units
                     </span>
                   </div>
 
                   {/* Category */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                    <span className="text-lg font-semibold text-luxury-gold">
                       Category:
                     </span>
-                    <span className="text-lg font-medium text-gray-800 dark:text-gray-100 capitalize">
+                    <span className="text-lg font-medium text-luxury-cream capitalize">
                       {currentProduct.category}
                     </span>
                   </div>
 
                   {/* Quantity */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                    <span className="text-lg font-semibold text-luxury-gold">
                       Quantity:
                     </span>
-                    <span className="text-lg font-medium text-gray-800 dark:text-gray-100">
+                    <span className="text-lg font-medium text-luxury-cream">
                       {currentProduct.Quantity}
                     </span>
                   </div>
@@ -159,17 +159,17 @@ const ProductDetailPage = () => {
                   {/* Homepage Control Fields */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {currentProduct.isFeatured && (
-                      <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full">
+                      <span className="px-3 py-1 text-sm font-bold bg-luxury-gold text-luxury-ink rounded-full">
                         ⭐ Featured Product
                       </span>
                     )}
                     {currentProduct.isNewArrival && (
-                      <span className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full">
+                      <span className="px-3 py-1 text-sm border border-luxury-gold text-luxury-gold rounded-full">
                         🆕 New Arrival
                       </span>
                     )}
                     {currentProduct.isOnSale && (
-                      <span className="px-3 py-1 text-sm bg-red-100 text-red-800 rounded-full">
+                      <span className="px-3 py-1 text-sm bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 rounded-full">
                         🏷️ On Sale
                       </span>
                     )}
@@ -177,22 +177,22 @@ const ProductDetailPage = () => {
 
                   {/* Discount Price Display */}
                   {currentProduct.isOnSale && currentProduct.discountPrice && (
-                    <div className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/40 rounded-lg">
-                      <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                    <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                      <span className="text-lg font-semibold text-luxury-gold">
                         Original Price:
                       </span>
-                      <span className="text-lg text-gray-500 line-through">
+                      <span className="text-lg text-luxury-cream/40 line-through">
                         Rs. {currentProduct.price}
                       </span>
                     </div>
                   )}
 
                   {currentProduct.isOnSale && currentProduct.discountPrice && (
-                    <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/40 rounded-lg">
-                      <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                    <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
+                      <span className="text-lg font-semibold text-luxury-gold">
                         Sale Price:
                       </span>
-                      <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      <span className="text-2xl font-bold text-luxury-gold">
                         Rs. {currentProduct.discountPrice}
                       </span>
                     </div>
