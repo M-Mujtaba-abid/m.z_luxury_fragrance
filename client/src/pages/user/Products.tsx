@@ -30,7 +30,7 @@ const Products = () => {
     <div className="min-h-screen  bg-luxury-ink py-8">
       <div className="max-w-7xl  p-4 sm:p-6 lg:p-8 mx-auto">
         <h1 className="font-logo text-3xl pt-[35px] font-bold text-luxury-cream mb-6">
-          {category ? `${category} Products` : "All Products"}
+          {category && category !== "all" ? `${category} Products` : "All Products"}
         </h1>
 
         {loading && <p className="text-luxury-cream/60">Loading...</p>}
@@ -109,7 +109,9 @@ const Products = () => {
 
         {!loading && filteredProducts.length === 0 && (
           <p className="text-center text-luxury-cream/50 mt-6">
-            No products found for {category}.
+            {category && category !== "all"
+              ? `No products found for ${category}.`
+              : "No products found."}
           </p>
         )}
       </div>

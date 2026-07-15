@@ -9,7 +9,7 @@ import { logoutUser } from "../../redux/thunks/AuthThunk";
 
 const NAV_LINKS = [
   { name: "Home", path: "/web" },
-  { name: "Collection", path: "/web/all-products" },
+  { name: "Collection", path: "/web/all" },
   { name: "Story", path: "/web/about" },
   { name: "Contact", path: "/web/contact" },
 ];
