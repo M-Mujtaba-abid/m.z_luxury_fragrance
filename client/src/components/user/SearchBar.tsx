@@ -80,7 +80,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ closeSearch }) => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search..."
-        className="flex-1 rounded-md border border-luxury-gold/20 bg-luxury-ink px-3 py-2 text-sm text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold/60"
+        className="flex-1 rounded-md border border-luxury-gold/20 bg-luxury-ink/40 px-3 py-2 text-sm text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
         onClick={(e) => e.stopPropagation()} // Prevent click from bubbling
       />
       <button
