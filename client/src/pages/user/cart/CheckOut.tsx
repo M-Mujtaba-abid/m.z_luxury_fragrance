@@ -111,25 +111,25 @@ const CheckOut = () => {
 
   if (showChoiceScreen) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 flex items-center justify-center px-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 max-w-md w-full text-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+      <div className="min-h-screen bg-luxury-ink py-12 flex items-center justify-center px-4">
+        <div className="bg-luxury-card border border-luxury-gold/10 rounded-lg shadow-md p-8 max-w-md w-full text-center">
+          <h1 className="font-logo text-2xl font-bold text-luxury-cream mb-2">
             Checkout
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-luxury-cream/70 mb-6">
             How would you like to continue?
           </p>
 
           <button
             onClick={() => setGuestCheckoutStarted(true)}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold mb-4"
+            className="w-full bg-luxury-gold text-luxury-ink py-3 rounded-lg hover:bg-luxury-gold-bright transition-colors duration-300 font-semibold mb-4"
           >
             Continue as Guest
           </button>
 
           <Link
             to="/login"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:underline"
+            className="text-sm text-luxury-cream/70 hover:text-luxury-gold-bright transition-colors duration-300"
           >
             Already have an account? Login
           </Link>
@@ -139,9 +139,9 @@ const CheckOut = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-luxury-ink py-12">
       <div className="max-w-6xl mx-auto py-[50px] sm:py-0 px-4">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+        <h1 className="font-logo text-3xl font-bold text-luxury-cream mb-8">
           Checkout
         </h1>
 
@@ -152,9 +152,9 @@ const CheckOut = () => {
           {/* Checkout Form */}
           <div className="space-y-6">
             {/* Personal Information */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-                <User className="w-5 h-5 mr-2" /> Personal Information
+            <div className="bg-luxury-card border border-luxury-gold/10 rounded-lg shadow-md p-6">
+              <h2 className="font-logo text-xl font-semibold text-luxury-cream mb-4 flex items-center">
+                <User className="w-5 h-5 mr-2 text-luxury-gold" /> Personal Information
               </h2>
               <div className="space-y-4">
                 <input
@@ -164,7 +164,7 @@ const CheckOut = () => {
                   value={formData.customerName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                 />
                 <input
                   type="email"
@@ -173,7 +173,7 @@ const CheckOut = () => {
                   value={formData.customerEmail}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                 />
                 <input
                   type="tel"
@@ -182,15 +182,15 @@ const CheckOut = () => {
                   value={formData.customerPhone}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                 />
               </div>
             </div>
 
             {/* Shipping Address */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-                <MapPin className="w-5 h-5 mr-2" /> Shipping Address
+            <div className="bg-luxury-card border border-luxury-gold/10 rounded-lg shadow-md p-6">
+              <h2 className="font-logo text-xl font-semibold text-luxury-cream mb-4 flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-luxury-gold" /> Shipping Address
               </h2>
               <div className="space-y-4">
                 <input
@@ -200,7 +200,7 @@ const CheckOut = () => {
                   value={formData.shippingStreet}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                 />
                 <div className="grid grid-cols-2 gap-4">
                   <input
@@ -210,7 +210,7 @@ const CheckOut = () => {
                     value={formData.shippingCity}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                   />
                   <input
                     type="text"
@@ -218,7 +218,7 @@ const CheckOut = () => {
                     placeholder="State"
                     value={formData.shippingState}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                   />
                 </div>
                 <input
@@ -227,7 +227,7 @@ const CheckOut = () => {
                   placeholder="Postal Code"
                   value={formData.shippingPostalCode}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                 />
                 <input
                   type="text"
@@ -236,21 +236,21 @@ const CheckOut = () => {
                   value={formData.shippingCountry}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
                 />
               </div>
             </div>
 
             {/* Payment Method */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-                <CreditCard className="w-5 h-5 mr-2" /> Payment Method
+            <div className="bg-luxury-card border border-luxury-gold/10 rounded-lg shadow-md p-6">
+              <h2 className="font-logo text-xl font-semibold text-luxury-cream mb-4 flex items-center">
+                <CreditCard className="w-5 h-5 mr-2 text-luxury-gold" /> Payment Method
               </h2>
               <select
                 name="paymentMethod"
                 value={formData.paymentMethod}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
               >
                 <option value="COD">Cash on Delivery</option>
                 <option value="CreditCard">Credit Card</option>
@@ -262,41 +262,41 @@ const CheckOut = () => {
 
           {/* Order Summary */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800  rounded-lg shadow-md p-6 sticky top-4">
-              <h2 className="text-xl font-semibold dark:text-white mb-4">Order Summary</h2>
+            <div className="bg-luxury-card border border-luxury-gold/10 rounded-lg shadow-md p-6 sticky top-4">
+              <h2 className="font-logo text-xl font-semibold text-luxury-cream mb-4">Order Summary</h2>
 
               {cartItems.map((item: any) => (
-                <div key={item.id} className="flex items-center dark:text-white space-x-3 mb-3">
+                <div key={item.id} className="flex items-center space-x-3 mb-3">
                   <img
                     src={item.Product?.productImage}
                     alt={item.Product?.title}
                     className="w-12 h-12 object-cover rounded"
                   />
                   <div className="flex-1">
-                    <h3 className="font-medium dark:text-white">{item.Product?.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-white">Qty: {item.quantity}</p>
+                    <h3 className="font-medium text-luxury-cream">{item.Product?.title}</h3>
+                    <p className="text-sm text-luxury-cream/60">Qty: {item.quantity}</p>
                   </div>
-                  <span className="font-semibold dark:text-white">Rs. {item.totalPrice}</span>
+                  <span className="font-semibold text-luxury-gold">Rs. {item.totalPrice}</span>
                 </div>
               ))}
 
-              <hr className="my-4" />
+              <hr className="my-4 border-luxury-gold/15" />
 
-              <div className="flex justify-between  dark:text-white font-bold text-lg mb-4">
+              <div className="flex justify-between text-luxury-cream font-bold text-lg mb-4">
                 <span>Total:</span>
-                <span>Rs. {calculateTotal()}</span>
+                <span className="text-luxury-gold">Rs. {calculateTotal()}</span>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600  text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="w-full bg-luxury-gold text-luxury-ink py-3 rounded-lg font-semibold transition-colors duration-300 hover:bg-luxury-gold-bright disabled:opacity-50"
               >
                 {loading ? "Processing..." : "Place Order"}
               </button>
 
               {error && (
-                <p className="text-red-500 mt-3 text-sm">⚠ {error}</p>
+                <p className="text-red-400 mt-3 text-sm">⚠ {error}</p>
               )}
             </div>
           </div>

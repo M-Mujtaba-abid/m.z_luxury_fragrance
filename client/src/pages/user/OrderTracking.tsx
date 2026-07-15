@@ -7,11 +7,11 @@ import { clearTrackedOrder } from "../../redux/slices/OrderSlice";
 import { Search } from "lucide-react";
 
 const statusStyles: Record<string, string> = {
-  pending: "bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100",
-  confirmed: "bg-indigo-200 text-indigo-800 dark:bg-indigo-600 dark:text-indigo-100",
-  shipped: "bg-blue-200 text-blue-800 dark:bg-blue-600 dark:text-blue-100",
-  delivered: "bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-100",
-  cancelled: "bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-100",
+  pending: "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30",
+  confirmed: "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30",
+  shipped: "bg-blue-500/15 text-blue-300 border border-blue-500/30",
+  delivered: "bg-green-500/15 text-green-300 border border-green-500/30",
+  cancelled: "bg-red-500/15 text-red-300 border border-red-500/30",
 };
 
 const OrderTracking: React.FC = () => {
@@ -41,18 +41,18 @@ const OrderTracking: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pt-[80px] bg-gray-100 dark:bg-gray-900 py-12 px-4">
+    <div className="min-h-screen pt-[80px] bg-luxury-ink py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="font-logo text-3xl font-bold text-luxury-cream mb-2">
           Track Your Order
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">
+        <p className="text-luxury-cream/70 mb-8">
           Enter your Order ID and the email you used at checkout — no login needed.
         </p>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 space-y-4"
+          className="bg-luxury-card border border-luxury-gold/10 rounded-xl shadow-md p-6 mb-8 space-y-4"
         >
           <input
             type="number"
@@ -60,7 +60,7 @@ const OrderTracking: React.FC = () => {
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
           />
           <input
             type="email"
@@ -68,12 +68,12 @@ const OrderTracking: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60"
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 bg-luxury-gold text-luxury-ink font-semibold py-3 rounded-lg hover:bg-luxury-gold-bright transition-colors duration-300 disabled:opacity-50"
           >
             <Search className="w-4 h-4" />
             {loading ? "Searching..." : "Track Order"}
@@ -81,30 +81,32 @@ const OrderTracking: React.FC = () => {
         </form>
 
         {error && (
-          <div className="bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 rounded-lg p-4 mb-6 text-sm">
+          <div className="bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg p-4 mb-6 text-sm">
             {error}
           </div>
         )}
 
         {trackedOrder && (
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6">
+          <div className="bg-luxury-elevated border border-luxury-gold/10 shadow-md rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="font-logo text-lg font-semibold text-luxury-gold">
                 Order #{trackedOrder.id}
               </h2>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-luxury-cream/50">
                 {new Date(trackedOrder.createdAt).toLocaleDateString()}
               </span>
             </div>
 
-            <div className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+            <div className="mb-4 text-sm text-luxury-cream/80">
               <p>
-                <span className="font-medium">Delivery Address:</span>{" "}
-                {trackedOrder.shippingStreet}, {trackedOrder.shippingCity}
+                <span className="font-medium text-luxury-gold">Delivery Address:</span>{" "}
+                <span className="text-luxury-cream">
+                  {trackedOrder.shippingStreet}, {trackedOrder.shippingCity}
+                </span>
               </p>
             </div>
 
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="divide-y divide-luxury-gold/10">
               {trackedOrder.OrderItems?.map((item: any) => (
                 <div key={item.id} className="flex items-center py-3 gap-4">
                   <img
@@ -113,21 +115,21 @@ const OrderTracking: React.FC = () => {
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="flex-1">
-                    <h3 className="text-gray-900 dark:text-white font-medium">
+                    <h3 className="text-luxury-cream font-medium">
                       {item.Product?.title}
                     </h3>
-                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                    <p className="text-sm text-luxury-cream/60">Qty: {item.quantity}</p>
                   </div>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                  <span className="font-semibold text-luxury-gold">
                     Rs. {item.priceAtPurchase * item.quantity}
                   </span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 flex justify-end font-semibold text-gray-900 dark:text-white">
+            <div className="mt-4 flex justify-end font-semibold text-luxury-cream">
               <span className="font-bold">Total: </span>
-              <span>Rs. {trackedOrder.totalAmount}</span>
+              <span className="text-luxury-gold">Rs. {trackedOrder.totalAmount}</span>
             </div>
 
             <div className="mt-4 flex justify-end">

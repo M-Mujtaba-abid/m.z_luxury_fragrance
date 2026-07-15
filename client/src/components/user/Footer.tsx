@@ -10,8 +10,8 @@ const Footer = () => {
             M.Z Luxury Fragrance
           </h2>
           <p className="text-sm text-luxury-cream/60">
-            Your trusted online grocery store with fresh products delivered to
-            your doorstep.
+            Handcrafted fragrances, thoughtfully composed to make your story
+            unforgettable — delivered to your door.
           </p>
         </div>
 
