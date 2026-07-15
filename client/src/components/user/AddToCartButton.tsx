@@ -37,7 +37,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     <div className={`p-4 pt-0 ${className || ""}`}>
       <button
         onClick={handleAddToCart}
-        className="mt-3 w-full border border-gray-400 bg-transparent text-black dark:text-white py-2 rounded-md hover:bg-green-100 dark:hover:bg-green-900 transition"
+        className="mt-3 w-full border border-luxury-gold/30 bg-transparent text-luxury-cream py-2 rounded-md transition-colors duration-300 hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
       >
         Add to Cart
       </button>

@@ -29,18 +29,16 @@ const AllProductsRender = () => {
 
   // Choose products based on category
   let productsToShow = [];
-  let bgColor = "";
 
   if (category === "featured") {
     productsToShow = featuredProducts;
-    bgColor = "bg-gradient-to-br from-blue-100 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900";
   } else if (category === "onSale") {
     productsToShow = onSaleProducts;
-    bgColor = "bg-gradient-to-br from-red-100 via-white to-red-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900";
   } else if (category === "newArrival") {
     productsToShow = newArrivals;
-    bgColor = "bg-gradient-to-br from-green-100 via-white to-green-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900";
   }
+
+  const bgColor = "bg-gradient-to-br from-luxury-ink via-[#141414] to-luxury-ink";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -54,7 +52,7 @@ const AllProductsRender = () => {
 
   return (
     <div className={` rounded-xl p-8 ${bgColor}`}>
-      <h2 className="pt-[80px] text-2xl font-bold mb-6 dark:text-white">
+      <h2 className="font-logo pt-[80px] text-2xl font-bold mb-6 text-luxury-cream">
         {category === "featured"
           ? "Featured Products"
           : category === "onSale"
@@ -75,10 +73,10 @@ const AllProductsRender = () => {
             variants={cardVariants}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className="relative border rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 flex flex-col"
+            className="relative border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden bg-luxury-ink hover:border-luxury-gold/30 transition-colors duration-300 flex flex-col"
           >
             {category === "featured" && (
-              <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow-md">
+              <span className="absolute top-3 left-3 bg-luxury-gold text-luxury-ink text-xs font-bold px-3 py-1 rounded-md shadow-md">
                 FEATURED
               </span>
             )}
@@ -90,13 +88,13 @@ const AllProductsRender = () => {
                 className="w-full h-[280px] object-cover"
               />
               <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white truncate">
+                <h3 className="text-lg font-semibold text-luxury-cream truncate">
                   {p.title.slice(0,20)}...
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                <p className="text-sm text-luxury-cream/60 mt-1">
                   Quantity: {p.Quantity}
                 </p>
-                <p className="text-base font-bold text-gray-800 dark:text-white mt-1">
+                <p className="text-base font-bold text-luxury-gold mt-1">
                   Rs. {category === "onSale" && p.isOnSale && p.discountPrice
                     ? p.discountPrice
                     : p.price}
@@ -105,13 +103,7 @@ const AllProductsRender = () => {
             </Link>
 
             <div className="p-4 pt-0">
-              <button className={`mt-3 w-full border border-gray-400 bg-transparent text-black dark:text-white py-2 rounded-md hover:transition ${
-                category === "featured"
-                  ? "hover:bg-blue-100 dark:hover:bg-blue-900"
-                  : category === "onSale"
-                  ? "hover:bg-red-100 dark:hover:bg-red-900"
-                  : "hover:bg-green-100 dark:hover:bg-green-900"
-              }`}>
+              <button className="mt-3 w-full border border-luxury-gold/30 bg-transparent text-luxury-cream py-2 rounded-md transition-colors duration-300 hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold">
                 Add to Cart
               </button>
             </div>
@@ -119,7 +111,7 @@ const AllProductsRender = () => {
         ))}
 
         {!loading && productsToShow.length === 0 && (
-          <div className="col-span-full text-gray-500">No products.</div>
+          <div className="col-span-full text-luxury-cream/50">No products.</div>
         )}
       </motion.div>
     </div>

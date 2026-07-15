@@ -45,17 +45,16 @@ const NewArrivals = () => {
 
   return (
     <div
-      className=" rounded-xl p-8 
-      bg-gradient-to-br from-green-100 via-white to-green-100 
-      dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative"
+      className=" rounded-xl p-8
+      bg-gradient-to-br from-luxury-ink via-[#141414] to-luxury-ink relative"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl dark:text-white font-bold">New Arrivals</h2>
+        <h2 className="font-logo text-2xl text-luxury-cream font-bold">New Arrivals</h2>
         <Link
            to="/web/all-products"
            state={{ category: "newArrival" }}
-          className="text-blue-600 hover:underline text-sm md:text-base"
+          className="text-luxury-gold hover:underline text-sm md:text-base"
         >
           View more
         </Link>
@@ -64,9 +63,9 @@ const NewArrivals = () => {
       {/* Left Arrow */}
       <button
         onClick={scrollLeft}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-700 p-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-600"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-luxury-ink border border-luxury-gold/20 p-2 rounded-full shadow hover:bg-luxury-gold/10 transition-colors duration-300"
       >
-        <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-white" />
+        <ChevronLeft className="w-5 h-5 text-luxury-cream" />
       </button>
 
       {/* Product Row */}
@@ -80,7 +79,7 @@ const NewArrivals = () => {
             key={p.id}
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
-            className="min-w-[260px] max-w-[260px] border rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 flex flex-col"
+            className="min-w-[260px] max-w-[260px] border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden bg-luxury-ink hover:border-luxury-gold/30 transition-colors duration-300 flex flex-col"
           >
             {/* ✅ Clickable Part */}
             <Link to={`/web/product-detail/${p.id}`} className="flex flex-col flex-grow">
@@ -93,13 +92,13 @@ const NewArrivals = () => {
 
               {/* Card Body */}
               <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white truncate">
+                <h3 className="text-lg font-semibold text-luxury-cream truncate">
                   {p.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                <p className="text-sm text-luxury-cream/60 mt-1">
                   Quantity: {p.Quantity}
                 </p>
-                <p className="text-base font-bold text-gray-600 dark:text-white mt-1">
+                <p className="text-base font-bold text-luxury-gold mt-1">
                   Rs. {p.price}
                 </p>
               </div>
@@ -112,16 +111,16 @@ const NewArrivals = () => {
 
         {/* No Data Case */}
         {!loading && newArrivals.length === 0 && (
-          <div className="text-gray-500">No new arrivals.</div>
+          <div className="text-luxury-cream/50">No new arrivals.</div>
         )}
       </motion.div>
 
       {/* Right Arrow */}
       <button
         onClick={scrollRight}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-700 p-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-600"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-luxury-ink border border-luxury-gold/20 p-2 rounded-full shadow hover:bg-luxury-gold/10 transition-colors duration-300"
       >
-        <ChevronRight className="w-5 h-5 text-gray-700 dark:text-white" />
+        <ChevronRight className="w-5 h-5 text-luxury-cream" />
       </button>
 
       {/* Dots Indicator */}
@@ -129,10 +128,10 @@ const NewArrivals = () => {
         {newArrivals.map((_: any, index: number) => (
           <div
             key={index}
-            className={`w-3 h-3 rounded-full ${
+            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
               index === activeIndex
-                ? "bg-green-600 dark:bg-green-400"
-                : "bg-gray-300 dark:bg-gray-600"
+                ? "bg-luxury-gold"
+                : "bg-luxury-cream/20"
             }`}
           ></div>
         ))}
