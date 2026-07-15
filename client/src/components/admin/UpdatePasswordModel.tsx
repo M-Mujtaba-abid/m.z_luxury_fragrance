@@ -120,6 +120,7 @@ import type { AppDispatch, RootState } from "../../redux/store";
 import { updatePassword } from "../../redux/thunks/AuthThunk";
 import { clearPasswordUpdateState } from "../../redux/slices/AuthSlice";
 import { Eye, EyeOff, X } from "lucide-react"; // icons
+import { motion } from "framer-motion";
 
 interface Props {
   open: boolean;
@@ -176,29 +177,32 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >
-      <div
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-900"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="w-full max-w-md rounded-2xl bg-luxury-elevated border border-luxury-gold/20 p-6 shadow-[0_0_60px_-15px_rgba(201,162,75,0.35)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-center mb-5 border-b pb-2">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+        <div className="flex justify-between items-center mb-5 border-b border-luxury-gold/10 pb-2">
+          <h2 className="font-logo text-2xl font-bold text-luxury-cream">
             Update Password
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-1 hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="rounded-full p-1 text-luxury-cream/70 hover:text-luxury-gold hover:bg-luxury-gold/10 transition-colors duration-300"
           >
-            <X className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Error */}
         {passwordUpdateError && (
-          <div className="mb-3 rounded bg-red-100 px-3 py-2 text-red-700 text-sm">
+          <div className="mb-3 rounded bg-red-950/40 border border-red-900/50 px-3 py-2 text-red-300 text-sm">
             {passwordUpdateError}
           </div>
         )}
@@ -207,13 +211,13 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Old Password */}
           <div className="relative">
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block mb-1 text-sm font-medium text-luxury-cream/80">
               Old Password
             </label>
             <input
               type={showPassword.old ? "text" : "password"}
               name="oldPassword"
-              className="w-full rounded-lg border px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+              className="w-full rounded-md border border-luxury-gold/20 bg-luxury-ink px-3 py-2 pr-10 text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
               value={form.oldPassword}
               onChange={handleChange}
               required
@@ -221,7 +225,7 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
             <button
               type="button"
               onClick={() => toggleVisibility("old")}
-              className="absolute right-3 top-8 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              className="absolute right-3 top-8 text-luxury-cream/60 hover:text-luxury-gold-bright transition-colors duration-300"
             >
               {showPassword.old ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -229,13 +233,13 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
 
           {/* New Password */}
           <div className="relative">
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block mb-1 text-sm font-medium text-luxury-cream/80">
               New Password
             </label>
             <input
               type={showPassword.new ? "text" : "password"}
               name="newPassword"
-              className="w-full rounded-lg border px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+              className="w-full rounded-md border border-luxury-gold/20 bg-luxury-ink px-3 py-2 pr-10 text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
               value={form.newPassword}
               onChange={handleChange}
               required
@@ -243,7 +247,7 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
             <button
               type="button"
               onClick={() => toggleVisibility("new")}
-              className="absolute right-3 top-8 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              className="absolute right-3 top-8 text-luxury-cream/60 hover:text-luxury-gold-bright transition-colors duration-300"
             >
               {showPassword.new ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -251,13 +255,13 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
 
           {/* Confirm Password */}
           <div className="relative">
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block mb-1 text-sm font-medium text-luxury-cream/80">
               Confirm Password
             </label>
             <input
               type={showPassword.confirm ? "text" : "password"}
               name="confirmPassword"
-              className="w-full rounded-lg border px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+              className="w-full rounded-md border border-luxury-gold/20 bg-luxury-ink px-3 py-2 pr-10 text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
               value={form.confirmPassword}
               onChange={handleChange}
               required
@@ -265,7 +269,7 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
             <button
               type="button"
               onClick={() => toggleVisibility("confirm")}
-              className="absolute right-3 top-8 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              className="absolute right-3 top-8 text-luxury-cream/60 hover:text-luxury-gold-bright transition-colors duration-300"
             >
               {showPassword.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -276,20 +280,20 @@ const UpdatePasswordModel: React.FC<Props> = ({ open, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border px-4 py-2 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="rounded-lg border border-luxury-gold text-luxury-gold px-4 py-2 hover:bg-luxury-gold/10 transition-colors duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={passwordUpdateLoading}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition disabled:opacity-50"
+              className="rounded-lg bg-luxury-gold text-luxury-ink px-4 py-2 font-medium hover:bg-luxury-gold-bright transition-colors duration-300 disabled:opacity-50"
             >
               {passwordUpdateLoading ? "Updating..." : "Update Password"}
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
