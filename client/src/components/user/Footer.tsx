@@ -2,14 +2,14 @@ import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-luxury-ink text-luxury-cream/70">
       <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
         {/* Brand / About */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Luxury Fragrance M.Z
+          <h2 className="font-logo text-2xl font-bold text-luxury-cream mb-4">
+            M.Z Luxury Fragrance
           </h2>
-          <p className="text-sm">
+          <p className="text-sm text-luxury-cream/60">
             Your trusted online grocery store with fresh products delivered to
             your doorstep.
           </p>
@@ -17,12 +17,14 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
+          <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-luxury-gold mb-4">
+            Quick Links
+          </h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a
                 href="/web/Men"
-                className="transition duration-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_#3b82f6]"
+                className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Shop
               </a>
@@ -30,7 +32,7 @@ const Footer = () => {
             <li>
               <a
                 href="/web/about"
-                className="transition duration-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_#3b82f6]"
+                className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 About Us
               </a>
@@ -38,7 +40,7 @@ const Footer = () => {
             <li>
               <a
                 href="/web/contact"
-                className="transition duration-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_#3b82f6]"
+                className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Contact
               </a>
@@ -48,14 +50,14 @@ const Footer = () => {
 
         {/* Customer Service */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">
+          <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-luxury-gold mb-4">
             Customer Service
           </h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a
                 href="/privacy"
-                className="transition duration-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_#3b82f6]"
+                className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Privacy Policy
               </a>
@@ -63,7 +65,7 @@ const Footer = () => {
             <li>
               <a
                 href="/terms"
-                className="transition duration-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_#3b82f6]"
+                className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Terms & Conditions
               </a>
@@ -73,29 +75,31 @@ const Footer = () => {
 
         {/* Social Media */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
+          <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-luxury-gold mb-4">
+            Follow Us
+          </h3>
           <div className="flex space-x-4">
             <a
               href="#"
-              className="transition duration-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_#3b82f6]"
+              className="text-luxury-cream/70 transition-colors duration-300 hover:text-luxury-gold"
             >
               <Facebook size={20} />
             </a>
             <a
               href="#"
-              className="transition duration-300 hover:text-pink-400 hover:drop-shadow-[0_0_8px_#ec4899]"
+              className="text-luxury-cream/70 transition-colors duration-300 hover:text-luxury-gold"
             >
               <Instagram size={20} />
             </a>
             <a
               href="#"
-              className="transition duration-300 hover:text-sky-400 hover:drop-shadow-[0_0_8px_#38bdf8]"
+              className="text-luxury-cream/70 transition-colors duration-300 hover:text-luxury-gold"
             >
               <Twitter size={20} />
             </a>
             <a
               href="#"
-              className="transition duration-300 hover:text-blue-500 hover:drop-shadow-[0_0_8px_#3b82f6]"
+              className="text-luxury-cream/70 transition-colors duration-300 hover:text-luxury-gold"
             >
               <Linkedin size={20} />
             </a>
@@ -104,7 +108,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom copyright */}
-      <div className="border-t border-gray-700 py-4 text-center text-sm text-gray-400">
+      <div className="border-t border-luxury-gold/15 py-4 text-center text-sm text-luxury-cream/50">
         © {new Date().getFullYear()} M.Z All rights reserved.
       </div>
     </footer>

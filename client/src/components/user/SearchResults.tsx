@@ -24,23 +24,23 @@ const SearchResults = () => {
   }, [query, dispatch]);
 
   return (
-    <div className="pt-[100px] p-6">
+    <div className="min-h-screen bg-luxury-ink pt-[100px] p-6">
       {/* Sticky Back Button */}
       <button
         onClick={() => navigate(-1)}
-        className="fixed top-24 right-6 z-50 px-3 py-1 border rounded-md bg-white dark:bg-gray-800 dark:text-white text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm transition"
+        className="fixed top-24 right-6 z-50 px-3 py-1 border border-luxury-gold/20 rounded-md bg-luxury-ink text-luxury-cream hover:bg-luxury-gold/10 hover:text-luxury-gold shadow-sm transition-colors duration-300"
       >
         Back
       </button>
 
-      <h2 className="text-xl font-bold mb-4 dark:text-white">
+      <h2 className="font-logo text-xl font-bold mb-4 text-luxury-cream">
         Search results for: "{query}"
       </h2>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {loading && <p className="text-luxury-cream/60">Loading...</p>}
+      {error && <p className="text-red-400">{error}</p>}
       {searchResults.length === 0 && !loading && (
-        <p className="text-gray-500">No products found</p>
+        <p className="text-luxury-cream/50">No products found</p>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -51,7 +51,7 @@ const SearchResults = () => {
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className="relative border rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 flex flex-col"
+            className="relative border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden bg-luxury-ink hover:border-luxury-gold/30 transition-colors duration-300 flex flex-col"
           >
             <Link
               to={`/web/product-detail/${p.id}`}
@@ -63,25 +63,25 @@ const SearchResults = () => {
                 className="w-full h-[220px] sm:h-[250px] md:h-[280px] object-cover"
               />
 
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white truncate mt-2 px-2">
+              <h3 className="text-lg font-semibold text-luxury-cream truncate mt-2 px-2">
                 {p.title}
               </h3>
 
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 px-2">
+              <p className="text-sm text-luxury-cream/60 mt-1 px-2">
                 Quantity: {p.Quantity}
               </p>
 
               {p.isOnSale && p.discountPrice ? (
                 <div className="mt-2 px-2">
-                  <span className="text-sm text-gray-500 line-through">
+                  <span className="text-sm text-luxury-cream/40 line-through">
                     Rs. {p.price}
                   </span>
-                  <span className="text-sm font-bold text-red-600 ml-2">
+                  <span className="text-sm font-bold text-luxury-gold ml-2">
                     Rs. {p.discountPrice}
                   </span>
                 </div>
               ) : (
-                <p className="text-base font-bold text-gray-800 dark:text-white mt-1 px-2">
+                <p className="text-base font-bold text-luxury-gold mt-1 px-2">
                   Rs. {p.price}
                 </p>
               )}

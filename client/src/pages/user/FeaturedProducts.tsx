@@ -30,11 +30,11 @@ const FeaturedProducts = () => {
   const productsToShow = featuredProducts.slice(0, 4);
 
   return (
-    <div className="mt-12 rounded-xl p-8 bg-gradient-to-br from-blue-100 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-            
+    <div className="mt-12 rounded-xl p-8 bg-gradient-to-br from-luxury-ink via-[#141414] to-luxury-ink">
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+        <h2 className="font-logo text-2xl font-bold text-luxury-cream">
           Featured Collections
         </h2>
 
@@ -48,8 +48,8 @@ const productsToShow = featuredProducts.slice(0, 4);
       to="/web/all-products"
       state={{ category: "featured" }}
 
-      className="px-6 py-2  text-blue-500  rounded-lg transition"
-    > 
+      className="px-6 py-2 text-luxury-gold hover:underline rounded-lg transition-colors duration-300"
+    >
       View More -
     </Link>
   </div>
@@ -71,9 +71,9 @@ const productsToShow = featuredProducts.slice(0, 4);
             variants={cardVariants}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className="relative border rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 flex flex-col"
+            className="relative border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden bg-luxury-ink hover:border-luxury-gold/30 transition-colors duration-300 flex flex-col"
           >
-            <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow-md">
+            <span className="absolute top-3 left-3 bg-luxury-gold text-luxury-ink text-xs font-bold px-3 py-1 rounded-md shadow-md">
               FEATURED
             </span>
 
@@ -84,13 +84,13 @@ const productsToShow = featuredProducts.slice(0, 4);
                 className="w-full h-[280px] object-cover"
               />
               <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white truncate">
+                <h3 className="text-lg font-semibold text-luxury-cream truncate">
                   {p.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                <p className="text-sm text-luxury-cream/60 mt-1">
                   Quantity: {p.Quantity}
                 </p>
-                <p className="text-base font-bold text-gray-800 dark:text-white mt-1">
+                <p className="text-base font-bold text-luxury-gold mt-1">
                   Rs. {p.price}
                 </p>
               </div>
@@ -101,7 +101,7 @@ const productsToShow = featuredProducts.slice(0, 4);
         ))}
 
         {!loading && featuredProducts.length === 0 && (
-          <div className="col-span-full text-gray-500">
+          <div className="col-span-full text-luxury-cream/50">
             No featured products.
           </div>
         )}

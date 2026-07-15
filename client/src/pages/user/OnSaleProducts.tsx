@@ -33,18 +33,17 @@ const OnSaleProducts = () => {
   return (
     <div
       className="mt-12 rounded-xl p-8
-      bg-gradient-to-br from-red-100 via-white to-red-100
-      dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+      bg-gradient-to-br from-luxury-ink via-[#141414] to-luxury-ink"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+        <h2 className="font-logo text-2xl font-bold text-luxury-cream">
           On Sale Impressions
         </h2>
         <Link
            to="/web/all-products"
            state={{ category: "onSale" }}
-          className="text-blue-600 hover:underline text-sm md:text-base"
+          className="text-luxury-gold hover:underline text-sm md:text-base"
         >
           View All Sales Impressions
         </Link>
@@ -64,7 +63,7 @@ const OnSaleProducts = () => {
             variants={cardVariants}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className="relative border rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 flex flex-col"
+            className="relative border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden bg-luxury-ink hover:border-luxury-gold/30 transition-colors duration-300 flex flex-col"
           >
             {/* Link for Image + Title + Price */}
             <Link
@@ -77,25 +76,25 @@ const OnSaleProducts = () => {
                 className="w-full h-[220px] sm:h-[250px] md:h-[280px] object-cover"
               />
 
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white truncate mt-2 px-2">
+              <h3 className="text-lg font-semibold text-luxury-cream truncate mt-2 px-2">
                 {p.title}
               </h3>
 
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 px-2">
+              <p className="text-sm text-luxury-cream/60 mt-1 px-2">
                 Quantity: {p.Quantity}
               </p>
 
               {p.isOnSale && p.discountPrice ? (
                 <div className="mt-2 px-2">
-                  <span className="text-sm text-gray-500 line-through">
+                  <span className="text-sm text-luxury-cream/40 line-through">
                     Rs. {p.price}
                   </span>
-                  <span className="text-sm font-bold text-red-600 ml-2">
+                  <span className="text-sm font-bold text-luxury-gold ml-2">
                     Rs. {p.discountPrice}
                   </span>
                 </div>
               ) : (
-                <p className="text-base font-bold text-gray-800 dark:text-white mt-1 px-2">
+                <p className="text-base font-bold text-luxury-gold mt-1 px-2">
                   Rs. {p.price}
                 </p>
               )}
@@ -108,7 +107,7 @@ const OnSaleProducts = () => {
 
         {/* No Data Case */}
         {!loading && onSaleProducts.length === 0 && (
-          <div className="col-span-full text-gray-500">
+          <div className="col-span-full text-luxury-cream/50">
             No sale products.
           </div>
         )}

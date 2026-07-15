@@ -27,15 +27,15 @@ const Products = () => {
       : products;
 
   return (
-    <div className="min-h-screen  bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen  bg-luxury-ink py-8">
       <div className="max-w-7xl  p-4 sm:p-6 lg:p-8 mx-auto">
-        <h1 className="text-3xl pt-[35px] font-bold text-gray-800 dark:text-white mb-6">
-          {category ? `${category} Products` : "All Products"}
+        <h1 className="font-logo text-3xl pt-[35px] font-bold text-luxury-cream mb-6">
+          {category && category !== "all" ? `${category} Products` : "All Products"}
         </h1>
 
-        {loading && <p className="text-gray-600">Loading...</p>}
+        {loading && <p className="text-luxury-cream/60">Loading...</p>}
         {error && (
-          <div className="mb-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded">
+          <div className="mb-4 p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded">
             {error}
           </div>
         )}
@@ -49,27 +49,27 @@ const Products = () => {
               className="group"
             >
               <div
-                className="bg-white dark:bg-gray-800 border border-gray-200 
-                dark:border-gray-700 rounded-lg shadow cursor-pointer 
-                hover:shadow-lg transition duration-300 flex flex-col"
+                className="bg-luxury-ink border border-luxury-gold/10
+                rounded-lg shadow cursor-pointer
+                hover:shadow-lg hover:border-luxury-gold/30 transition duration-300 flex flex-col"
               >
                 {/* 🔥 Image Full Card Top */}
                 <div className="overflow-hidden rounded-t-lg">
                   <img
                     src={product.productImage}
                     alt={product.title}
-                    className="w-full h-72 sm:h-80 md:h-90 object-cover 
+                    className="w-full h-72 sm:h-80 md:h-90 object-cover
                     transform group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
 
                 {/* 🔥 Only Title + Price */}
                 <div className="p-4 flex flex-col">
-                  <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-lg font-bold text-luxury-cream mb-2 group-hover:text-luxury-gold transition-colors duration-300">
                     {product.title.slice(0,20)}...
                   </h2>
 
-                  <p className="font-semibold text-blue-600 dark:text-blue-400">
+                  <p className="font-semibold text-luxury-gold">
                     Rs. {product.price}
                   </p>
                 </div>
@@ -108,8 +108,10 @@ const Products = () => {
         </div>
 
         {!loading && filteredProducts.length === 0 && (
-          <p className="text-center text-gray-500 dark:text-gray-400 mt-6">
-            No products found for {category}.
+          <p className="text-center text-luxury-cream/50 mt-6">
+            {category && category !== "all"
+              ? `No products found for ${category}.`
+              : "No products found."}
           </p>
         )}
       </div>
