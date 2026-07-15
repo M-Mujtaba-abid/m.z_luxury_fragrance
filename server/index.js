@@ -1,16 +1,17 @@
 import dotenv from "dotenv"
 import app from "./app.js"
-import { connectDB, sequelize } from "./config/db.js";
+import { connectDB } from "./config/db.js";
 dotenv.config()
 
 const port = process.env.PORT || 8000;
 
-// Connect to database and sync models
+// Schema is managed exclusively via sequelize-cli migrations (see migrations/).
+// sync({ alter: true }) is intentionally NOT used here - on a hosted DB it can
+// generate unpredictable/breaking ALTER statements (e.g. it failed trying to
+// convert Users.userRole to an enum type). Just verify the connection works.
 const initDb = async () => {
   try {
     await connectDB();
-    await sequelize.sync({ alter: true });
-    console.log("All models synced successfully");
   } catch (err) {
     console.error("Database initialization failed:", err);
   }

@@ -77,20 +77,33 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-luxury-ink/95 backdrop-blur-md shadow-lg shadow-black/30"
-            : "bg-transparent"
-        }`}
+      <motion.nav
+        className="fixed inset-x-0 top-0 z-50"
+        animate={{
+          backgroundColor: scrolled ? "rgba(20, 20, 26, 0.92)" : "rgba(20, 20, 26, 0)",
+          backdropFilter: scrolled ? "blur(16px)" : "blur(0px)",
+          boxShadow: scrolled ? "0 8px 30px rgba(0,0,0,0.35)" : "0 0 0 rgba(0,0,0,0)",
+        }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
       >
+        {/* gold hairline - only reads once the nav has picked up a solid ground to sit on */}
+        <motion.div
+          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-luxury-gold-bright to-transparent"
+          animate={{ opacity: scrolled ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+        />
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             {/* Logo / wordmark */}
             <Link to="/web" className="group flex items-center" aria-label="Go to homepage">
-              <span className="font-logo text-2xl md:text-3xl font-bold tracking-wide text-luxury-cream transition-colors duration-300 group-hover:text-luxury-gold">
+              <motion.span
+                whileHover={{ letterSpacing: "0.03em" }}
+                transition={{ duration: 0.3 }}
+                className="font-logo text-2xl md:text-3xl font-bold tracking-wide text-luxury-cream transition-colors duration-300 group-hover:text-luxury-gold-bright"
+              >
                 M.Z
-              </span>
+              </motion.span>
             </Link>
 
             {/* Desktop nav links */}
@@ -100,12 +113,12 @@ const Navbar: React.FC = () => {
                   key={l.name}
                   to={l.path}
                   className={`group relative text-xs font-medium uppercase tracking-[0.2em] transition-colors duration-300 ${
-                    isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold"
+                    isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold-bright"
                   }`}
                 >
                   {l.name}
                   <span
-                    className={`absolute left-0 -bottom-1.5 h-px bg-luxury-gold transition-all duration-300 ${
+                    className={`absolute left-0 -bottom-1.5 h-px bg-luxury-gold-bright transition-all duration-300 ${
                       isActive(l.path) ? "w-full" : "w-0 group-hover:w-full"
                     }`}
                   />
@@ -116,16 +129,18 @@ const Navbar: React.FC = () => {
             {/* Desktop icons */}
             <div className="hidden md:flex items-center gap-6">
               <div className="relative" ref={searchRef}>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSearchOpen((s) => !s);
                   }}
-                  className="text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                  className="text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                   aria-label="Search"
                 >
                   <Search className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                </button>
+                </motion.button>
 
                 <AnimatePresence>
                   {searchOpen && (
@@ -134,7 +149,7 @@ const Navbar: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-5 w-80 overflow-hidden rounded-md border border-luxury-gold/20 bg-luxury-ink shadow-xl"
+                      className="absolute right-0 mt-5 w-80 overflow-hidden rounded-md border border-luxury-gold-bright/20 bg-luxury-elevated/80 backdrop-blur-xl shadow-xl"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <SearchBar closeSearch={() => setSearchOpen(false)} />
@@ -143,9 +158,11 @@ const Navbar: React.FC = () => {
                 </AnimatePresence>
               </div>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleCartClick}
-                className="relative text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                className="relative text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                 aria-label="Cart"
               >
                 <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.5} />
@@ -154,20 +171,22 @@ const Navbar: React.FC = () => {
                     {cartItems.length}
                   </span>
                 )}
-              </button>
+              </motion.button>
 
               {token ? (
                 <div className="relative" ref={accountRef}>
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setAccountOpen((s) => !s);
                     }}
-                    className="text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                    className="text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                     aria-label="Account"
                   >
                     <User className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                  </button>
+                  </motion.button>
 
                   <AnimatePresence>
                     {accountOpen && (
@@ -176,24 +195,24 @@ const Navbar: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 mt-5 w-44 overflow-hidden rounded-md border border-luxury-gold/20 bg-luxury-ink shadow-xl"
+                        className="absolute right-0 mt-5 w-44 overflow-hidden rounded-md border border-luxury-gold-bright/20 bg-luxury-elevated/80 backdrop-blur-xl shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Link
                           to="/web/profile"
-                          className="block px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold hover:bg-luxury-gold/5 transition-colors duration-300"
+                          className="block px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                         >
                           Profile
                         </Link>
                         <Link
                           to="/web/myorders"
-                          className="block px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold hover:bg-luxury-gold/5 transition-colors duration-300"
+                          className="block px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                         >
                           My Orders
                         </Link>
                         <button
                           onClick={handleLogout}
-                          className="block w-full px-4 py-3 text-left text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold hover:bg-luxury-gold/5 transition-colors duration-300"
+                          className="block w-full px-4 py-3 text-left text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                         >
                           Logout
                         </button>
@@ -204,7 +223,7 @@ const Navbar: React.FC = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="text-xs font-medium uppercase tracking-[0.2em] text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                  className="text-xs font-medium uppercase tracking-[0.2em] text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                 >
                   Login
                 </Link>
@@ -214,14 +233,14 @@ const Navbar: React.FC = () => {
             {/* Mobile hamburger */}
             <button
               onClick={() => setDrawerOpen(true)}
-              className="md:hidden text-luxury-cream hover:text-luxury-gold transition-colors duration-300"
+              className="md:hidden text-luxury-cream hover:text-luxury-gold-bright transition-colors duration-300"
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6" strokeWidth={1.5} />
             </button>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Mobile drawer */}
       <AnimatePresence>
@@ -240,13 +259,13 @@ const Navbar: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-              className="fixed right-0 top-0 z-[70] flex h-full w-[80%] max-w-sm flex-col bg-luxury-ink shadow-2xl md:hidden"
+              className="fixed right-0 top-0 z-[70] flex h-full w-[80%] max-w-sm flex-col bg-luxury-elevated shadow-2xl md:hidden"
             >
               <div className="flex items-center justify-between border-b border-luxury-gold/15 px-6 py-6">
                 <span className="font-logo text-xl font-bold text-luxury-cream">M.Z</span>
                 <button
                   onClick={() => setDrawerOpen(false)}
-                  className="text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                  className="text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                   aria-label="Close menu"
                 >
                   <X className="h-6 w-6" strokeWidth={1.5} />
@@ -259,7 +278,7 @@ const Navbar: React.FC = () => {
                     key={l.name}
                     to={l.path}
                     className={`border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-colors duration-300 ${
-                      isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold"
+                      isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold-bright"
                     }`}
                   >
                     {l.name}
@@ -273,7 +292,7 @@ const Navbar: React.FC = () => {
                     setDrawerOpen(false);
                     setSearchOpen(true);
                   }}
-                  className="text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                  className="text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                   aria-label="Search"
                 >
                   <Search className="h-5 w-5" strokeWidth={1.5} />
@@ -284,7 +303,7 @@ const Navbar: React.FC = () => {
                     setDrawerOpen(false);
                     handleCartClick();
                   }}
-                  className="relative text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                  className="relative text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                   aria-label="Cart"
                 >
                   <ShoppingBag className="h-5 w-5" strokeWidth={1.5} />
@@ -301,7 +320,7 @@ const Navbar: React.FC = () => {
                       setDrawerOpen(false);
                       navigate("/web/profile");
                     }}
-                    className="text-luxury-cream/80 hover:text-luxury-gold transition-colors duration-300"
+                    className="text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                     aria-label="Account"
                   >
                     <User className="h-5 w-5" strokeWidth={1.5} />
@@ -310,7 +329,7 @@ const Navbar: React.FC = () => {
 
                 <button
                   onClick={token ? handleLogout : () => navigate("/login")}
-                  className="ml-auto text-xs font-medium uppercase tracking-widest text-luxury-cream/70 hover:text-luxury-gold transition-colors duration-300"
+                  className="ml-auto text-xs font-medium uppercase tracking-widest text-luxury-cream/70 hover:text-luxury-gold-bright transition-colors duration-300"
                 >
                   {token ? "Logout" : "Login"}
                 </button>
@@ -328,7 +347,7 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-20 z-40 bg-luxury-ink shadow-lg md:hidden"
+            className="fixed inset-x-0 top-20 z-40 bg-luxury-elevated/95 backdrop-blur-xl shadow-lg md:hidden"
           >
             <SearchBar closeSearch={() => setSearchOpen(false)} />
           </motion.div>
