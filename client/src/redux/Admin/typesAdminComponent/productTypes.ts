@@ -1,3 +1,12 @@
+// A single purchasable size for a product, with its own price/stock.
+export interface ProductVariant {
+  id?: number;
+  productId?: number;
+  size: '15ML' | '50ML' | '100ML';
+  price: number;
+  stock: number;
+}
+
 // Product interface based on the model
 export interface Product {
   id: number;
@@ -13,6 +22,7 @@ export interface Product {
   isNewArrival: boolean;
   isOnSale: boolean;
   discountPrice?: number;
+  variants?: ProductVariant[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -44,4 +54,5 @@ export interface ProductData {
   isNewArrival: boolean;
   isOnSale: boolean;
   discountPrice?: number;
+  variants?: ProductVariant[];
 }

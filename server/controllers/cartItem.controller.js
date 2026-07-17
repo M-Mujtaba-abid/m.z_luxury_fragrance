@@ -1,5 +1,6 @@
 import CartItem from "../models/CartItem.model.js";
 import Product from "../models/product.model.js";
+import ProductVariant from "../models/productVariant.model.js";
 import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
@@ -7,7 +8,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 // Add item to cart
 export const addToCart = asyncHandler(async (req, res) => {
-  const {  quantity } = req.body;
+  const { quantity, variantId } = req.body;
   const { productId } = req.params;
 
   const userId = req.user.id; // assume user is logged in (from auth middleware)
@@ -16,12 +17,22 @@ console.log(`user id ye he ${userId}  and product id ye he  ${productId} or quan
 
   const product = await Product.findByPk(productId);
   if (!product) throw new ApiError(404, "Product not found");
- 
-  // check if already in cart
+
+  // variantId is optional — legacy/single-size products keep working with no variant selected
+  let variant = null;
+  if (variantId) {
+    variant = await ProductVariant.findOne({
+      where: { id: variantId, productId },
+    });
+    if (!variant) throw new ApiError(404, "Product variant not found");
+  }
+  const unitPrice = variant ? variant.price : product.price;
+
+  // check if already in cart (same product + same variant = same line item)
   let cartItem = await CartItem.findOne({
-    where: { userId, productId },
+    where: { userId, productId, variantId: variant ? variant.id : null },
   });
-  
+
   if (cartItem) {
     // update quantity only, priceAtAddition same rahega
     cartItem.quantity += quantity;
@@ -31,8 +42,9 @@ console.log(`user id ye he ${userId}  and product id ye he  ${productId} or quan
     cartItem = await CartItem.create({
       userId,
       productId,
+      variantId: variant ? variant.id : null,
       quantity,
-      priceAtAddition: product.price, // snapshot store
+      priceAtAddition: unitPrice, // snapshot store
     });
   }
 
@@ -50,7 +62,11 @@ export const getUserCart = asyncHandler(async (req, res) => {
 
   const cartItems = await CartItem.findAll({
     where: { userId },
-    include: [{ model: Product }, { model: User, attributes: ["id", "firstName", "email"] }],
+    include: [
+      { model: Product },
+      { model: ProductVariant },
+      { model: User, attributes: ["id", "firstName", "email"] },
+    ],
   });
 
   // attach totalPrice for each item

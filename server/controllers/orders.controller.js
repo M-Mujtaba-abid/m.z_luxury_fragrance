@@ -5,7 +5,9 @@ import Order from "../models/order.model.js";
 import User from "../models/user.model.js";
 import CartItem from "../models/CartItem.model.js";
 import Product from "../models/product.model.js";
+import ProductVariant from "../models/productVariant.model.js";
 import orderItem from "../models/orderItem.model.js";
+import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 
 // Create new order (with cart → orderItems mapping)
 export const createOrder = asyncHandler(async (req, res) => {
@@ -38,7 +40,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   // 2. Check cart items of this user
   const cartItems = await CartItem.findAll({
     where: { userId, status: "active" },
-    include: [Product],
+    include: [Product, ProductVariant],
   });
 
   if (cartItems.length === 0) {
@@ -68,21 +70,32 @@ export const createOrder = asyncHandler(async (req, res) => {
   });
 
   // 5. Create order items (snapshot of cart)
+  const createdOrderItems = [];
   for (const item of cartItems) {
-    await orderItem.create({
+    const created = await orderItem.create({
       orderId: order.id,
       productId: item.productId,
+      variantId: item.variantId,
+      variantSize: item.ProductVariant?.size ?? null,
       productName: item.Product.title,
       quantity: item.quantity,
       priceAtPurchase: item.priceAtAddition,
       subtotal: item.quantity * item.priceAtAddition,
     });
+    createdOrderItems.push(created);
   }
 
   // 6. Clear the user's cart
   await CartItem.destroy({ where: { userId } });
 
-  // 7. Response
+  // 7. Send order confirmation email (best-effort — a failed email must not fail the order)
+  try {
+    await sendOrderConfirmationEmail(order, createdOrderItems);
+  } catch (err) {
+    console.error("Order confirmation email failed:", err);
+  }
+
+  // 8. Response
   res
     .status(201)
     .json(new ApiResponse(201, order, "Order created successfully"));

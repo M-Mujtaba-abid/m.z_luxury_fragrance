@@ -1,5 +1,6 @@
 // server/controllers/product.controller.js
 import Product from "../models/product.model.js";
+import ProductVariant from "../models/productVariant.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
@@ -8,6 +9,18 @@ import cloudinary from "../config/cloudinary.js";
 import streamifier from "streamifier";
 
 import { Op, where, col, cast } from "sequelize";
+
+// Multipart forms can't send a nested array, so the frontend sends `variants`
+// as a JSON string and we parse it here. Absent/invalid input is treated as "no variants".
+const parseVariants = (rawVariants) => {
+  if (!rawVariants) return [];
+  try {
+    const parsed = JSON.parse(rawVariants);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
 
 // CREATE Product
 
@@ -26,6 +39,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     isNewArrival,
     isOnSale,
     discountPrice,
+    variants,
   } = req.body;
 
   if (
@@ -73,13 +87,33 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     discountPrice,
   });
 
+  const parsedVariants = parseVariants(variants);
+  if (parsedVariants.length > 0) {
+    await ProductVariant.bulkCreate(
+      parsedVariants.map((v) => ({
+        productId: newProduct.id,
+        size: v.size,
+        price: v.price,
+        stock: v.stock,
+      }))
+    );
+  }
+
+  const productWithVariants = await Product.findByPk(newProduct.id, {
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
+
   return res
     .status(201)
-    .json(new ApiResponse(201, newProduct, "Product created successfully"));
+    .json(
+      new ApiResponse(201, productWithVariants, "Product created successfully")
+    );
 });
 
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.findAll();
+  const products = await Product.findAll({
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
 
   return res
     .status(200)
@@ -90,7 +124,9 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
 
 export const getProductById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const product = await Product.findByPk(id);
+  const product = await Product.findByPk(id, {
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
 
   if (!product) {
     return next(new ApiError(404, "Product not found"));
@@ -163,6 +199,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     isNewArrival,
     isOnSale,
     discountPrice,
+    variants,
   } = req.body;
 
   const product = await Product.findByPk(id);
@@ -205,9 +242,32 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     discountPrice,
   });
 
+  // Replace-all: the admin form always submits the full current variant list.
+  // Guarded on `undefined` so API callers that omit the field don't wipe existing variants.
+  if (variants !== undefined) {
+    const parsedVariants = parseVariants(variants);
+    await ProductVariant.destroy({ where: { productId: product.id } });
+    if (parsedVariants.length > 0) {
+      await ProductVariant.bulkCreate(
+        parsedVariants.map((v) => ({
+          productId: product.id,
+          size: v.size,
+          price: v.price,
+          stock: v.stock,
+        }))
+      );
+    }
+  }
+
+  const updatedProduct = await Product.findByPk(product.id, {
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
+
   return res
     .status(200)
-    .json(new ApiResponse(200, product, "Product updated successfully"));
+    .json(
+      new ApiResponse(200, updatedProduct, "Product updated successfully")
+    );
 });
 
 // ✅ Delete Product

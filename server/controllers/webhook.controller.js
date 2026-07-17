@@ -4,6 +4,7 @@ import Order from "../models/order.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
 import ApiError from "../utils/apiError.js";
+import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -42,7 +43,7 @@ export const stripeWebhook = asyncHandler(async (req, res) => {
         totalAmount,
       } = session.metadata;
 
-      await Order.create({
+      const order = await Order.create({
         userId,
         customerName,
         customerEmail,
@@ -62,6 +63,14 @@ export const stripeWebhook = asyncHandler(async (req, res) => {
       });
 
       console.log("✅ Order saved to DB after payment success");
+
+      // Note: no OrderItem rows exist for this flow yet (pre-existing gap,
+      // unrelated to variants) so this confirmation is order-total only.
+      try {
+        await sendOrderConfirmationEmail(order, []);
+      } catch (err) {
+        console.error("Order confirmation email failed:", err);
+      }
     }
 
     if (event.type === "payment_intent.payment_failed") {

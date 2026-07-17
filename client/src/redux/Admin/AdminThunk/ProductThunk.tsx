@@ -27,6 +27,9 @@ export const createProduct = createAsyncThunk(
       if (productData.discountPrice !== undefined) {
         formData.append('discountPrice', productData.discountPrice.toString());
       }
+      if (productData.variants !== undefined) {
+        formData.append('variants', JSON.stringify(productData.variants));
+      }
       formData.append('productImage', productData.productImage);
 
       const response = await API.post('/product/postproduct', formData, {
@@ -89,6 +92,8 @@ export const updateProduct = createAsyncThunk(
         if (value !== undefined) {
           if (key === 'productImage' && value instanceof File) {
             formData.append(key, value);
+          } else if (key === 'variants') {
+            formData.append(key, JSON.stringify(value));
           } else {
             formData.append(key, value.toString());
           }
