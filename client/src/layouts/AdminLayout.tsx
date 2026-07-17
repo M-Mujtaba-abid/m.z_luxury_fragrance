@@ -12,7 +12,7 @@ const AdminLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 bg-gray-100 dark:bg-gray-800 p-6 text-gray-900 dark:text-white transition-colors ml-0 md:ml-64">
+      <div className="flex-1 bg-luxury-ink p-6 text-luxury-cream ml-0 md:ml-64">
    
         <Outlet /> {/* ✅ yahan child routes render honge */}
       </div>
