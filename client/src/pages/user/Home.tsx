@@ -38,7 +38,7 @@ const Home = () => {
   const { products } = useSelector((state: RootState) => state.products);
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchProducts(undefined));
   }, [dispatch]);
 
   // Show a real product per category instead of stock imagery

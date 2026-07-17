@@ -7,6 +7,7 @@ import slugify from "../utils/slugify.js";
 import { Op, where, col, cast } from "sequelize";
 
 const ALLOWED_CATEGORIES = ["Men", "Women", "Children"];
+const PUBLISHED_ONLY = { publishStatus: "published" };
 
 const listIncludes = [
   { model: ProductImage, separate: true, order: [["sortOrder", "ASC"]] },
@@ -154,14 +155,26 @@ export const createProduct = async ({
     );
   }
 
-  return getProductById({ id: product.id });
+  // includeAll: this is an admin write path returning its own just-saved
+  // product, which is very often still a draft — it must not be filtered
+  // out by the same publishStatus check storefront reads use.
+  return getProductById({ id: product.id, includeAll: true });
 };
 
-export const getAllProducts = async () => Product.findAll({ include: listIncludes });
+export const getAllProducts = async ({ includeAll } = {}) =>
+  Product.findAll({
+    where: includeAll ? undefined : PUBLISHED_ONLY,
+    include: listIncludes,
+  });
 
-export const getProductById = async ({ id }) => {
+export const getProductById = async ({ id, includeAll } = {}) => {
   const product = await Product.findByPk(id, { include: listIncludes });
   if (!product) throw new ApiError(404, "Product not found");
+  if (!includeAll && product.publishStatus !== "published") {
+    // Treat an unpublished product as not found rather than leaking a
+    // "this exists but isn't public" distinction to storefront callers.
+    throw new ApiError(404, "Product not found");
+  }
   return product;
 };
 
@@ -261,7 +274,7 @@ export const updateProduct = async ({
     }
   }
 
-  return getProductById({ id });
+  return getProductById({ id, includeAll: true });
 };
 
 export const deleteProduct = async ({ id }) => {
@@ -271,11 +284,16 @@ export const deleteProduct = async ({ id }) => {
   await product.destroy();
 };
 
+// The functions below are storefront-only (search, category browsing,
+// homepage sections) — always filtered to published, no includeAll escape
+// hatch like getAllProducts/getProductById have for admin use.
+
 export const searchProducts = async ({ query }) => {
   const term = `%${query.toLowerCase()}%`;
 
   const products = await Product.findAll({
     where: {
+      ...PUBLISHED_ONLY,
       [Op.or]: [
         { title: { [Op.iLike]: term } },
         { description: { [Op.iLike]: term } },
@@ -299,7 +317,7 @@ export const getProductsByCategory = async ({ category }) => {
   }
 
   const products = await Product.findAll({
-    where: { category: matchedCategory },
+    where: { category: matchedCategory, ...PUBLISHED_ONLY },
     include: listIncludes,
   });
   if (products.length === 0) throw new ApiError(404, "No products found in this category");
@@ -307,13 +325,15 @@ export const getProductsByCategory = async ({ category }) => {
   return products;
 };
 
+// Admin-facing count (Dashboard "Total Products" KPI) — intentionally counts
+// everything, drafts included, since that's the admin's real catalog size.
 export const getNumberOfTotalproduct = async () => Product.count();
 
 export const getFeaturedProducts = async () =>
-  Product.findAll({ where: { isFeatured: true }, include: listIncludes });
+  Product.findAll({ where: { isFeatured: true, ...PUBLISHED_ONLY }, include: listIncludes });
 
 export const getNewArrivals = async () =>
-  Product.findAll({ where: { isNewArrival: true }, include: listIncludes });
+  Product.findAll({ where: { isNewArrival: true, ...PUBLISHED_ONLY }, include: listIncludes });
 
 export const getOnSaleProducts = async () =>
-  Product.findAll({ where: { isOnSale: true }, include: listIncludes });
+  Product.findAll({ where: { isOnSale: true, ...PUBLISHED_ONLY }, include: listIncludes });

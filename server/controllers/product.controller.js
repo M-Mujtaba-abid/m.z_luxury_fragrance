@@ -11,7 +11,8 @@ export const createProduct = asyncHandler(async (req, res) => {
 });
 
 export const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await productService.getAllProducts();
+  const includeAll = req.query.includeAll === "true";
+  const products = await productService.getAllProducts({ includeAll });
 
   return res
     .status(200)
@@ -20,7 +21,8 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 export const getProductById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const product = await productService.getProductById({ id });
+  const includeAll = req.query.includeAll === "true";
+  const product = await productService.getProductById({ id, includeAll });
 
   return res
     .status(200)

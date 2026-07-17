@@ -19,7 +19,7 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     if (productId) {
-      dispatch(getProductById(parseInt(productId)));
+      dispatch(getProductById({ id: parseInt(productId) }));
     }
     return () => {
       dispatch(clearError());

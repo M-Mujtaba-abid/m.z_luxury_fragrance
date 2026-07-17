@@ -6,6 +6,45 @@ import API from '../apiInstance';
 import type { ProductData } from '../types/productTypes';
 import { showLoader, hideLoader } from '../slices/LoaderSlice';
 
+// Shared scalar/array/file field appender for create + update, since both
+// submit the same shape of form.
+const appendProductFields = (formData: FormData, productData: Partial<ProductData>) => {
+  const scalarKeys: (keyof ProductData)[] = [
+    'title', 'description', 'status', 'category', 'Quantity',
+    'brand', 'gender', 'metaTitle', 'metaDescription', 'slug', 'publishStatus',
+  ];
+  scalarKeys.forEach((key) => {
+    const value = productData[key];
+    if (value !== undefined && value !== null) formData.append(key, value.toString());
+  });
+
+  const numberKeys: (keyof ProductData)[] = ['price', 'stock', 'discountPrice', 'coverIndex'];
+  numberKeys.forEach((key) => {
+    const value = productData[key];
+    if (value !== undefined && value !== null) formData.append(key, value.toString());
+  });
+
+  const boolKeys: (keyof ProductData)[] = ['isFeatured', 'isNewArrival', 'isOnSale'];
+  boolKeys.forEach((key) => {
+    const value = productData[key];
+    if (value !== undefined) formData.append(key, value.toString());
+  });
+
+  const arrayKeys: (keyof ProductData)[] = ['topNotes', 'heartNotes', 'baseNotes'];
+  arrayKeys.forEach((key) => {
+    const value = productData[key] as string[] | undefined;
+    if (value !== undefined) formData.append(key, JSON.stringify(value));
+  });
+
+  if (productData.variants !== undefined) {
+    formData.append('variants', JSON.stringify(productData.variants));
+  }
+
+  if (productData.images?.length) {
+    productData.images.forEach((file) => formData.append('images', file));
+  }
+};
+
 // Create product thunk
 export const createProduct = createAsyncThunk(
   'products/createProduct',
@@ -14,20 +53,7 @@ export const createProduct = createAsyncThunk(
       dispatch(showLoader());
 
       const formData = new FormData();
-      formData.append('title', productData.title);
-      formData.append('description', productData.description);
-      formData.append('status', productData.status);
-      formData.append('price', productData.price.toString());
-      formData.append('stock', productData.stock.toString());
-      formData.append('category', productData.category);
-      formData.append('Quantity', productData.Quantity);
-      formData.append('isFeatured', productData.isFeatured.toString());
-      formData.append('isNewArrival', productData.isNewArrival.toString());
-      formData.append('isOnSale', productData.isOnSale.toString());
-      if (productData.discountPrice !== undefined) {
-        formData.append('discountPrice', productData.discountPrice.toString());
-      }
-      formData.append('productImage', productData.productImage);
+      appendProductFields(formData, productData);
 
       const response = await API.post('/product/postproduct', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -42,13 +68,18 @@ export const createProduct = createAsyncThunk(
   }
 );
 
-// Fetch all products thunk
+// Fetch all products thunk.
+// includeAll: admin-only escape hatch to also see draft (unpublished)
+// products — storefront callers must never pass this, so it defaults to
+// false/omitted, which is the published-only, customer-safe behavior.
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (includeAll: boolean | undefined, { dispatch, rejectWithValue }) => {
     try {
       dispatch(showLoader());
-      const response = await API.get('/product/getallproduct');
+      const response = await API.get('/product/getallproduct', {
+        params: includeAll ? { includeAll: 'true' } : undefined,
+      });
       return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch products');
@@ -58,13 +89,20 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
-// Get product by ID thunk
+// Get product by ID thunk. Same includeAll escape hatch as fetchProducts —
+// admin views (edit form, admin detail page) must pass it so drafts can
+// still be opened for editing; storefront product-detail pages must not.
 export const getProductById = createAsyncThunk(
   'products/getProductById',
-  async (productId: number, { dispatch, rejectWithValue }) => {
+  async (
+    { id, includeAll }: { id: number; includeAll?: boolean },
+    { dispatch, rejectWithValue }
+  ) => {
     try {
       dispatch(showLoader());
-      const response = await API.get(`/product/getsingleproduct/${productId}`);
+      const response = await API.get(`/product/getsingleproduct/${id}`, {
+        params: includeAll ? { includeAll: 'true' } : undefined,
+      });
       return response.data.data || response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch product');
@@ -85,15 +123,7 @@ export const updateProduct = createAsyncThunk(
       dispatch(showLoader());
 
       const formData = new FormData();
-      Object.entries(updateData).forEach(([key, value]) => {
-        if (value !== undefined) {
-          if (key === 'productImage' && value instanceof File) {
-            formData.append(key, value);
-          } else {
-            formData.append(key, value.toString());
-          }
-        }
-      });
+      appendProductFields(formData, updateData);
 
       const response = await API.patch(`/product/updateproduct/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },

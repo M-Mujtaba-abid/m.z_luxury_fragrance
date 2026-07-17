@@ -16,7 +16,7 @@ const Products = () => {
   const { category } = useParams<{ category: string }>();
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchProducts(undefined));
   }, [dispatch]);
 
   const filteredProducts =

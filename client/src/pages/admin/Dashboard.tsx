@@ -44,7 +44,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getTotalProductsCount());
-    dispatch(fetchProducts());
+    dispatch(fetchProducts(true));
     dispatch(fetchAllOrders());
     dispatch(fetchTotalOrders());
     dispatch(fetchTotalUsers());
