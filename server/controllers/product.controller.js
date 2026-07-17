@@ -3,7 +3,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
 
 export const createProduct = asyncHandler(async (req, res) => {
-  const product = await productService.createProduct({ ...req.body, file: req.file });
+  const product = await productService.createProduct({ ...req.body, files: req.files });
 
   return res
     .status(201)
@@ -29,7 +29,7 @@ export const getProductById = asyncHandler(async (req, res) => {
 
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const product = await productService.updateProduct({ id, file: req.file, ...req.body });
+  const product = await productService.updateProduct({ id, files: req.files, ...req.body });
 
   return res
     .status(200)
