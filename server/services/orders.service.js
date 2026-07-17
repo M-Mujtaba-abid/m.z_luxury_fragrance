@@ -3,6 +3,7 @@ import Order from "../models/order.model.js";
 import User from "../models/user.model.js";
 import CartItem from "../models/CartItem.model.js";
 import Product from "../models/product.model.js";
+import ProductVariant from "../models/productVariant.model.js";
 import OrderItem from "../models/orderItem.model.js";
 import ApiError from "../utils/apiError.js";
 import resolveOwner from "../utils/resolveOwner.js";
@@ -12,7 +13,10 @@ const orderIncludes = [
   { model: User, attributes: ["id", "firstName", "email"] },
   {
     model: OrderItem,
-    include: [{ model: Product, attributes: ["id", "title", "productImage", "price"] }],
+    include: [
+      { model: Product, attributes: ["id", "title", "productImage", "price"] },
+      { model: ProductVariant, attributes: ["id", "size", "price"] }
+    ],
   },
 ];
 
@@ -34,7 +38,7 @@ export const createOrder = async ({
 
   const cartItems = await CartItem.findAll({
     where: { ...owner, status: "active" },
-    include: [Product],
+    include: [Product, ProductVariant],
   });
 
   if (cartItems.length === 0) {
@@ -68,6 +72,8 @@ export const createOrder = async ({
     await OrderItem.create({
       orderId: order.id,
       productId: item.productId,
+      variantId: item.variantId,
+      variantSize: item.ProductVariant?.size ?? null,
       productName: item.Product.title,
       quantity: item.quantity,
       priceAtPurchase: item.priceAtAddition,

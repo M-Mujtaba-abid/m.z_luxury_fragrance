@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize";
 import {sequelize} from "../config/db.js";
 import User from "../models/user.model.js";
 import Product from "./product.model.js";
+import ProductVariant from "./productVariant.model.js";
 
 const CartItem = sequelize.define("CartItem", {
   id: {
@@ -21,6 +22,11 @@ const CartItem = sequelize.define("CartItem", {
   productId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  variantId: {
+    // optional: which size variant was added, null = legacy single-size product
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
   quantity: {
     type: DataTypes.INTEGER,
@@ -56,5 +62,8 @@ CartItem.belongsTo(User, { foreignKey: "userId" });
 
 Product.hasMany(CartItem, { foreignKey: "productId" });
 CartItem.belongsTo(Product, { foreignKey: "productId" });
+
+ProductVariant.hasMany(CartItem, { foreignKey: "variantId" });
+CartItem.belongsTo(ProductVariant, { foreignKey: "variantId" });
 
 export default CartItem;

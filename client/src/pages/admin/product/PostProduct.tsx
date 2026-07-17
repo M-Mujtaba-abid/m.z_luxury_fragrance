@@ -8,7 +8,12 @@ import {
 } from "../../../redux/thunks/ProductThunk";
 import { clearError } from "../../../redux/slices/ProductSlice";
 import type { RootState, AppDispatch } from "../../../redux/store";
-import type { ProductData } from "../../../redux/types/productTypes";
+import type {
+  ProductData,
+  ProductVariant,
+} from "../../../redux/types/productTypes";
+
+const VARIANT_SIZES: ProductVariant["size"][] = ["15ML", "50ML", "100ML"];
 
 const PostProduct = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,6 +42,35 @@ const PostProduct = () => {
   });
 
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [variantError, setVariantError] = useState<string>("");
+
+  const addVariantRow = () => {
+    const usedSizes = new Set(variants.map((v) => v.size));
+    const nextSize = VARIANT_SIZES.find((size) => !usedSizes.has(size));
+    if (!nextSize) return; // all 3 sizes already added
+    setVariants((prev) => [...prev, { size: nextSize, price: 0, stock: 0 }]);
+  };
+
+  const updateVariantRow = (
+    index: number,
+    field: "size" | "price" | "stock",
+    value: string
+  ) => {
+    setVariants((prev) =>
+      prev.map((variant, i) => {
+        if (i !== index) return variant;
+        if (field === "size") {
+          return { ...variant, size: value as ProductVariant["size"] };
+        }
+        return { ...variant, [field]: Number(value) };
+      })
+    );
+  };
+
+  const removeVariantRow = (index: number) => {
+    setVariants((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // ✅ Fetch product by ID in edit mode
   useEffect(() => {
@@ -66,6 +100,7 @@ const PostProduct = () => {
         discountPrice: currentProduct.discountPrice?.toString(),
       });
       setImagePreview(currentProduct.productImage);
+      setVariants(currentProduct.variants ?? []);
     }
   }, [currentProduct, isEditMode]);
 
@@ -96,6 +131,20 @@ const PostProduct = () => {
   // ✅ Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setVariantError("");
+
+    const sizesSeen = new Set<string>();
+    for (const variant of variants) {
+      if (sizesSeen.has(variant.size)) {
+        setVariantError(`Size ${variant.size} is added more than once.`);
+        return;
+      }
+      sizesSeen.add(variant.size);
+      if (!variant.price || variant.price <= 0) {
+        setVariantError(`Enter a valid price for ${variant.size}.`);
+        return;
+      }
+    }
 
     if (isEditMode) {
       if (!productId) return;
@@ -113,6 +162,7 @@ const PostProduct = () => {
         isNewArrival: formData.isNewArrival,
         isOnSale: formData.isOnSale,
         discountPrice: parseFloat(formData.discountPrice),
+        variants,
       };
       if (formData.productImage) updateData.productImage = formData.productImage;
 
@@ -141,6 +191,7 @@ const PostProduct = () => {
         isNewArrival: formData.isNewArrival,
         isOnSale: formData.isOnSale,
         discountPrice: parseFloat(formData.discountPrice),
+        variants,
       };
 
       try {
@@ -160,6 +211,7 @@ const PostProduct = () => {
           discountPrice: "",
         });
         setImagePreview("");
+        setVariants([]);
       } catch (error) {
         console.error("Create failed:", error);
       }
@@ -269,6 +321,86 @@ const PostProduct = () => {
               <option value="50ML">50ML</option>
               <option value="100ML">100ML</option>
             </select>
+          </div>
+
+          {/* Additional Size Variants */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className={labelClass}>
+                Additional Size Variants (optional)
+              </label>
+              <button
+                type="button"
+                onClick={addVariantRow}
+                disabled={variants.length >= VARIANT_SIZES.length}
+                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                + Add Size
+              </button>
+            </div>
+
+            {variantError && (
+              <p className="text-sm text-red-600 dark:text-red-400 mb-2">
+                {variantError}
+              </p>
+            )}
+
+            {variants.length > 0 && (
+              <div className="space-y-3">
+                {variants.map((variant, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-3 border rounded-md dark:border-gray-700"
+                  >
+                    <div>
+                      <label className={labelClass}>Size</label>
+                      <select
+                        value={variant.size}
+                        onChange={(e) =>
+                          updateVariantRow(index, "size", e.target.value)
+                        }
+                        className={inputClass}
+                      >
+                        {VARIANT_SIZES.map((size) => (
+                          <option key={size} value={size}>
+                            {size}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Price</label>
+                      <input
+                        type="number"
+                        value={variant.price || ""}
+                        onChange={(e) =>
+                          updateVariantRow(index, "price", e.target.value)
+                        }
+                        className={inputClass}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Stock</label>
+                      <input
+                        type="number"
+                        value={variant.stock || ""}
+                        onChange={(e) =>
+                          updateVariantRow(index, "stock", e.target.value)
+                        }
+                        className={inputClass}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeVariantRow(index)}
+                      className="px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 h-fit"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Homepage Control Fields */}
