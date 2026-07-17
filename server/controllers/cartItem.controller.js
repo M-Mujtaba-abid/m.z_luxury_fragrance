@@ -5,11 +5,11 @@ import asyncHandler from "../utils/asyncHandler.js";
 // Add item to cart
 export const addToCart = asyncHandler(async (req, res) => {
   const { productId } = req.params;
-  const { quantity } = req.body;
+  const { quantity, variantId } = req.body;
   const userId = req.user?.id;
   const guestId = req.guestId;
 
-  const cartItem = await cartItemService.addToCart({ userId, guestId, productId, quantity });
+  const cartItem = await cartItemService.addToCart({ userId, guestId, productId, quantity, variantId });
 
   res.status(201).json(new ApiResponse(201, cartItem, "Item added to cart successfully"));
 });

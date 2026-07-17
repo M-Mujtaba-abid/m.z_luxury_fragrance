@@ -24,6 +24,13 @@ const OrderItem = sequelize.define("OrderItem", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  // Snapshot of the variant's size at purchase time (same idea as
+  // productName below) so order history still reads correctly even if the
+  // variant row is later edited or deleted.
+  variantSize: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   productName: {   // snapshot
     type: DataTypes.STRING,
     allowNull: false,

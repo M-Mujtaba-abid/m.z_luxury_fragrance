@@ -114,6 +114,19 @@ const ListProduct = () => {
                   </span>
                 </div>
 
+                {product.ProductVariants?.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {product.ProductVariants.map((variant: any) => (
+                      <span
+                        key={variant.id ?? variant.size}
+                        className="px-2 py-1 text-xs rounded-full bg-luxury-elevated text-luxury-cream/70 border border-luxury-gold/10"
+                      >
+                        {variant.size}: Rs. {variant.price} ({variant.stock} in stock)
+                      </span>
+                    ))}
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-2 mb-3">
                   {product.isFeatured && (
                     <span className="px-2 py-1 text-xs rounded-full bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30">

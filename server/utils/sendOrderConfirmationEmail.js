@@ -3,7 +3,13 @@ import sendEmail from "./sendEmail.js";
 const formatItemsList = (items = []) => {
   if (!items.length) return "";
   return items
-    .map((item) => `- ${item.Product?.title || item.productName || "Item"} x${item.quantity}`)
+    .map((item) => {
+      const name = item.Product?.title || item.productName || "Item";
+      // `items` here are CartItem instances (see orders.service.js), so the
+      // variant size comes from the ProductVariant include, not a snapshot.
+      const size = item.ProductVariant?.size ? ` (${item.ProductVariant.size})` : "";
+      return `- ${name}${size} x${item.quantity}`;
+    })
     .join("\n");
 };
 

@@ -5,8 +5,11 @@ export interface ProductImage {
   isCover: boolean;
 }
 
+// A single purchasable size for a product, with its own price/stock. Free
+// text rather than a fixed ENUM — bottle sizes vary per product.
 export interface ProductVariant {
   id?: number;
+  productId?: number;
   size: string;
   price: number;
   stock: number;

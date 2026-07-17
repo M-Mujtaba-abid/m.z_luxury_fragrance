@@ -1,3 +1,4 @@
+// models/productVariant.model.js
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 import Product from "./product.model.js";
@@ -38,9 +39,14 @@ const ProductVariant = sequelize.define(
   {
     tableName: "ProductVariants",
     timestamps: true,
+    // Two variants of the same product can't share a size string.
+    indexes: [{ unique: true, fields: ["productId", "size"] }],
   }
 );
 
+// No `as:` alias — the admin product form, ListProduct, and
+// ProductDetailPage all read the default `product.ProductVariants` include
+// key already, so aliasing this would silently break every one of them.
 Product.hasMany(ProductVariant, { foreignKey: "productId" });
 ProductVariant.belongsTo(Product, { foreignKey: "productId" });
 

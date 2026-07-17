@@ -52,7 +52,7 @@ const WebSiteLayout = () => {
       {location.pathname === "/web" && <ScrollVideoScrub />}
 
 
-      <div className="container mx-auto  ">
+      <div className="w-full">
         <Outlet /> {/* ✅ yahan child routes render honge */}
       </div>
 
