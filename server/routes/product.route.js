@@ -22,9 +22,16 @@ import {
 
 const router = express.Router();
 
+// `productImage`: legacy single-file field (current admin form still uses this)
+// `images`: new multi-image gallery field (drag-and-drop product form)
+const productImageUpload = upload.fields([
+  { name: "productImage", maxCount: 1 },
+  { name: "images", maxCount: 8 },
+]);
+
 router.post(
   "/postproduct",
-  upload.single("productImage"),
+  productImageUpload,
   validateCreateProduct,
   createProduct
 );
@@ -35,7 +42,7 @@ router.get("/getnewarrivals",     getNewArrivals);
 router.get("/getonsaleproducts" ,   getOnSaleProducts);
 router.patch(
   "/updateproduct/:id",
-  upload.single("productImage"),
+  productImageUpload,
   validateProductId,
   updateProduct
 );

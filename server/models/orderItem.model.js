@@ -19,13 +19,15 @@ const OrderItem = sequelize.define("OrderItem", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  // Null for orders placed against a product with no configured variants.
   variantId: {
-    // optional: null = legacy single-size product, no variant selected
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  // Snapshot of the variant's size at purchase time (same idea as
+  // productName below) so order history still reads correctly even if the
+  // variant row is later edited or deleted.
   variantSize: {
-    // snapshot of size at purchase time, so history reads correctly even if the variant is later deleted
     type: DataTypes.STRING,
     allowNull: true,
   },

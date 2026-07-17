@@ -2,6 +2,7 @@ import ApiError from "../utils/apiError.js";
 
 export const validateCreateProduct = (req, res, next) => {
   const { title, description, status, price, stock, Quantity, category } = req.body;
+  const hasImage = req.files?.productImage?.length || req.files?.images?.length;
 
   if (
     !title ||
@@ -9,7 +10,7 @@ export const validateCreateProduct = (req, res, next) => {
     !status ||
     !price ||
     !stock ||
-    !req.file ||
+    !hasImage ||
     !Quantity ||
     !category
   ) {

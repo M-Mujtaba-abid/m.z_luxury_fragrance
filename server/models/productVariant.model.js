@@ -15,8 +15,10 @@ const ProductVariant = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    // Free text rather than the old Quantity ENUM (15ML/50ML/100ML) — bottle
+    // sizes vary per product and shouldn't be capped to a fixed list.
     size: {
-      type: DataTypes.ENUM("15ML", "50ML", "100ML"),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     price: {
@@ -28,16 +30,24 @@ const ProductVariant = sequelize.define(
       allowNull: false,
       defaultValue: 0,
     },
+    sku: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
   },
   {
     tableName: "ProductVariants",
     timestamps: true,
+    // Two variants of the same product can't share a size string.
     indexes: [{ unique: true, fields: ["productId", "size"] }],
   }
 );
 
-// relations
-Product.hasMany(ProductVariant, { foreignKey: "productId", as: "variants" });
+// No `as:` alias — the admin product form, ListProduct, and
+// ProductDetailPage all read the default `product.ProductVariants` include
+// key already, so aliasing this would silently break every one of them.
+Product.hasMany(ProductVariant, { foreignKey: "productId" });
 ProductVariant.belongsTo(Product, { foreignKey: "productId" });
 
 export default ProductVariant;

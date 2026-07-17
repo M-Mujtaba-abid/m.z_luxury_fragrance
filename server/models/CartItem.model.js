@@ -23,8 +23,9 @@ const CartItem = sequelize.define("CartItem", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  // Null when the product has no configured variants and is added using its
+  // own default price/stock (see product.model.js).
   variantId: {
-    // optional: which size variant was added, null = legacy single-size product
     type: DataTypes.INTEGER,
     allowNull: true,
   },

@@ -1,30 +1,43 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import {
   createProduct,
   updateProduct,
   getProductById,
 } from "../../../redux/thunks/ProductThunk";
-import { clearError } from "../../../redux/slices/ProductSlice";
+import { clearError, clearCurrentProduct } from "../../../redux/slices/ProductSlice";
 import type { RootState, AppDispatch } from "../../../redux/store";
-import type {
-  ProductData,
-  ProductVariant,
-} from "../../../redux/types/productTypes";
+import type { ProductVariant } from "../../../redux/types/productTypes";
+import TagInput from "../../../components/admin/product-form/TagInput";
+import ImageDropzone from "../../../components/admin/product-form/ImageDropzone";
+import VariantsEditor from "../../../components/admin/product-form/VariantsEditor";
+import RichTextEditor from "../../../components/admin/product-form/RichTextEditor";
+import ProductPreviewCard from "../../../components/admin/product-form/ProductPreviewCard";
 
-const VARIANT_SIZES: ProductVariant["size"][] = ["15ML", "50ML", "100ML"];
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").trim();
+
+const inputClass =
+  "w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 placeholder:text-luxury-cream/40 focus:border-luxury-gold-bright/60";
+const labelClass = "block text-sm font-medium text-luxury-cream/80 mb-2";
+const sectionClass = "bg-luxury-card border border-luxury-gold/10 rounded-xl p-6 space-y-4";
 
 const PostProduct = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
-
-  const { loading, error, currentProduct } = useSelector(
-    (state: RootState) => state.products
-  );
-
   const isEditMode = !!productId;
+
+  const { loading, error, currentProduct } = useSelector((state: RootState) => state.products);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -34,55 +47,36 @@ const PostProduct = () => {
     stock: "",
     category: "Men" as "Men" | "Women" | "Children",
     Quantity: "15ML" as "15ML" | "50ML" | "100ML",
-    productImage: null as File | null,
     isFeatured: false,
     isNewArrival: false,
     isOnSale: false,
     discountPrice: "",
+    brand: "",
+    gender: "" as "" | "Men" | "Women" | "Unisex",
+    metaTitle: "",
+    metaDescription: "",
+    slug: "",
+    publishStatus: "draft" as "draft" | "published",
   });
-
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [topNotes, setTopNotes] = useState<string[]>([]);
+  const [heartNotes, setHeartNotes] = useState<string[]>([]);
+  const [baseNotes, setBaseNotes] = useState<string[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [variantError, setVariantError] = useState<string>("");
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [coverIndex, setCoverIndex] = useState(0);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
 
-  const addVariantRow = () => {
-    const usedSizes = new Set(variants.map((v) => v.size));
-    const nextSize = VARIANT_SIZES.find((size) => !usedSizes.has(size));
-    if (!nextSize) return; // all 3 sizes already added
-    setVariants((prev) => [...prev, { size: nextSize, price: 0, stock: 0 }]);
-  };
-
-  const updateVariantRow = (
-    index: number,
-    field: "size" | "price" | "stock",
-    value: string
-  ) => {
-    setVariants((prev) =>
-      prev.map((variant, i) => {
-        if (i !== index) return variant;
-        if (field === "size") {
-          return { ...variant, size: value as ProductVariant["size"] };
-        }
-        return { ...variant, [field]: Number(value) };
-      })
-    );
-  };
-
-  const removeVariantRow = (index: number) => {
-    setVariants((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // ✅ Fetch product by ID in edit mode
   useEffect(() => {
     if (isEditMode && productId) {
-      dispatch(getProductById(parseInt(productId)));
+      dispatch(getProductById({ id: parseInt(productId), includeAll: true }));
     }
     return () => {
       dispatch(clearError());
+      dispatch(clearCurrentProduct());
     };
   }, [dispatch, productId, isEditMode]);
 
-  // ✅ Prefill form when currentProduct updates
   useEffect(() => {
     if (isEditMode && currentProduct) {
       setFormData({
@@ -93,435 +87,357 @@ const PostProduct = () => {
         stock: currentProduct.stock?.toString(),
         category: currentProduct.category,
         Quantity: currentProduct.Quantity,
-        productImage: null,
         isFeatured: currentProduct.isFeatured,
         isNewArrival: currentProduct.isNewArrival,
         isOnSale: currentProduct.isOnSale,
-        discountPrice: currentProduct.discountPrice?.toString(),
+        discountPrice: currentProduct.discountPrice?.toString() || "",
+        brand: currentProduct.brand || "",
+        gender: currentProduct.gender || "",
+        metaTitle: currentProduct.metaTitle || "",
+        metaDescription: currentProduct.metaDescription || "",
+        slug: currentProduct.slug || "",
+        publishStatus: currentProduct.publishStatus || "draft",
       });
-      setImagePreview(currentProduct.productImage);
-      setVariants(currentProduct.variants ?? []);
+      setSlugTouched(true); // existing slug — don't auto-overwrite it on edit
+      setTopNotes(currentProduct.topNotes || []);
+      setHeartNotes(currentProduct.heartNotes || []);
+      setBaseNotes(currentProduct.baseNotes || []);
+      setVariants(currentProduct.ProductVariants || []);
     }
   }, [currentProduct, isEditMode]);
 
-  // ✅ Input change handler
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      const next = { ...prev, [name]: value };
+      if (name === "title" && !slugTouched) {
+        next.slug = slugify(value);
+      }
+      return next;
+    });
   };
 
-  // ✅ File change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, productImage: file }));
-      const reader = new FileReader();
-      reader.onload = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
+  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSlugTouched(true);
+    setFormData((prev) => ({ ...prev, slug: e.target.value }));
+  };
+
+  const validate = (): string[] => {
+    const errors: string[] = [];
+    if (!formData.title.trim()) errors.push("Title is required.");
+    if (!stripHtml(formData.description)) errors.push("Description is required.");
+    if (!formData.price || Number(formData.price) <= 0) errors.push("Price must be greater than 0.");
+    if (formData.stock === "" || Number(formData.stock) < 0) errors.push("Stock is required.");
+    if (!isEditMode && newImages.length === 0) errors.push("At least one product image is required.");
+    if (formData.isOnSale && (!formData.discountPrice || Number(formData.discountPrice) <= 0)) {
+      errors.push("Discount price is required when On Sale is enabled.");
+    }
+    for (const v of variants) {
+      if (!v.size.trim()) errors.push("Every variant needs a size.");
+      if (!v.price || v.price <= 0) errors.push(`Variant "${v.size || "?"}" needs a price greater than 0.`);
+    }
+    return errors;
+  };
+
+  const handleSubmit = async (publishStatusOverride: "draft" | "published") => {
+    const errors = validate();
+    setFormErrors(errors);
+    if (errors.length > 0) {
+      toast.error(errors[0]);
+      return;
+    }
+
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      status: formData.status,
+      price: parseFloat(formData.price),
+      stock: parseInt(formData.stock),
+      category: formData.category,
+      Quantity: formData.Quantity,
+      isFeatured: formData.isFeatured,
+      isNewArrival: formData.isNewArrival,
+      isOnSale: formData.isOnSale,
+      discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
+      brand: formData.brand || undefined,
+      gender: formData.gender || undefined,
+      topNotes,
+      heartNotes,
+      baseNotes,
+      metaTitle: formData.metaTitle || undefined,
+      metaDescription: formData.metaDescription || undefined,
+      slug: formData.slug || undefined,
+      publishStatus: publishStatusOverride,
+      variants,
+      images: newImages,
+      coverIndex,
+    };
+
+    try {
+      if (isEditMode && productId) {
+        await dispatch(updateProduct({ id: parseInt(productId), ...payload })).unwrap();
+        toast.success("Product updated successfully");
+      } else {
+        await dispatch(createProduct(payload)).unwrap();
+        toast.success(
+          publishStatusOverride === "published" ? "Product published" : "Product saved as draft"
+        );
+      }
+      navigate("/admin/products");
+    } catch (err: any) {
+      toast.error(err || "Something went wrong");
     }
   };
 
-  // ✅ Submit handler
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setVariantError("");
-
-    const sizesSeen = new Set<string>();
-    for (const variant of variants) {
-      if (sizesSeen.has(variant.size)) {
-        setVariantError(`Size ${variant.size} is added more than once.`);
-        return;
-      }
-      sizesSeen.add(variant.size);
-      if (!variant.price || variant.price <= 0) {
-        setVariantError(`Enter a valid price for ${variant.size}.`);
-        return;
-      }
-    }
-
-    if (isEditMode) {
-      if (!productId) return;
-
-      const updateData: any = {
-        id: productId,
-        title: formData.title,
-        description: formData.description,
-        status: formData.status,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-        category: formData.category,
-        Quantity: formData.Quantity,
-        isFeatured: formData.isFeatured,
-        isNewArrival: formData.isNewArrival,
-        isOnSale: formData.isOnSale,
-        discountPrice: parseFloat(formData.discountPrice),
-        variants,
-      };
-      if (formData.productImage) updateData.productImage = formData.productImage;
-
-      try {
-        await dispatch(updateProduct(updateData)).unwrap();
-        navigate("/admin/products");
-      } catch (error) {
-        console.error("Update failed:", error);
-      }
-    } else {
-      if (!formData.productImage) {
-        alert("Please select an image");
-        return;
-      }
-
-      const productData: ProductData = {
-        title: formData.title,
-        description: formData.description,
-        status: formData.status,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-        category: formData.category,
-        Quantity: formData.Quantity,
-        productImage: formData.productImage,
-        isFeatured: formData.isFeatured,
-        isNewArrival: formData.isNewArrival,
-        isOnSale: formData.isOnSale,
-        discountPrice: parseFloat(formData.discountPrice),
-        variants,
-      };
-
-      try {
-        await dispatch(createProduct(productData)).unwrap();
-        setFormData({
-          title: "",
-          description: "",
-          status: "available",
-          price: "",
-          stock: "",
-          category: "Men",
-          Quantity: "15ML",
-          productImage: null,
-          isFeatured: false,
-          isNewArrival: false,
-          isOnSale: false,
-          discountPrice: "",
-        });
-        setImagePreview("");
-        setVariants([]);
-      } catch (error) {
-        console.error("Create failed:", error);
-      }
-    }
-  };
-
-  // ✅ Common Input Class
-  const inputClass =
-    "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent " +
-    "bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700";
-
-  const labelClass =
-    "block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300";
+  const previewImageUrl = newImages.length
+    ? URL.createObjectURL(newImages[coverIndex] || newImages[0])
+    : currentProduct?.productImage;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-            {isEditMode ? "Edit Product" : "Create New Product"}
-          </h1>
-          {isEditMode && (
-            <button
-              onClick={() => navigate("/admin/products")}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-            >
-              Back
-            </button>
-          )}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="font-logo text-3xl font-bold text-luxury-cream">
+          {isEditMode ? "Edit Product" : "Add New Product"}
+        </h1>
+        <button
+          onClick={() => navigate("/admin/products")}
+          className="px-4 py-2 border border-luxury-gold text-luxury-gold rounded-lg hover:bg-luxury-gold/10 transition-colors duration-300"
+        >
+          Back
+        </button>
+      </div>
+
+      {error && (
+        <div className="p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg">
+          {error}
+        </div>
+      )}
+      {formErrors.length > 0 && (
+        <div className="p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg text-sm space-y-1">
+          {formErrors.map((msg, i) => (
+            <p key={i}>• {msg}</p>
+          ))}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Main form */}
+        <div className="lg:col-span-2 space-y-6">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">Basics</h2>
+            <div>
+              <label className={labelClass}>Product Title *</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="e.g. Oud Royale"
+                className={inputClass}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Brand</label>
+                <input
+                  type="text"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleInputChange}
+                  placeholder="e.g. M.Z Atelier"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Gender</label>
+                <select name="gender" value={formData.gender} onChange={handleInputChange} className={inputClass}>
+                  <option value="">Select gender</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                  <option value="Unisex">Unisex</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Description *</label>
+              <RichTextEditor
+                key={isEditMode ? (currentProduct ? `loaded-${currentProduct.id}` : "loading") : "new"}
+                value={formData.description}
+                onChange={(html) => setFormData((prev) => ({ ...prev, description: html }))}
+                placeholder="Describe the fragrance..."
+              />
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">Fragrance Notes</h2>
+            <TagInput label="Top Notes" values={topNotes} onChange={setTopNotes} placeholder="Type a note and press Enter" />
+            <TagInput label="Heart Notes" values={heartNotes} onChange={setHeartNotes} placeholder="Type a note and press Enter" />
+            <TagInput label="Base Notes" values={baseNotes} onChange={setBaseNotes} placeholder="Type a note and press Enter" />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">Category & Pricing</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Category *</label>
+                <select name="category" value={formData.category} onChange={handleInputChange} className={inputClass}>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                  <option value="Children">Children</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Default Size *</label>
+                <select name="Quantity" value={formData.Quantity} onChange={handleInputChange} className={inputClass}>
+                  <option value="15ML">15ML</option>
+                  <option value="50ML">50ML</option>
+                  <option value="100ML">100ML</option>
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Price (Rs.) *</label>
+                <input type="number" name="price" value={formData.price} onChange={handleInputChange} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Stock *</label>
+                <input type="number" name="stock" value={formData.stock} onChange={handleInputChange} className={inputClass} />
+              </div>
+            </div>
+            <p className="text-xs text-luxury-cream/40">
+              This is the product's own price/stock, used when no size variants are configured below.
+            </p>
+            <VariantsEditor variants={variants} onChange={setVariants} />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">Images</h2>
+            <ImageDropzone
+              existingImages={currentProduct?.ProductImages || []}
+              newImages={newImages}
+              coverIndex={coverIndex}
+              onChangeNewImages={setNewImages}
+              onChangeCoverIndex={setCoverIndex}
+            />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">SEO</h2>
+            <div>
+              <label className={labelClass}>Meta Title</label>
+              <input type="text" name="metaTitle" value={formData.metaTitle} onChange={handleInputChange} className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Meta Description</label>
+              <textarea
+                name="metaDescription"
+                value={formData.metaDescription}
+                onChange={handleInputChange as any}
+                rows={2}
+                maxLength={300}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Slug</label>
+              <input type="text" value={formData.slug} onChange={handleSlugChange} className={inputClass} />
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">Merchandising</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Availability</label>
+                <select name="status" value={formData.status} onChange={handleInputChange} className={inputClass}>
+                  <option value="available">Available</option>
+                  <option value="not available">Not Available</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Discount Price</label>
+                <input
+                  type="number"
+                  name="discountPrice"
+                  value={formData.discountPrice}
+                  onChange={handleInputChange}
+                  disabled={!formData.isOnSale}
+                  className={`${inputClass} disabled:opacity-40`}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-6 pt-1">
+              {[
+                { key: "isFeatured" as const, label: "Featured" },
+                { key: "isNewArrival" as const, label: "New Arrival" },
+                { key: "isOnSale" as const, label: "On Sale" },
+              ].map(({ key, label }) => (
+                <label key={key} className="flex items-center gap-2 text-sm text-luxury-cream/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData[key]}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.checked }))}
+                    className="accent-luxury-gold w-4 h-4"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 rounded">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div>
-            <label className={labelClass}>Product Title *</label>
-            <input
-              type="text"
-              placeholder="Enter Product Title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              required
-              className={inputClass}
+        {/* Live preview + actions */}
+        <div className="lg:sticky lg:top-6 space-y-4">
+          <div className={sectionClass}>
+            <h2 className="font-logo text-lg font-semibold text-luxury-cream">Live Preview</h2>
+            <ProductPreviewCard
+              title={formData.title}
+              price={Number(formData.price) || 0}
+              discountPrice={formData.discountPrice ? Number(formData.discountPrice) : undefined}
+              isOnSale={formData.isOnSale}
+              isFeatured={formData.isFeatured}
+              quantity={formData.Quantity}
+              imageUrl={previewImageUrl}
             />
           </div>
 
-          {/* Description */}
-          <div>
-            <label className={labelClass}>Description *</label>
-            <textarea
-              name="description"
-              placeholder="Enter Product Description"
-              value={formData.description}
-              onChange={handleInputChange}
-              required
-              rows={4}
-              className={inputClass}
-            />
-          </div>
-
-          {/* Status & Category */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Status *</label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                className={inputClass}
+          <div className={sectionClass}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-luxury-cream/70">Status</span>
+              <span
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  formData.publishStatus === "published"
+                    ? "bg-green-500/15 text-green-400 border border-green-500/30"
+                    : "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
+                }`}
               >
-                <option value="available">Available</option>
-                <option value="not available">Not Available</option>
-              </select>
+                {formData.publishStatus === "published" ? "Published" : "Draft"}
+              </span>
             </div>
-            <div>
-              <label className={labelClass}>Category *</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className={inputClass}
-              >
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
-                <option value="Children">Children</option>
-                
-              </select>
-            </div>
-          </div>
-
-          {/* Quantity */}
-          <div>
-            <label className={labelClass}>Quantity *</label>
-            <select
-              name="Quantity"
-              value={formData.Quantity}
-              onChange={handleInputChange}
-              className={inputClass}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              disabled={loading}
+              onClick={() => handleSubmit("published")}
+              className="w-full bg-luxury-gold text-luxury-ink py-3 rounded-lg font-semibold hover:bg-luxury-gold-bright transition-colors duration-300 disabled:opacity-50"
             >
-              <option value="15ML">15ML</option>
-              <option value="50ML">50ML</option>
-              <option value="100ML">100ML</option>
-            </select>
+              {loading ? "Saving..." : "Publish"}
+            </motion.button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleSubmit("draft")}
+              className="w-full border border-luxury-gold text-luxury-gold py-3 rounded-lg hover:bg-luxury-gold/10 transition-colors duration-300 disabled:opacity-50"
+            >
+              Save as Draft
+            </button>
           </div>
-
-          {/* Additional Size Variants */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className={labelClass}>
-                Additional Size Variants (optional)
-              </label>
-              <button
-                type="button"
-                onClick={addVariantRow}
-                disabled={variants.length >= VARIANT_SIZES.length}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                + Add Size
-              </button>
-            </div>
-
-            {variantError && (
-              <p className="text-sm text-red-600 dark:text-red-400 mb-2">
-                {variantError}
-              </p>
-            )}
-
-            {variants.length > 0 && (
-              <div className="space-y-3">
-                {variants.map((variant, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-3 border rounded-md dark:border-gray-700"
-                  >
-                    <div>
-                      <label className={labelClass}>Size</label>
-                      <select
-                        value={variant.size}
-                        onChange={(e) =>
-                          updateVariantRow(index, "size", e.target.value)
-                        }
-                        className={inputClass}
-                      >
-                        {VARIANT_SIZES.map((size) => (
-                          <option key={size} value={size}>
-                            {size}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Price</label>
-                      <input
-                        type="number"
-                        value={variant.price || ""}
-                        onChange={(e) =>
-                          updateVariantRow(index, "price", e.target.value)
-                        }
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Stock</label>
-                      <input
-                        type="number"
-                        value={variant.stock || ""}
-                        onChange={(e) =>
-                          updateVariantRow(index, "stock", e.target.value)
-                        }
-                        className={inputClass}
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeVariantRow(index)}
-                      className="px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 h-fit"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Homepage Control Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Featured Product</label>
-              <select
-                name="isFeatured"
-                value={formData.isFeatured.toString()}
-                onChange={handleInputChange}
-                className={inputClass}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>New Arrival</label>
-              <select
-                name="isNewArrival"
-                value={formData.isNewArrival.toString()}
-                onChange={handleInputChange}
-                className={inputClass}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Sale Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>On Sale</label>
-              <select
-                name="isOnSale"
-                value={formData.isOnSale.toString()}
-                onChange={handleInputChange}
-                className={inputClass}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Discount Price</label>
-              <input
-                type="number"
-                name="discountPrice"
-                placeholder="Enter discount price"
-                value={formData.discountPrice}
-                onChange={handleInputChange}
-                className={inputClass}
-                disabled={!formData.isOnSale}
-              />
-            </div>
-          </div>
-
-          {/* Price & Stock */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Price *</label>
-              <input
-                type="number"
-                name="price"
-                placeholder="Enter Product Price"
-                value={formData.price}
-                onChange={handleInputChange}
-                required
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Stock *</label>
-              <input
-                type="number"
-                name="stock"
-                placeholder="Enter Product Stock"
-                value={formData.stock}
-                onChange={handleInputChange}
-                required
-                className={inputClass}
-              />
-            </div>
-          </div>
-
-          {/* Image */}
-          <div>
-            <label className={labelClass}>
-              Product Image {isEditMode ? "(optional)" : "*"}
-            </label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              accept="image/*"
-              className={inputClass}
-            />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="mt-2 w-32 h-32 object-cover rounded-md border dark:border-gray-600"
-              />
-            )}
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading
-              ? isEditMode
-                ? "Updating..."
-                : "Creating..."
-              : isEditMode
-              ? "Update Product"
-              : "Create Product"}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
