@@ -1,22 +1,18 @@
-<<<<<<< HEAD
 // server/controllers/product.controller.js
 import Product from "../models/product.model.js";
 import ProductVariant from "../models/productVariant.model.js";
-=======
 import * as productService from "../services/product.service.js";
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
-
-<<<<<<< HEAD
-import { Op, where, col, cast } from "sequelize";
+import ApiError from "../utils/apiError.js";
+import { Op } from "sequelize";
 
 // Multipart forms can't send a nested array, so the frontend sends `variants`
 // as a JSON string and we parse it here. Absent/invalid input is treated as "no variants".
 const parseVariants = (rawVariants) => {
   if (!rawVariants) return [];
   try {
-    const parsed = JSON.parse(rawVariants);
+    const parsed = typeof rawVariants === "string" ? JSON.parse(rawVariants) : rawVariants;
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -24,9 +20,6 @@ const parseVariants = (rawVariants) => {
 };
 
 // CREATE Product
-
-//create
-
 export const createProduct = asyncHandler(async (req, res, next) => {
   const {
     title,
@@ -53,27 +46,11 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     !Quantity ||
     !category
   ) {
-    return next(new ApiError(400, "All fields are required"));
+    throw new ApiError(400, "All fields are required");
   }
 
-  let uploadedImage;
-
-  const streamUpload = (reqFile) => {
-    return new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "products" },
-        (error, result) => {
-          if (result) resolve(result);
-          else reject(error);
-        }
-      );
-      streamifier.createReadStream(reqFile.buffer).pipe(stream);
-    });
-  };
-
-  uploadedImage = await streamUpload(req.file);
-
-  const newProduct = await Product.create({
+  // Create standard product model and upload image via service
+  const newProduct = await productService.createProduct({
     title,
     description,
     status,
@@ -81,16 +58,12 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     stock,
     category,
     Quantity,
-    productImage: uploadedImage.secure_url,
-    isFeatured,
-    isNewArrival,
-    isOnSale,
+    isFeatured: isFeatured === "true" || isFeatured === true,
+    isNewArrival: isNewArrival === "true" || isNewArrival === true,
+    isOnSale: isOnSale === "true" || isOnSale === true,
     discountPrice,
+    file: req.file,
   });
-=======
-export const createProduct = asyncHandler(async (req, res) => {
-  const product = await productService.createProduct({ ...req.body, file: req.file });
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
   const parsedVariants = parseVariants(variants);
   if (parsedVariants.length > 0) {
@@ -110,111 +83,50 @@ export const createProduct = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-<<<<<<< HEAD
     .json(
       new ApiResponse(201, productWithVariants, "Product created successfully")
     );
 });
 
-export const getAllProducts = asyncHandler(async (req, res, next) => {
+// GET All Products
+export const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Product.findAll({
     include: [{ model: ProductVariant, as: "variants" }],
   });
-=======
-    .json(new ApiResponse(201, product, "Product created successfully"));
-});
-
-export const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await productService.getAllProducts();
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
   return res
     .status(200)
     .json(new ApiResponse(200, products, "Products fetched successfully"));
 });
 
+// GET Product By ID
 export const getProductById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-<<<<<<< HEAD
   const product = await Product.findByPk(id, {
     include: [{ model: ProductVariant, as: "variants" }],
   });
 
   if (!product) {
-    return next(new ApiError(404, "Product not found"));
+    throw new ApiError(404, "Product not found");
   }
-=======
-  const product = await productService.getProductById({ id });
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
   return res
     .status(200)
     .json(new ApiResponse(200, product, "Product fetched successfully"));
 });
 
+// UPDATE Product
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-<<<<<<< HEAD
-  const {
-    title,
-    description,
-    status,
-    price,
-    stock,
-    category,
-    Quantity,
-    isFeatured,
-    isNewArrival,
-    isOnSale,
-    discountPrice,
-    variants,
-  } = req.body;
+  const { variants } = req.body;
 
-  const product = await Product.findByPk(id);
-  if (!product) {
-    return next(new ApiError(404, "Product not found"));
-  }
-
-  let uploadedImageUrl = product.productImage;
-
-  if (req.file) {
-    const streamUpload = (reqFile) => {
-      return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "products" },
-          (error, result) => {
-            if (result) resolve(result);
-            else reject(error);
-          }
-        );
-        streamifier.createReadStream(reqFile.buffer).pipe(stream);
-      });
-    };
-
-    const uploadedImage = await streamUpload(req.file);
-    uploadedImageUrl = uploadedImage.secure_url;
-  }
-
-  await product.update({
-    title,
-    description,
-    status,
-    price,
-    stock,
-    category,
-    Quantity,
-    productImage: uploadedImageUrl,
-    isFeatured,
-    isNewArrival,
-    isOnSale,
-    discountPrice,
+  const product = await productService.updateProduct({
+    id,
+    file: req.file,
+    ...req.body,
   });
-=======
-  const product = await productService.updateProduct({ id, file: req.file, ...req.body });
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
   // Replace-all: the admin form always submits the full current variant list.
-  // Guarded on `undefined` so API callers that omit the field don't wipe existing variants.
   if (variants !== undefined) {
     const parsedVariants = parseVariants(variants);
     await ProductVariant.destroy({ where: { productId: product.id } });
@@ -241,6 +153,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
     );
 });
 
+// DELETE Product
 export const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   await productService.deleteProduct({ id });
@@ -250,6 +163,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Product deleted successfully"));
 });
 
+// SEARCH Products
 export const searchProducts = asyncHandler(async (req, res) => {
   const { q } = req.query;
   const products = await productService.searchProducts({ query: q });
@@ -259,6 +173,7 @@ export const searchProducts = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, products, "Products fetched successfully"));
 });
 
+// GET Products By Category
 export const getProductsByCategory = asyncHandler(async (req, res) => {
   const { category } = req.params;
   const products = await productService.getProductsByCategory({ category });
@@ -268,6 +183,7 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, products, `Products in category: ${category}`));
 });
 
+// GET Total Products Count
 export const getNumberOfTotalproduct = asyncHandler(async (req, res) => {
   const totalProducts = await productService.getNumberOfTotalproduct();
 
@@ -278,17 +194,29 @@ export const getNumberOfTotalproduct = asyncHandler(async (req, res) => {
     );
 });
 
+// GET Featured Products
 export const getFeaturedProducts = asyncHandler(async (req, res) => {
-  const products = await productService.getFeaturedProducts();
+  const products = await Product.findAll({
+    where: { isFeatured: true },
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
   res.status(200).json(new ApiResponse(200, products, "Featured products"));
 });
 
+// GET New Arrivals
 export const getNewArrivals = asyncHandler(async (req, res) => {
-  const products = await productService.getNewArrivals();
+  const products = await Product.findAll({
+    where: { isNewArrival: true },
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
   res.status(200).json(new ApiResponse(200, products, "New Arrivals"));
 });
 
+// GET On Sale Products
 export const getOnSaleProducts = asyncHandler(async (req, res) => {
-  const products = await productService.getOnSaleProducts();
+  const products = await Product.findAll({
+    where: { isOnSale: true },
+    include: [{ model: ProductVariant, as: "variants" }],
+  });
   res.status(200).json(new ApiResponse(200, products, "On Sale products"));
 });

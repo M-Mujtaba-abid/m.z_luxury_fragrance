@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Eye, ArrowRightLeft, Star, ShoppingBag } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/user/cart/CartThunk";
+import { addToCart } from "../../redux/thunks/CartThunk";
 import type { AppDispatch } from "../../redux/store";
-import type { Product } from "../../redux/Admin/typesAdminComponent/productTypes";
-import { ImageLoader } from "../../components/ui/ImageLoader";
+import type { Product } from "../../redux/types/productTypes";
+import { ImageLoader } from "../ui/ImageLoader";
 import toast from "react-hot-toast";
 
 interface ProductCardProps {

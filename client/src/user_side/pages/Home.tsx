@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import FeaturedProducts from "./FeaturedProducts";
-import NewArrivals from "./NewArrivals";
-import OnSaleProducts from "./OnSaleProducts";
+import FeaturedProducts from "../../pages/user/FeaturedProducts";
+import NewArrivals from "../../pages/user/NewArrivals";
+import OnSaleProducts from "../../pages/user/OnSaleProducts";
 import BrandRibbon from "../component/BrandRibbon";
 import AppleShowcase from "../component/AppleShowcase";
 import SignaturePreview from "../component/SignaturePreview";

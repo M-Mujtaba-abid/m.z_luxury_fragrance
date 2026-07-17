@@ -1,21 +1,14 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-<<<<<<< HEAD:client/src/user_side/pages/AllProductsRender.tsx
   useFeaturedProductsQuery,
   useOnSaleProductsQuery,
   useNewArrivalsQuery,
 } from "../../queries/productQueries";
-=======
-  fetchFeaturedProducts,
-  fetchOnSaleProducts,
-  fetchNewArrivals,
-} from "../../redux/thunks/ProductThunk";
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/AllProductsRender.tsx
 import { motion } from "framer-motion";
-import ProductCard from "../component/ProductCard";
+import ProductCard from "../../components/user/ProductCard";
 import { ProductsGridSkeleton } from "../../components/ui/ProductCardSkeleton";
-import QuickViewModal from "../component/QuickViewModal";
+import QuickViewModal from "../../components/user/QuickViewModal";
 import SEO from "../../components/ui/SEO";
 
 const AllProductsRender = () => {
@@ -28,7 +21,6 @@ const AllProductsRender = () => {
   const onSaleQuery = useOnSaleProductsQuery();
   const newArrivalsQuery = useNewArrivalsQuery();
 
-<<<<<<< HEAD:client/src/user_side/pages/AllProductsRender.tsx
   let productsToShow: any[] = [];
   let isLoading = false;
   let error = null;
@@ -53,27 +45,7 @@ const AllProductsRender = () => {
     error = newArrivalsQuery.error;
     titleText = "New Arrivals";
     tagText = "Fresh olfactory impressions";
-=======
-  // Fetch the correct category if not already fetched
-  useEffect(() => {
-    if (category === "featured") dispatch(fetchFeaturedProducts());
-    else if (category === "onSale") dispatch(fetchOnSaleProducts());
-    else if (category === "newArrival") dispatch(fetchNewArrivals());
-  }, [category, dispatch]);
-
-  // Choose products based on category
-  let productsToShow = [];
-
-  if (category === "featured") {
-    productsToShow = featuredProducts;
-  } else if (category === "onSale") {
-    productsToShow = onSaleProducts;
-  } else if (category === "newArrival") {
-    productsToShow = newArrivals;
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/AllProductsRender.tsx
   }
-
-  const bgColor = "bg-gradient-to-br from-luxury-ink via-[#141414] to-luxury-ink";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -81,7 +53,6 @@ const AllProductsRender = () => {
   };
 
   return (
-<<<<<<< HEAD:client/src/user_side/pages/AllProductsRender.tsx
     <div className="min-h-screen bg-gray-50/50 dark:bg-neutral-950 py-12">
       <SEO title={titleText} description={`${titleText} - ${tagText}`} />
       <div className="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
@@ -100,69 +71,6 @@ const AllProductsRender = () => {
           <div className="mb-6 p-4 bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 rounded-2xl text-center">
             Failed to retrieve collection. Please try again.
           </div>
-=======
-    <div className={` rounded-xl p-8 ${bgColor}`}>
-      <h2 className="font-logo pt-[80px] text-2xl font-bold mb-6 text-luxury-cream">
-        {category === "featured"
-          ? "Featured Products"
-          : category === "onSale"
-          ? "On Sale Products"
-          : "New Arrivals"}
-      </h2>
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.2 }}
-        className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {productsToShow.map((p: any) => (
-          <motion.div
-            key={p.id}
-            variants={cardVariants}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-            className="relative border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden bg-luxury-ink hover:border-luxury-gold/30 transition-colors duration-300 flex flex-col"
-          >
-            {category === "featured" && (
-              <span className="absolute top-3 left-3 bg-luxury-gold text-luxury-ink text-xs font-bold px-3 py-1 rounded-md shadow-md">
-                FEATURED
-              </span>
-            )}
-
-            <Link to={`/web/product-detail/${p.id}`} className="flex flex-col flex-grow">
-              <img
-                src={p.productImage}
-                alt={p.title}
-                className="w-full h-[280px] object-cover"
-              />
-              <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-luxury-cream truncate">
-                  {p.title.slice(0,20)}...
-                </h3>
-                <p className="text-sm text-luxury-cream/60 mt-1">
-                  Quantity: {p.Quantity}
-                </p>
-                <p className="text-base font-bold text-luxury-gold mt-1">
-                  Rs. {category === "onSale" && p.isOnSale && p.discountPrice
-                    ? p.discountPrice
-                    : p.price}
-                </p>
-              </div>
-            </Link>
-
-            <div className="p-4 pt-0">
-              <button className="mt-3 w-full border border-luxury-gold/30 bg-transparent text-luxury-cream py-2 rounded-md transition-colors duration-300 hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold">
-                Add to Cart
-              </button>
-            </div>
-          </motion.div>
-        ))}
-
-        {!loading && productsToShow.length === 0 && (
-          <div className="col-span-full text-luxury-cream/50">No products.</div>
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/AllProductsRender.tsx
         )}
 
         {/* Product Grid / Skeleton */}

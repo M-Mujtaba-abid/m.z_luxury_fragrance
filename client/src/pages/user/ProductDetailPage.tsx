@@ -1,23 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-<<<<<<< HEAD:client/src/user_side/pages/ProductDetailPage.tsx
 import { useSingleProductQuery } from "../../queries/productQueries";
 import { Star, ShieldCheck, Truck, RefreshCw, ShoppingBag, ArrowLeft } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/user/cart/CartThunk";
+import { addToCart } from "../../redux/thunks/CartThunk";
 import type { AppDispatch } from "../../redux/store";
 import { ImageLoader } from "../../components/ui/ImageLoader";
 import toast from "react-hot-toast";
 import SEO from "../../components/ui/SEO";
-=======
-import { getProductById } from "../../redux/thunks/ProductThunk";
-import {
-  clearError,
-  clearCurrentProduct,
-} from "../../redux/slices/ProductSlice";
-import type { RootState, AppDispatch } from "../../redux/store";
-import AddToCartButton from "../../components/user/AddToCartButton";
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/ProductDetailPage.tsx
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -42,7 +32,6 @@ const ProductDetailPage = () => {
 
   if (isLoading) {
     return (
-<<<<<<< HEAD:client/src/user_side/pages/ProductDetailPage.tsx
       <div className="min-h-screen pt-24 bg-white dark:bg-neutral-950 flex flex-col justify-center items-center">
         <div className="space-y-4 w-full max-w-4xl px-4 animate-pulse">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -55,11 +44,6 @@ const ProductDetailPage = () => {
               <div className="h-12 bg-neutral-100 dark:bg-neutral-900 rounded-md w-full" />
             </div>
           </div>
-=======
-      <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
-        <div className="text-xl font-semibold text-luxury-cream/70">
-          Loading product details...
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/ProductDetailPage.tsx
         </div>
       </div>
     );
@@ -67,7 +51,6 @@ const ProductDetailPage = () => {
 
   if (error || !currentProduct) {
     return (
-<<<<<<< HEAD:client/src/user_side/pages/ProductDetailPage.tsx
       <div className="min-h-screen pt-24 bg-white dark:bg-neutral-950 flex flex-col justify-center items-center px-4">
         <h2 className="text-2xl font-light text-rose-500 mb-4">Fragrance Not Found</h2>
         <p className="text-neutral-500 text-sm mb-6 text-center max-w-sm">
@@ -79,30 +62,15 @@ const ProductDetailPage = () => {
         >
           Return to Catalog
         </button>
-=======
-      <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
-        <div className="text-xl font-semibold text-red-400">{error}</div>
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/ProductDetailPage.tsx
       </div>
     );
   }
 
-<<<<<<< HEAD:client/src/user_side/pages/ProductDetailPage.tsx
   // Calculate pricing based on variants/sizes
   let basePrice = currentProduct.price;
   let displayPrice = basePrice;
   if (currentProduct.isOnSale && currentProduct.discountPrice) {
     displayPrice = currentProduct.discountPrice;
-=======
-  if (!currentProduct) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
-        <div className="text-xl font-semibold text-luxury-cream/70">
-          Product not found
-        </div>
-      </div>
-    );
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/ProductDetailPage.tsx
   }
 
   if (selectedSize === "15ML") {
@@ -128,7 +96,6 @@ const ProductDetailPage = () => {
   };
 
   return (
-<<<<<<< HEAD:client/src/user_side/pages/ProductDetailPage.tsx
     <div className="min-h-screen bg-white dark:bg-neutral-950 py-12 md:py-24">
       <SEO
         title={currentProduct.title}
@@ -238,72 +205,6 @@ const ProductDetailPage = () => {
                         selectedSize === size
                           ? "bg-black dark:bg-white text-white dark:text-black border-transparent shadow-md"
                           : "border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 bg-transparent hover:border-neutral-400"
-=======
-    <div className="min-h-screen py-8  bg-luxury-ink">
-      <div className="max-w-4xl pt-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-luxury-ink border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-luxury-gold/10">
-            <div className="flex justify-between items-center">
-              <h1 className="font-logo text-3xl font-bold text-luxury-cream">
-                Product Details
-              </h1>
-              <button
-                onClick={() => navigate(-1)}
-                className="px-4 py-2 border border-luxury-gold/20 bg-luxury-ink text-luxury-cream rounded-md transition-colors duration-300 hover:bg-luxury-gold/10 hover:text-luxury-gold"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-
-          {/* Product Content */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Product Image */}
-              <div className="space-y-4">
-                <div className="aspect-w-1 pt-10 aspect-h-1 w-full overflow-hidden rounded-lg border border-luxury-gold/15 bg-[#141414]">
-                  <img
-                    src={currentProduct.productImage}
-                    alt={currentProduct.title}
-                    className="w-full lg:h-[500px] object-cover rounded-lg"
-                  />
-                </div>
-              </div>
-
-              {/* Product Information */}
-              <div className="space-y-6">
-                <div>
-                  <h2 className="font-logo text-2xl font-bold text-luxury-cream mb-2">
-                    {currentProduct.title}
-                  </h2>
-                  <p className="text-luxury-cream/70 text-lg leading-relaxed">
-                    {currentProduct.description}
-                  </p>
-                </div>
-
-                <div className="space-y-4">
-                  {/* Price */}
-                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                    <span className="text-lg font-semibold text-luxury-gold">
-                      Price:
-                    </span>
-                    <span className="text-2xl font-bold text-luxury-cream">
-                      Rs. {currentProduct.price}
-                    </span>
-                  </div>
-
-                  {/* Status */}
-                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                    <span className="text-lg font-semibold text-luxury-gold">
-                      Status:
-                    </span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        currentProduct.status === "available"
-                          ? "bg-luxury-gold/15 text-luxury-gold border border-luxury-gold/30"
-                          : "bg-red-950/40 text-red-300 border border-red-900/40"
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/ProductDetailPage.tsx
                       }`}
                     >
                       {size}
@@ -312,7 +213,6 @@ const ProductDetailPage = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD:client/src/user_side/pages/ProductDetailPage.tsx
               {/* Quantity Stepper */}
               <div className="space-y-3">
                 <span className="text-xs uppercase tracking-widest text-neutral-400 dark:text-neutral-500 font-semibold block">
@@ -368,78 +268,6 @@ const ProductDetailPage = () => {
                   )}
                   {activeTab === "shipping" && (
                     <p>Delivered globally in discrete custom shockproof containers. Complete with personalized branding wrap and a complimentary mini-tester fragrance vial. Standard shipping is 2-4 days.</p>
-=======
-                  {/* Stock */}
-                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                    <span className="text-lg font-semibold text-luxury-gold">
-                      Stock:
-                    </span>
-                    <span className="text-lg font-medium text-luxury-cream">
-                      {currentProduct.stock} units
-                    </span>
-                  </div>
-
-                  {/* Category */}
-                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                    <span className="text-lg font-semibold text-luxury-gold">
-                      Category:
-                    </span>
-                    <span className="text-lg font-medium text-luxury-cream capitalize">
-                      {currentProduct.category}
-                    </span>
-                  </div>
-
-                  {/* Quantity */}
-                  <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                    <span className="text-lg font-semibold text-luxury-gold">
-                      Quantity:
-                    </span>
-                    <span className="text-lg font-medium text-luxury-cream">
-                      {currentProduct.Quantity}
-                    </span>
-                  </div>
-
-                  {/* Homepage Control Fields */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {currentProduct.isFeatured && (
-                      <span className="px-3 py-1 text-sm font-bold bg-luxury-gold text-luxury-ink rounded-full">
-                        ⭐ Featured Product
-                      </span>
-                    )}
-                    {currentProduct.isNewArrival && (
-                      <span className="px-3 py-1 text-sm border border-luxury-gold text-luxury-gold rounded-full">
-                        🆕 New Arrival
-                      </span>
-                    )}
-                    {currentProduct.isOnSale && (
-                      <span className="px-3 py-1 text-sm bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 rounded-full">
-                        🏷️ On Sale
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Discount Price Display */}
-                  {currentProduct.isOnSale && currentProduct.discountPrice && (
-                    <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                      <span className="text-lg font-semibold text-luxury-gold">
-                        Original Price:
-                      </span>
-                      <span className="text-lg text-luxury-cream/40 line-through">
-                        Rs. {currentProduct.price}
-                      </span>
-                    </div>
-                  )}
-
-                  {currentProduct.isOnSale && currentProduct.discountPrice && (
-                    <div className="flex items-center justify-between p-4 bg-[#141414] border border-luxury-gold/10 rounded-lg">
-                      <span className="text-lg font-semibold text-luxury-gold">
-                        Sale Price:
-                      </span>
-                      <span className="text-2xl font-bold text-luxury-gold">
-                        Rs. {currentProduct.discountPrice}
-                      </span>
-                    </div>
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/user/ProductDetailPage.tsx
                   )}
                 </div>
               </div>

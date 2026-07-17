@@ -8,16 +8,12 @@ import {
 } from "../../../redux/thunks/ProductThunk";
 import { clearError } from "../../../redux/slices/ProductSlice";
 import type { RootState, AppDispatch } from "../../../redux/store";
-<<<<<<< HEAD:client/src/admin_side/pages/product/PostProduct.tsx
 import type {
   ProductData,
   ProductVariant,
-} from "../../../redux/Admin/typesAdminComponent/productTypes";
+} from "../../../redux/types/productTypes";
 
 const VARIANT_SIZES: ProductVariant["size"][] = ["15ML", "50ML", "100ML"];
-=======
-import type { ProductData } from "../../../redux/types/productTypes";
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44:client/src/pages/admin/product/PostProduct.tsx
 
 const PostProduct = () => {
   const dispatch = useDispatch<AppDispatch>();

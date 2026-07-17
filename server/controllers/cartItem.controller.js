@@ -1,33 +1,27 @@
-<<<<<<< HEAD
 import CartItem from "../models/CartItem.model.js";
 import Product from "../models/product.model.js";
 import ProductVariant from "../models/productVariant.model.js";
 import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.js";
-=======
-import * as cartItemService from "../services/cartItem.service.js";
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import resolveOwner from "../utils/resolveOwner.js";
+
+const withTotal = (cartItem) => ({
+  ...cartItem.toJSON(),
+  totalPrice: cartItem.quantity * cartItem.priceAtAddition,
+});
 
 // Add item to cart
 export const addToCart = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
-  const { quantity, variantId } = req.body;
-=======
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
   const { productId } = req.params;
-  const { quantity } = req.body;
+  const { quantity, variantId } = req.body;
   const userId = req.user?.id;
   const guestId = req.guestId;
 
-  const cartItem = await cartItemService.addToCart({ userId, guestId, productId, quantity });
-
-<<<<<<< HEAD
   const product = await Product.findByPk(productId);
   if (!product) throw new ApiError(404, "Product not found");
 
-  // variantId is optional — legacy/single-size products keep working with no variant selected
   let variant = null;
   if (variantId) {
     variant = await ProductVariant.findOne({
@@ -37,35 +31,26 @@ export const addToCart = asyncHandler(async (req, res) => {
   }
   const unitPrice = variant ? variant.price : product.price;
 
-  // check if already in cart (same product + same variant = same line item)
+  const owner = resolveOwner(userId, guestId);
+
   let cartItem = await CartItem.findOne({
-    where: { userId, productId, variantId: variant ? variant.id : null },
+    where: { ...owner, productId, variantId: variant ? variant.id : null },
   });
 
   if (cartItem) {
-    // update quantity only, priceAtAddition same rahega
     cartItem.quantity += quantity;
     await cartItem.save();
   } else {
-    // create new cart item with snapshot price
     cartItem = await CartItem.create({
-      userId,
+      ...owner,
       productId,
       variantId: variant ? variant.id : null,
       quantity,
-      priceAtAddition: unitPrice, // snapshot store
+      priceAtAddition: unitPrice,
     });
   }
 
-  // calculate total dynamically
-  const totalPrice = cartItem.quantity * cartItem.priceAtAddition;
-
-  res.status(201).json(
-    new ApiResponse(201, { ...cartItem.toJSON(), totalPrice }, "Item added to cart successfully")
-  );
-=======
-  res.status(201).json(new ApiResponse(201, cartItem, "Item added to cart successfully"));
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
+  res.status(201).json(new ApiResponse(201, withTotal(cartItem), "Item added to cart successfully"));
 });
 
 // Get all cart items of logged-in user or guest
@@ -73,20 +58,18 @@ export const getUserCart = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   const guestId = req.guestId;
 
-<<<<<<< HEAD
+  const owner = resolveOwner(userId, guestId);
+
   const cartItems = await CartItem.findAll({
-    where: { userId },
+    where: owner,
     include: [
       { model: Product },
       { model: ProductVariant },
       { model: User, attributes: ["id", "firstName", "email"] },
     ],
   });
-=======
-  const cartItems = await cartItemService.getUserCart({ userId, guestId });
->>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
-  res.status(200).json(new ApiResponse(200, cartItems, "Cart fetched successfully"));
+  res.status(200).json(new ApiResponse(200, cartItems.map(withTotal), "Cart fetched successfully"));
 });
 
 // Update quantity of cart item
@@ -96,28 +79,44 @@ export const updateCartItem = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   const guestId = req.guestId;
 
-  const cartItem = await cartItemService.updateCartItem({ id, userId, guestId, quantity });
+  const owner = resolveOwner(userId, guestId);
 
-  res.status(200).json(new ApiResponse(200, cartItem, "Cart item updated successfully"));
+  const cartItem = await CartItem.findOne({ 
+    where: { id, ...owner }, 
+    include: [Product, ProductVariant] 
+  });
+  if (!cartItem) throw new ApiError(404, "Cart item not found");
+
+  cartItem.quantity = quantity;
+  await cartItem.save();
+
+  res.status(200).json(new ApiResponse(200, withTotal(cartItem), "Cart item updated successfully"));
 });
 
-// Remove cart item
+// Remove item from cart
 export const removeCartItem = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const userId = req.user?.id;
   const guestId = req.guestId;
 
-  await cartItemService.removeCartItem({ id, userId, guestId });
+  const owner = resolveOwner(userId, guestId);
+
+  const cartItem = await CartItem.findOne({ where: { id, ...owner } });
+  if (!cartItem) throw new ApiError(404, "Cart item not found");
+
+  await cartItem.destroy();
 
   res.status(200).json(new ApiResponse(200, {}, "Cart item removed successfully"));
 });
 
-// Clear all cart items
+// Clear cart
 export const clearCart = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   const guestId = req.guestId;
 
-  await cartItemService.clearCart({ userId, guestId });
+  const owner = resolveOwner(userId, guestId);
+
+  await CartItem.destroy({ where: owner });
 
   res.status(200).json(new ApiResponse(200, {}, "Cart cleared successfully"));
 });

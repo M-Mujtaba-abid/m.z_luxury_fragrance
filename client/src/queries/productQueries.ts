@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
-import type { Product } from "../redux/Admin/typesAdminComponent/productTypes";
+import type { Product } from "../redux/types/productTypes";
 
 // Configured standard cache limits
 const STALE_TIME = 1000 * 60 * 5; // 5 mins
