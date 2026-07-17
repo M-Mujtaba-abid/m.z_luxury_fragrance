@@ -35,9 +35,10 @@ export const AppleShowcase: React.FC = () => {
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: "bottom bottom",
+        end: "+=1200",
         scrub: 1,
         pin: true,
+        pinSpacing: false,
         anticipatePin: 1,
         onUpdate: (self) => {
           scrollProgress = self.progress;
@@ -113,7 +114,7 @@ export const AppleShowcase: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative h-[400vh] bg-black text-white overflow-hidden">
+    <div ref={containerRef} className="relative h-[200vh] bg-black text-white overflow-hidden">
       {/* Sticky Viewport */}
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center">
 

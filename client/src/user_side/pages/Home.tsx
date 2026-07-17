@@ -66,7 +66,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans">
       <SEO title="Signature Perfume Impressions & Olfactive Journeys" />
-      
+
       {/* 1. Brands Ribbon Marquee */}
       <div className="pt-2">
         <BrandRibbon />
@@ -150,7 +150,7 @@ const Home = () => {
       </div>
 
       {/* 5. Apple-style Product Showcase Section */}
-      <div className="py-8">
+      <div className="">
         <AppleShowcase />
       </div>
 
@@ -210,7 +210,7 @@ const Home = () => {
               Global Reviews
             </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {REVIEWS.map((rev, idx) => (
               <div
