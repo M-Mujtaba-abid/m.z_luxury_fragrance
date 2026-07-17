@@ -1,10 +1,17 @@
 import express from "express";
 import { createCheckoutSession,  sessionSuccess } from "../controllers/payment.controller.js";
+import { identifyUser } from "../middleware/identifyUser.js";
+import { validateCreateCheckoutSession, validateSessionId } from "../validators/payment.validator.js";
 
 const route = express.Router();
 
-route.post("/create-checkout-session", createCheckoutSession);
-route.get("/sessionsuccess/:sessionId", sessionSuccess);
+route.post(
+  "/create-checkout-session",
+  identifyUser,
+  validateCreateCheckoutSession,
+  createCheckoutSession
+);
+route.get("/sessionsuccess/:sessionId", validateSessionId, sessionSuccess);
 // route.get("/sessioncancel/:sessionId", sessionCancel);
 
 

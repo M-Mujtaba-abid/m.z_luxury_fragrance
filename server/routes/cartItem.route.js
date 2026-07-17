@@ -6,14 +6,19 @@ import {
   removeCartItem,
   clearCart,
 } from "../controllers/cartItem.controller.js";
-import { isAuthenticated } from "../middleware/isAuthenticated.js";
+import { identifyUser } from "../middleware/identifyUser.js";
+import {
+  validateAddToCart,
+  validateUpdateCartItem,
+  validateCartItemId,
+} from "../validators/cartItem.validator.js";
 
 const router = express.Router();
 
-router.post("/addtocart/:productId", isAuthenticated, addToCart);
-router.get("/getallcartproduct", isAuthenticated, getUserCart);
-router.patch("/updatecart/:id", isAuthenticated, updateCartItem);
-router.delete("/deletecartitem/:id", isAuthenticated, removeCartItem);
-router.delete("/deletcart", isAuthenticated, clearCart);
+router.post("/addtocart/:productId", identifyUser, validateAddToCart, addToCart);
+router.get("/getallcartproduct", identifyUser, getUserCart);
+router.patch("/updatecart/:id", identifyUser, validateUpdateCartItem, updateCartItem);
+router.delete("/deletecartitem/:id", identifyUser, validateCartItemId, removeCartItem);
+router.delete("/deletcart", identifyUser, clearCart);
 
 export default router;

@@ -1,31 +1,22 @@
-// stripeWebhook.controller.js
-import Stripe from "stripe";
-import Order from "../models/order.model.js";
+import * as webhookService from "../services/webhook.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
+<<<<<<< HEAD
 import ApiError from "../utils/apiError.js";
 import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+=======
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
 export const stripeWebhook = asyncHandler(async (req, res) => {
-  const sig = req.headers["stripe-signature"];
-  let event;
+  const signature = req.headers["stripe-signature"];
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    throw new ApiError(400, `Webhook Error: ${err.message}`);
-  }
+  const event = webhookService.constructStripeEvent({ payload: req.body, signature });
 
-  try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
+  await webhookService.handleStripeEvent(event);
 
+<<<<<<< HEAD
       const paymentIntentId = session.payment_intent;
       const transactionId = session.id;
       const paymentDate = new Date();
@@ -83,4 +74,9 @@ export const stripeWebhook = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new ApiError(500, "Failed to process webhook event");
   }
+=======
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { received: true }, "Webhook processed"));
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 });

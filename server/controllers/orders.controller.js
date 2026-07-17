@@ -1,6 +1,6 @@
-import asyncHandler from "../utils/asyncHandler.js";
-import ApiError from "../utils/apiError.js";
+import * as ordersService from "../services/orders.service.js";
 import ApiResponse from "../utils/apiResponse.js";
+<<<<<<< HEAD
 import Order from "../models/order.model.js";
 import User from "../models/user.model.js";
 import CartItem from "../models/CartItem.model.js";
@@ -8,45 +8,37 @@ import Product from "../models/product.model.js";
 import ProductVariant from "../models/productVariant.model.js";
 import orderItem from "../models/orderItem.model.js";
 import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
+=======
+import asyncHandler from "../utils/asyncHandler.js";
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
-// Create new order (with cart → orderItems mapping)
+// Create new order (with cart -> orderItems mapping) - works for both
+// logged-in users and guests (identifyUser sets req.user or req.guestId)
 export const createOrder = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  const guestId = req.user ? undefined : req.guestId;
 
-  const {
-    customerName,
-    customerEmail,
-    customerPhone,
-    shippingStreet,
-    shippingCity,
-    shippingState,
-    shippingPostalCode,
-    shippingCountry,
-    paymentMethod,
-  } = req.body;
+  const order = await ordersService.createOrder({ ...req.body, userId, guestId });
 
-  // 1. Validate required fields
-  if (
-    !customerName ||
-    !customerEmail ||
-    !customerPhone ||
-    !shippingStreet ||
-    !shippingCity ||
-    !shippingCountry
-  ) {
-    throw new ApiError(400, "All required fields must be provided");
-  }
+  res.status(201).json(new ApiResponse(201, order, "Order created successfully"));
+});
 
+<<<<<<< HEAD
   // 2. Check cart items of this user
   const cartItems = await CartItem.findAll({
     where: { userId, status: "active" },
     include: [Product, ProductVariant],
   });
+=======
+// Guest order tracking by order id + email, no login required
+export const trackOrder = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { email } = req.query;
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
-  if (cartItems.length === 0) {
-    throw new ApiError(400, "Your cart is empty. Add products first.");
-  }
+  const order = await ordersService.getGuestOrder({ id, email });
 
+<<<<<<< HEAD
   // 3. Calculate total amount dynamically
   let totalAmount = 0;
   cartItems.forEach((item) => {
@@ -99,36 +91,18 @@ export const createOrder = asyncHandler(async (req, res) => {
   res
     .status(201)
     .json(new ApiResponse(201, order, "Order created successfully"));
+=======
+  res.status(200).json(new ApiResponse(200, order, "Order fetched successfully"));
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 });
 
 // Get all orders of logged-in user
 export const getUserOrders = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
-  const orders = await Order.findAll({
-    where: { userId },
-    include: [
-      {
-        model: User,
-        attributes: ["id", "firstName", "email"],
-      },
-      {
-        model: orderItem,
-        include: [
-          {
-            model: Product,
-            attributes: ["id", "title", "productImage", "price"], // product ka detail
-          },
-        ],
-      },
-    ],
-  });
+  const orders = await ordersService.getUserOrders({ userId });
 
-  res.status(200).json({
-    success: true,
-    message: "User orders fetched successfully",
-    data: orders,
-  });
+  res.status(200).json(new ApiResponse(200, orders, "User orders fetched successfully"));
 });
 
 // Update order status (Admin use case)
@@ -136,15 +110,9 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  const order = await Order.findByPk(id);
-  if (!order) throw new ApiError(404, "Order not found");
+  const order = await ordersService.updateOrderStatus({ id, status });
 
-  order.status = status;
-  await order.save();
-
-  res
-    .status(200)
-    .json(new ApiResponse(200, order, "Order status updated successfully"));
+  res.status(200).json(new ApiResponse(200, order, "Order status updated successfully"));
 });
 
 // Delete an order (if needed)
@@ -152,83 +120,32 @@ export const deleteOrder = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;
 
-  const order = await Order.findOne({ where: { id, userId } });
-  if (!order) throw new ApiError(404, "Order not found");
+  await ordersService.deleteOrder({ id, userId });
 
-  await order.destroy();
-
-  res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Order deleted successfully"));
+  res.status(200).json(new ApiResponse(200, {}, "Order deleted successfully"));
 });
-
 
 // Get all orders (Admin use case)
 export const getAllOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.findAll({
-    include: [
-      {
-        model: User,
-        attributes: ["id", "firstName", "email"],
-      },
-      {
-        model: orderItem,
-        include: [
-          {
-            model: Product,
-            attributes: ["id", "title", "productImage", "price"],
-          },
-        ],
-      },
-    ],
-    order: [["createdAt", "DESC"]], // latest orders first
-  });
+  const orders = await ordersService.getAllOrders();
 
-  res.status(200).json({
-    success: true,
-    message: "All user orders fetched successfully",
-    data: orders,
-  });
+  res.status(200).json(new ApiResponse(200, orders, "All user orders fetched successfully"));
 });
 
 // Get single order details by ID
 export const getOrderById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const order = await Order.findByPk(id, {
-    include: [
-      {
-        model: User,
-        attributes: ["id", "firstName", "email"],
-      },
-      {
-        model: orderItem,
-        include: [
-          {
-            model: Product,
-            attributes: ["id", "title", "productImage", "price"],
-          },
-        ],
-      },
-    ],
-  });
+  const order = await ordersService.getOrderById({ id });
 
-  if (!order) throw new ApiError(404, "Order not found");
-
-  res.status(200).json({
-    success: true,
-    message: "Order details fetched successfully",
-    data: order,
-  });
+  res.status(200).json(new ApiResponse(200, order, "Order details fetched successfully"));
 });
 
 // Get total number of orders
 export const getTotalOrders = asyncHandler(async (req, res) => {
-  const totalOrders = await Order.count();
+  const totalOrders = await ordersService.getTotalOrders();
 
-  res.status(200).json({
-    success: true,
-    message: "Total number of orders fetched successfully",
-    data: { totalOrders },
-  });
+  res
+    .status(200)
+    .json(new ApiResponse(200, { totalOrders }, "Total number of orders fetched successfully"));
 });

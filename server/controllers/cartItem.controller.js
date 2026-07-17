@@ -1,20 +1,29 @@
+<<<<<<< HEAD
 import CartItem from "../models/CartItem.model.js";
 import Product from "../models/product.model.js";
 import ProductVariant from "../models/productVariant.model.js";
 import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.js";
+=======
+import * as cartItemService from "../services/cartItem.service.js";
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 // Add item to cart
 export const addToCart = asyncHandler(async (req, res) => {
+<<<<<<< HEAD
   const { quantity, variantId } = req.body;
+=======
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
   const { productId } = req.params;
+  const { quantity } = req.body;
+  const userId = req.user?.id;
+  const guestId = req.guestId;
 
-  const userId = req.user.id; // assume user is logged in (from auth middleware)
-console.log(`user id ye he ${userId}  and product id ye he  ${productId} or quanitty ye h e${quantity}`)
-  // check product exists
+  const cartItem = await cartItemService.addToCart({ userId, guestId, productId, quantity });
 
+<<<<<<< HEAD
   const product = await Product.findByPk(productId);
   if (!product) throw new ApiError(404, "Product not found");
 
@@ -54,12 +63,17 @@ console.log(`user id ye he ${userId}  and product id ye he  ${productId} or quan
   res.status(201).json(
     new ApiResponse(201, { ...cartItem.toJSON(), totalPrice }, "Item added to cart successfully")
   );
+=======
+  res.status(201).json(new ApiResponse(201, cartItem, "Item added to cart successfully"));
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 });
 
-// Get all cart items of logged-in user
+// Get all cart items of logged-in user or guest
 export const getUserCart = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  const guestId = req.guestId;
 
+<<<<<<< HEAD
   const cartItems = await CartItem.findAll({
     where: { userId },
     include: [
@@ -68,52 +82,42 @@ export const getUserCart = asyncHandler(async (req, res) => {
       { model: User, attributes: ["id", "firstName", "email"] },
     ],
   });
+=======
+  const cartItems = await cartItemService.getUserCart({ userId, guestId });
+>>>>>>> 58a249e3315431d3cb1baffc2e79c74b6949ce44
 
-  // attach totalPrice for each item
-  const cartWithTotals = cartItems.map(item => ({
-    ...item.toJSON(),
-    totalPrice: item.quantity * item.priceAtAddition,
-  }));
-
-  res.status(200).json(new ApiResponse(200, cartWithTotals, "Cart fetched successfully"));
+  res.status(200).json(new ApiResponse(200, cartItems, "Cart fetched successfully"));
 });
 
 // Update quantity of cart item
 export const updateCartItem = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  const guestId = req.guestId;
 
-  let cartItem = await CartItem.findOne({ where: { id, userId }, include: [Product] });
-  if (!cartItem) throw new ApiError(404, "Cart item not found");
+  const cartItem = await cartItemService.updateCartItem({ id, userId, guestId, quantity });
 
-  cartItem.quantity = quantity;
-  await cartItem.save();
-
-  const totalPrice = quantity * cartItem.priceAtAddition;
-
-  res.status(200).json(
-    new ApiResponse(200, { ...cartItem.toJSON(), totalPrice }, "Cart item updated successfully")
-  );
+  res.status(200).json(new ApiResponse(200, cartItem, "Cart item updated successfully"));
 });
 
 // Remove cart item
 export const removeCartItem = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  const guestId = req.guestId;
 
-  const cartItem = await CartItem.findOne({ where: { id, userId } });
-  if (!cartItem) throw new ApiError(404, "Cart item not found");
-
-  await cartItem.destroy();
+  await cartItemService.removeCartItem({ id, userId, guestId });
 
   res.status(200).json(new ApiResponse(200, {}, "Cart item removed successfully"));
 });
 
 // Clear all cart items
 export const clearCart = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  await CartItem.destroy({ where: { userId } });
+  const userId = req.user?.id;
+  const guestId = req.guestId;
+
+  await cartItemService.clearCart({ userId, guestId });
 
   res.status(200).json(new ApiResponse(200, {}, "Cart cleared successfully"));
 });

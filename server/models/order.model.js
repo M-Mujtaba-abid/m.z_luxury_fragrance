@@ -69,7 +69,15 @@ const Order = sequelize.define(
     },
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+    },
+    guestId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    guestEmail: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
 
     // snapshot of user info
@@ -111,7 +119,16 @@ const Order = sequelize.define(
       defaultValue: "pending",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    validate: {
+      hasOwner() {
+        if (!this.userId && !this.guestId) {
+          throw new Error("Order must belong to either a userId or a guestId");
+        }
+      },
+    },
+  }
 );
 
 // relation

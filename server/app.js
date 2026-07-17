@@ -21,14 +21,21 @@ dotenv.config();
 
 
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.LOCAL_URL,
+  "https://luxuryfragrancemz.vercel.app",
+  "https://m-z-luxury-fragrance-61m9.vercel.app",
+].filter(Boolean);
+const isLocalhostOrigin = (origin) => /^http:\/\/localhost:\d+$/.test(origin);
+
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL,
-    process.env.LOCAL_URL,
-    "https://m-z-luxury-fragrance-61m9.vercel.app",
-    "https://luxuryfragrancemz.vercel.app",
-    "http://localhost:5173"
-  ].filter(Boolean),
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || isLocalhostOrigin(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true
 }));
