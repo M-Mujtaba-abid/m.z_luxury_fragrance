@@ -54,6 +54,52 @@ const Product = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: true, // sirf tab required jab isOnSale true ho
     },
+
+    // 🟢 Catalog metadata (product form: brand/notes/SEO/publish state)
+    brand: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    // Fragrance-industry classification, distinct from `category` above:
+    // `category` drives storefront navigation (Men/Women/Children sections),
+    // `gender` is who the scent is marketed for (a unisex scent can still
+    // live under either category section).
+    gender: {
+      type: DataTypes.ENUM("Men", "Women", "Unisex"),
+      allowNull: true,
+    },
+    topNotes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
+    heartNotes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
+    baseNotes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
+    metaTitle: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    metaDescription: {
+      type: DataTypes.STRING(300),
+      allowNull: true,
+    },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+    // Distinct from `status` above, which tracks stock availability, not
+    // whether the product is visible on the storefront yet.
+    publishStatus: {
+      type: DataTypes.ENUM("draft", "published"),
+      allowNull: false,
+      defaultValue: "draft",
+    },
   },
   {
     tableName: "Products",
@@ -61,9 +107,8 @@ const Product = sequelize.define(
   }
 );
 
-// agar associations lagani ho
-// Product.associate = (models) => {
-//   Product.hasMany(models.Order);
-// };
-
+// price/stock/Quantity above remain the product's own "default" listing so
+// products without any configured variants still work in cart/checkout as
+// they do today. ProductVariant rows are additional per-size price/stock
+// overrides layered on top — see ProductVariant.model.js.
 export default Product;
