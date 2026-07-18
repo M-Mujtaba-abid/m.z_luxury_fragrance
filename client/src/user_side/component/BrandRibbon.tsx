@@ -16,7 +16,7 @@ const BRAND_NAMES = [
 export const BrandRibbon: React.FC = () => {
   return (
     <div className="w-full bg-luxury-ink text-luxury-cream py-6 overflow-hidden border-y border-luxury-gold/10 select-none">
-      <div className="flex whitespace-nowrap gap-12 animate-[scroll_30s_linear_infinite]">
+      <div className="flex whitespace-nowrap gap-12 animate-[scroll_14s_linear_infinite]">
         {/* Double the list for infinite marquee */}
         {[...BRAND_NAMES, ...BRAND_NAMES].map((brand, idx) => (
           <div

@@ -1,9 +1,11 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../redux/store";
 import { fetchMyOrders } from "../../../redux/thunks/OrderThunk";
+import { fetchEligibleOrders } from "../../../redux/thunks/ReviewThunk";
 import { useNavigate } from "react-router-dom";
+import ReviewFormModal from "../../../components/user/ReviewFormModal";
 
 const MyOrders: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,12 +14,24 @@ const MyOrders: React.FC = () => {
     (state: RootState) => state.order
   );
   const { token } = useSelector((state: RootState) => state.user);
+  const { eligibleOrders } = useSelector((state: RootState) => state.review);
+
+  const [reviewTarget, setReviewTarget] = useState<{
+    orderId: number;
+    productId: number;
+    productTitle: string;
+    productImage: string;
+  } | null>(null);
 
   useEffect(() => {
     if (token) {
       dispatch(fetchMyOrders());
+      dispatch(fetchEligibleOrders());
     }
   }, [dispatch, token]);
+
+  const isEligibleForReview = (orderId: number, productId: number) =>
+    eligibleOrders.some((e) => e.orderId === orderId && e.productId === productId);
 
   if (!token) {
     return (
@@ -109,6 +123,27 @@ const MyOrders: React.FC = () => {
                       <span className="font-semibold text-gray-900 dark:text-gray-100">
                         Rs. {item.priceAtPurchase * item.quantity}
                       </span>
+                      {order.status === "delivered" && (
+                        isEligibleForReview(order.id, item.productId) ? (
+                          <button
+                            onClick={() =>
+                              setReviewTarget({
+                                orderId: order.id,
+                                productId: item.productId,
+                                productTitle: item.Product?.title,
+                                productImage: item.Product?.productImage,
+                              })
+                            }
+                            className="ml-2 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide bg-luxury-gold text-luxury-ink hover:bg-luxury-gold-bright transition-colors duration-300 whitespace-nowrap"
+                          >
+                            Write a Review
+                          </button>
+                        ) : (
+                          <span className="ml-2 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 whitespace-nowrap">
+                            Reviewed
+                          </span>
+                        )
+                      )}
                     </div>
                   ))}
                 </div>
@@ -156,6 +191,17 @@ const MyOrders: React.FC = () => {
           </div>
         )}
       </div>
+
+      {reviewTarget && (
+        <ReviewFormModal
+          isOpen={!!reviewTarget}
+          onClose={() => setReviewTarget(null)}
+          orderId={reviewTarget.orderId}
+          productId={reviewTarget.productId}
+          productTitle={reviewTarget.productTitle}
+          productImage={reviewTarget.productImage}
+        />
+      )}
     </div>
   );
 };

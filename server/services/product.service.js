@@ -5,6 +5,7 @@ import ApiError from "../utils/apiError.js";
 import uploadBufferToCloudinary from "../utils/cloudinaryUpload.js";
 import slugify from "../utils/slugify.js";
 import { Op, where, col, cast } from "sequelize";
+import * as reviewService from "./review.service.js";
 
 const ALLOWED_CATEGORIES = ["Men", "Women", "Children"];
 const PUBLISHED_ONLY = { publishStatus: "published" };
@@ -13,6 +14,19 @@ const listIncludes = [
   { model: ProductImage, separate: true, order: [["sortOrder", "ASC"]] },
   { model: ProductVariant },
 ];
+
+// Merges averageRating/reviewCount (computed live from Reviews, not stored
+// on Product) into product instance(s) before they reach a controller.
+// Accepts either a single instance or an array, mirrors that shape back.
+const attachRatingSummary = async (products) => {
+  const list = Array.isArray(products) ? products : [products];
+  const summary = await reviewService.getRatingSummaryForProducts(list.map((p) => p.id));
+  const withRatings = list.map((p) => ({
+    ...p.toJSON(),
+    ...(summary[p.id] || { averageRating: 0, reviewCount: 0 }),
+  }));
+  return Array.isArray(products) ? withRatings : withRatings[0];
+};
 
 // Tag-input fields (notes) arrive from multipart form data as either a real
 // array (repeated field name), a JSON-stringified array, or a plain string.
@@ -161,11 +175,13 @@ export const createProduct = async ({
   return getProductById({ id: product.id, includeAll: true });
 };
 
-export const getAllProducts = async ({ includeAll } = {}) =>
-  Product.findAll({
+export const getAllProducts = async ({ includeAll } = {}) => {
+  const products = await Product.findAll({
     where: includeAll ? undefined : PUBLISHED_ONLY,
     include: listIncludes,
   });
+  return attachRatingSummary(products);
+};
 
 export const getProductById = async ({ id, includeAll } = {}) => {
   const product = await Product.findByPk(id, { include: listIncludes });
@@ -175,7 +191,7 @@ export const getProductById = async ({ id, includeAll } = {}) => {
     // "this exists but isn't public" distinction to storefront callers.
     throw new ApiError(404, "Product not found");
   }
-  return product;
+  return attachRatingSummary(product);
 };
 
 export const updateProduct = async ({
@@ -305,7 +321,7 @@ export const searchProducts = async ({ query }) => {
 
   if (!products.length) throw new ApiError(404, "No products found");
 
-  return products;
+  return attachRatingSummary(products);
 };
 
 export const getProductsByCategory = async ({ category }) => {
@@ -322,7 +338,7 @@ export const getProductsByCategory = async ({ category }) => {
   });
   if (products.length === 0) throw new ApiError(404, "No products found in this category");
 
-  return products;
+  return attachRatingSummary(products);
 };
 
 // Admin-facing count (Dashboard "Total Products" KPI) — intentionally counts
@@ -330,10 +346,16 @@ export const getProductsByCategory = async ({ category }) => {
 export const getNumberOfTotalproduct = async () => Product.count();
 
 export const getFeaturedProducts = async () =>
-  Product.findAll({ where: { isFeatured: true, ...PUBLISHED_ONLY }, include: listIncludes });
+  attachRatingSummary(
+    await Product.findAll({ where: { isFeatured: true, ...PUBLISHED_ONLY }, include: listIncludes })
+  );
 
 export const getNewArrivals = async () =>
-  Product.findAll({ where: { isNewArrival: true, ...PUBLISHED_ONLY }, include: listIncludes });
+  attachRatingSummary(
+    await Product.findAll({ where: { isNewArrival: true, ...PUBLISHED_ONLY }, include: listIncludes })
+  );
 
 export const getOnSaleProducts = async () =>
-  Product.findAll({ where: { isOnSale: true, ...PUBLISHED_ONLY }, include: listIncludes });
+  attachRatingSummary(
+    await Product.findAll({ where: { isOnSale: true, ...PUBLISHED_ONLY }, include: listIncludes })
+  );

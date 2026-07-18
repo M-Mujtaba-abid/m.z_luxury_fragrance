@@ -42,6 +42,9 @@ export interface Product {
   publishStatus?: 'draft' | 'published';
   ProductImages?: ProductImage[];
   ProductVariants?: ProductVariant[];
+  // Computed live from Reviews, not stored on the product row itself.
+  averageRating?: number;
+  reviewCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }

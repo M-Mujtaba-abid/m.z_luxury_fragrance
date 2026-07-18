@@ -8,6 +8,7 @@ import {
 } from "../../redux/slices/ProductSlice";
 import type { RootState, AppDispatch } from "../../redux/store";
 import AddToCartButton from "../../components/user/AddToCartButton";
+import ProductReviews from "../../components/user/ProductReviews";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -212,6 +213,8 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
+
+        <ProductReviews productId={currentProduct.id} />
       </div>
     </div>
   );
