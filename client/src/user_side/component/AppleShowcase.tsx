@@ -5,6 +5,10 @@ import { ShieldCheck, Flame, Layers, Award } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Prevents pinned sections from glitching when mobile browsers
+// resize the viewport on scroll (address bar show/hide).
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 const VIDEO_SRC = "/Generated Video July 17, 2026 - 12_20PM.mp4";
 
 export const AppleShowcase: React.FC = () => {
@@ -103,8 +107,15 @@ export const AppleShowcase: React.FC = () => {
 
     render();
 
+    // Content above/below this section (product grids, async-loaded images)
+    // keeps reflowing after mount, which leaves the pin's start/end pixel
+    // positions stale — refresh whenever the document's height actually changes.
+    const resizeObserver = new ResizeObserver(() => ScrollTrigger.refresh());
+    resizeObserver.observe(document.body);
+
     return () => {
       cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
       ScrollTrigger.getAll().forEach((trigger) => {
         if (trigger.trigger === container) {
           trigger.kill();
@@ -143,12 +154,12 @@ export const AppleShowcase: React.FC = () => {
         <div className="relative w-full max-w-7xl mx-auto px-6 sm:px-8 h-full flex items-center justify-center">
 
           {/* Left Cards Column */}
-          <div className="absolute left-8 lg:left-24 z-20 flex flex-col gap-6 max-w-sm">
+          <div className="contents md:absolute md:left-8 lg:left-24 md:z-20 md:flex md:flex-col md:gap-6 md:max-w-sm">
 
             {/* Card 1: Heritage */}
             <div
               ref={card1Ref}
-              className="p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
+              className="absolute inset-x-6 top-1/2 -translate-y-1/2 z-20 pointer-events-none md:static md:translate-y-0 md:pointer-events-auto p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
             >
               <Award className="w-8 h-8 text-luxury-gold" />
               <h3 className="font-logo text-xl font-light tracking-wide text-luxury-cream">French Craftsmanship</h3>
@@ -160,7 +171,7 @@ export const AppleShowcase: React.FC = () => {
             {/* Card 3: Longevity */}
             <div
               ref={card3Ref}
-              className="p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
+              className="absolute inset-x-6 top-1/2 -translate-y-1/2 z-20 pointer-events-none md:static md:translate-y-0 md:pointer-events-auto p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
             >
               <Flame className="w-8 h-8 text-luxury-gold-bright" />
               <h3 className="font-logo text-xl font-light tracking-wide text-luxury-cream">24-Hour Active Sillage</h3>
@@ -172,12 +183,12 @@ export const AppleShowcase: React.FC = () => {
           </div>
 
           {/* Right Cards Column */}
-          <div className="absolute right-8 lg:right-24 z-20 flex flex-col gap-6 max-w-sm">
+          <div className="contents md:absolute md:right-8 lg:right-24 md:z-20 md:flex md:flex-col md:gap-6 md:max-w-sm">
 
             {/* Card 2: Glass Composition */}
             <div
               ref={card2Ref}
-              className="p-6 rounded-2xl mt-[150px] bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
+              className="absolute inset-x-6 top-1/2 -translate-y-1/2 z-20 pointer-events-none md:static md:translate-y-0 md:pointer-events-auto md:mt-[150px] p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
             >
               <Layers className="w-8 h-8 text-luxury-gold" />
               <h3 className="font-logo text-xl font-light tracking-wide text-luxury-cream">Refractive Crystal Vessel</h3>
@@ -189,7 +200,7 @@ export const AppleShowcase: React.FC = () => {
             {/* Final CTA Card */}
             <div
               ref={ctaRef}
-              className="p-8 rounded-3xl bg-luxury-elevated/90 border border-luxury-gold/15 backdrop-blur-lg space-y-5 opacity-0 flex flex-col items-start"
+              className="absolute inset-x-6 top-1/2 -translate-y-1/2 z-20 md:static md:translate-y-0 p-8 rounded-3xl bg-luxury-elevated/90 border border-luxury-gold/15 backdrop-blur-lg space-y-5 opacity-0 flex flex-col items-start"
             >
               <span className="text-[10px] tracking-[0.2em] font-bold text-luxury-gold uppercase">
                 Ready to Experience
