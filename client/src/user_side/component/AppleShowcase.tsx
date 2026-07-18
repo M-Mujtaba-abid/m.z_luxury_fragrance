@@ -116,7 +116,7 @@ export const AppleShowcase: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative bg-black overflow-hidden"
+      className="relative bg-luxury-ink overflow-hidden"
       style={{ height: "2200px" }}
     >
       {/* Sticky Viewport */}
@@ -148,11 +148,11 @@ export const AppleShowcase: React.FC = () => {
             {/* Card 1: Heritage */}
             <div
               ref={card1Ref}
-              className="p-6 rounded-2xl bg-neutral-950/70 border border-neutral-900 backdrop-blur-md space-y-3 opacity-0"
+              className="p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
             >
-              <Award className="w-8 h-8 text-amber-400" />
-              <h3 className="text-xl font-light tracking-wide">French Craftsmanship</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
+              <Award className="w-8 h-8 text-luxury-gold" />
+              <h3 className="font-logo text-xl font-light tracking-wide text-luxury-cream">French Craftsmanship</h3>
+              <p className="text-xs text-luxury-cream/70 leading-relaxed">
                 Handcrafted by top-tier Parisian perfumers, selecting only rare organic petals and exotic spices.
               </p>
             </div>
@@ -160,11 +160,11 @@ export const AppleShowcase: React.FC = () => {
             {/* Card 3: Longevity */}
             <div
               ref={card3Ref}
-              className="p-6 rounded-2xl bg-neutral-950/70 border border-neutral-900 backdrop-blur-md space-y-3 opacity-0"
+              className="p-6 rounded-2xl bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
             >
-              <Flame className="w-8 h-8 text-rose-500" />
-              <h3 className="text-xl font-light tracking-wide">24-Hour Active Sillage</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
+              <Flame className="w-8 h-8 text-luxury-gold-bright" />
+              <h3 className="font-logo text-xl font-light tracking-wide text-luxury-cream">24-Hour Active Sillage</h3>
+              <p className="text-xs text-luxury-cream/70 leading-relaxed">
                 An intense, high-concentration molecular blend designed to linger elegantly throughout day and night.
               </p>
             </div>
@@ -177,11 +177,11 @@ export const AppleShowcase: React.FC = () => {
             {/* Card 2: Glass Composition */}
             <div
               ref={card2Ref}
-              className="p-6 rounded-2xl mt-[150px] bg-neutral-950/70 border border-neutral-900 backdrop-blur-md space-y-3 opacity-0"
+              className="p-6 rounded-2xl mt-[150px] bg-luxury-elevated/80 border border-luxury-gold/10 backdrop-blur-md space-y-3 opacity-0"
             >
-              <Layers className="w-8 h-8 text-blue-400" />
-              <h3 className="text-xl font-light tracking-wide">Refractive Crystal Vessel</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
+              <Layers className="w-8 h-8 text-luxury-gold" />
+              <h3 className="font-logo text-xl font-light tracking-wide text-luxury-cream">Refractive Crystal Vessel</h3>
+              <p className="text-xs text-luxury-cream/70 leading-relaxed">
                 Housed in a thick-bottomed custom crystal bottle that plays with light refraction, evoking gold liquid art.
               </p>
             </div>
@@ -189,18 +189,18 @@ export const AppleShowcase: React.FC = () => {
             {/* Final CTA Card */}
             <div
               ref={ctaRef}
-              className="p-8 rounded-3xl bg-neutral-950/90 border border-neutral-900 backdrop-blur-lg space-y-5 opacity-0 flex flex-col items-start"
+              className="p-8 rounded-3xl bg-luxury-elevated/90 border border-luxury-gold/15 backdrop-blur-lg space-y-5 opacity-0 flex flex-col items-start"
             >
-              <span className="text-[10px] tracking-[0.2em] font-bold text-amber-500 uppercase">
+              <span className="text-[10px] tracking-[0.2em] font-bold text-luxury-gold uppercase">
                 Ready to Experience
               </span>
-              <h3 className="text-2xl font-light tracking-wide">Oud Impérial</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
+              <h3 className="font-logo text-2xl font-light tracking-wide text-luxury-cream">Oud Impérial</h3>
+              <p className="text-xs text-luxury-cream/70 leading-relaxed">
                 Claim your standard bottle pack and experience a sensory impression that defines modern royalty.
               </p>
               <div className="flex gap-2">
-                <span className="text-lg font-bold text-white">Rs. 8,500</span>
-                <span className="text-xs text-neutral-400 line-through self-end mb-0.5">Rs. 12,000</span>
+                <span className="text-lg font-bold text-luxury-gold">Rs. 8,500</span>
+                <span className="text-xs text-luxury-cream/40 line-through self-end mb-0.5">Rs. 12,000</span>
               </div>
               <button
                 onClick={() => {
@@ -211,7 +211,7 @@ export const AppleShowcase: React.FC = () => {
                     window.location.href = "/web/all-products";
                   }
                 }}
-                className="w-full py-3 bg-white hover:bg-neutral-200 text-black font-semibold text-xs tracking-widest uppercase rounded-lg shadow-lg transition duration-300 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink font-semibold text-xs tracking-widest uppercase rounded-lg shadow-lg transition-colors duration-300 flex items-center justify-center gap-2"
               >
                 <ShieldCheck size={14} />
                 <span>Reserve Bottle</span>
