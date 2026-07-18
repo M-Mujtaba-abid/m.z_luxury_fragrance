@@ -19,21 +19,21 @@ const OnSaleProducts = () => {
 
   if (error) {
     return (
-      <div className="mt-12 p-6 bg-red-50/50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl text-center text-rose-500">
+      <div className="mt-12 p-6 bg-red-950/40 border border-red-900/50 rounded-2xl text-center text-red-300">
         Error loading sale products. Please try again.
       </div>
     );
   }
 
   return (
-    <div className="mt-12 rounded-3xl p-8 border border-neutral-100 dark:border-neutral-900 bg-white/40 dark:bg-neutral-950/20 backdrop-blur-md">
+    <div className="mt-12 rounded-3xl p-8 border border-luxury-gold/10 bg-luxury-card backdrop-blur-md">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <span className="text-[10px] tracking-[0.2em] text-neutral-400 dark:text-neutral-500 font-bold uppercase">
+          <span className="text-[10px] tracking-[0.2em] text-luxury-gold font-bold uppercase">
             Exclusive Deals
           </span>
-          <h2 className="text-3xl font-light tracking-wide text-neutral-900 dark:text-white mt-1">
+          <h2 className="font-logo text-3xl font-light tracking-wide text-luxury-cream mt-1">
             On Sale Impressions
           </h2>
         </div>
@@ -42,7 +42,7 @@ const OnSaleProducts = () => {
           <Link
             to="/web/all-products"
             state={{ category: "onSale" }}
-            className="text-xs tracking-wider uppercase font-semibold text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-colors duration-300 border-b border-neutral-300 dark:border-neutral-700 pb-0.5"
+            className="text-xs tracking-wider uppercase font-semibold text-luxury-gold hover:text-luxury-gold-bright transition-colors duration-300 border-b border-luxury-gold/30 pb-0.5"
           >
             View All Sales
           </Link>
@@ -69,7 +69,7 @@ const OnSaleProducts = () => {
           ))}
 
           {productsToShow.length === 0 && (
-            <div className="col-span-full text-center text-neutral-400 py-10">
+            <div className="col-span-full text-center text-luxury-cream/50 py-10">
               No products are currently on sale.
             </div>
           )}

@@ -59,9 +59,9 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
       await dispatch(
         addToCart({ productId: product.id, quantity: selectedQuantity })
       ).unwrap();
-      
+
       toast.success(`${product.title} added to cart!`);
-      
+
       if (checkoutAfter) {
         onClose();
         navigate("/web/checkout");
@@ -86,18 +86,18 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
 
           {/* Container Drawer */}
           <div
-            className="relative w-full max-w-5xl h-[90vh] md:h-auto max-h-[85vh] bg-white dark:bg-neutral-950 border border-neutral-100 dark:border-neutral-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-300"
+            className="relative w-full max-w-5xl h-[90vh] md:h-auto max-h-[85vh] bg-luxury-elevated border border-luxury-gold/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-300"
           >
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute right-6 top-6 z-20 p-2 rounded-full bg-neutral-100 dark:bg-neutral-900 text-neutral-500 hover:text-neutral-950 dark:hover:text-white transition-colors duration-300"
+              className="absolute right-6 top-6 z-20 p-2 rounded-full bg-luxury-ink text-luxury-cream/70 hover:text-luxury-gold transition-colors duration-300"
             >
               <X size={18} />
             </button>
 
             {/* Left Side: Images & Zoom Panel */}
-            <div className="w-full md:w-1/2 bg-neutral-50 dark:bg-neutral-900 p-6 flex flex-col justify-center items-center relative overflow-hidden">
+            <div className="w-full md:w-1/2 bg-luxury-ink p-6 flex flex-col justify-center items-center relative overflow-hidden">
               <div className="relative aspect-square w-full max-w-[380px] group cursor-zoom-in overflow-hidden rounded-2xl">
                 <ImageLoader
                   src={product.productImage}
@@ -110,12 +110,12 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
               {/* Badges */}
               <div className="absolute left-6 top-6 flex flex-col gap-1.5 pointer-events-none">
                 {product.isOnSale && (
-                  <span className="px-3 py-1 text-[9px] tracking-widest font-bold bg-rose-500 text-white rounded-full uppercase">
+                  <span className="px-3 py-1 text-[9px] tracking-widest font-bold bg-red-500 text-white rounded-full uppercase">
                     Sale
                   </span>
                 )}
                 {product.isFeatured && (
-                  <span className="px-3 py-1 text-[9px] tracking-widest font-bold bg-amber-500 text-white rounded-full uppercase">
+                  <span className="px-3 py-1 text-[9px] tracking-widest font-bold bg-luxury-gold text-luxury-ink rounded-full uppercase">
                     Signature
                   </span>
                 )}
@@ -127,45 +127,45 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
               <div className="space-y-6">
                 {/* Meta details & reviews */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs tracking-widest text-neutral-400 dark:text-neutral-500 uppercase">
+                  <div className="flex items-center justify-between text-xs tracking-widest text-luxury-cream/50 uppercase">
                     <span>{product.category} COLLECTION</span>
                     <div className="flex items-center gap-1">
-                      <div className="flex text-amber-400">
+                      <div className="flex text-luxury-gold">
                         {Array.from({ length: 5 }).map((_, i) => (
                           <Star key={i} size={11} fill="currentColor" className="stroke-none" />
                         ))}
                       </div>
-                      <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                      <span className="font-semibold text-luxury-cream/80">
                         4.8 (42 Reviews)
                       </span>
                     </div>
                   </div>
 
-                  <h2 className="text-2xl font-light text-neutral-900 dark:text-white tracking-wide">
+                  <h2 className="font-logo text-2xl font-light text-luxury-cream tracking-wide">
                     {product.title}
                   </h2>
                 </div>
 
                 {/* Price Display */}
                 <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-semibold text-neutral-900 dark:text-white">
+                  <span className="text-2xl font-semibold text-luxury-gold">
                     Rs. {displayPrice}
                   </span>
                   {product.isOnSale && product.discountPrice && (
-                    <span className="text-sm text-neutral-400 line-through">
+                    <span className="text-sm text-luxury-cream/40 line-through">
                       Rs. {product.price}
                     </span>
                   )}
-                  <span className="text-xs text-emerald-500 font-medium ml-2">
+                  <span className="text-xs text-emerald-400 font-medium ml-2">
                     {product.stock > 0 ? `In Stock (${product.stock} left)` : "Out of Stock"}
                   </span>
                 </div>
 
                 {/* Options selectors */}
-                <div className="space-y-4 pt-2 border-t border-neutral-100 dark:border-neutral-900">
+                <div className="space-y-4 pt-2 border-t border-luxury-gold/10">
                   {/* Size Selector */}
                   <div>
-                    <span className="text-xs tracking-widest text-neutral-400 dark:text-neutral-500 uppercase block mb-2">
+                    <span className="text-xs tracking-widest text-luxury-cream/50 uppercase block mb-2">
                       Select Size
                     </span>
                     <div className="flex gap-3">
@@ -175,8 +175,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                           onClick={() => setSelectedSize(size)}
                           className={`px-4 py-2 text-xs font-semibold tracking-wider rounded-lg border transition-all duration-300 ${
                             selectedSize === size
-                              ? "bg-black dark:bg-white text-white dark:text-black border-transparent shadow-sm"
-                              : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 text-neutral-700 dark:text-neutral-300 bg-transparent"
+                              ? "bg-luxury-gold text-luxury-ink border-transparent shadow-sm"
+                              : "border-luxury-gold/20 hover:border-luxury-gold/50 text-luxury-cream/70 bg-transparent"
                           }`}
                         >
                           {size}
@@ -187,24 +187,24 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
 
                   {/* Quantity Selector */}
                   <div>
-                    <span className="text-xs tracking-widest text-neutral-400 dark:text-neutral-500 uppercase block mb-2">
+                    <span className="text-xs tracking-widest text-luxury-cream/50 uppercase block mb-2">
                       Quantity
                     </span>
-                    <div className="inline-flex items-center border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-neutral-50 dark:bg-neutral-900/50">
+                    <div className="inline-flex items-center border border-luxury-gold/20 rounded-lg overflow-hidden bg-luxury-ink">
                       <button
                         onClick={() => setSelectedQuantity(Math.max(1, selectedQuantity - 1))}
-                        className="px-3.5 py-1.5 text-neutral-500 hover:text-black dark:hover:text-white transition-colors duration-300"
+                        className="px-3.5 py-1.5 text-luxury-cream/60 hover:text-luxury-gold transition-colors duration-300"
                       >
                         -
                       </button>
-                      <span className="px-4 text-xs font-semibold text-neutral-800 dark:text-neutral-200">
+                      <span className="px-4 text-xs font-semibold text-luxury-cream">
                         {selectedQuantity}
                       </span>
                       <button
                         onClick={() =>
                           setSelectedQuantity(Math.min(product.stock, selectedQuantity + 1))
                         }
-                        className="px-3.5 py-1.5 text-neutral-500 hover:text-black dark:hover:text-white transition-colors duration-300"
+                        className="px-3.5 py-1.5 text-luxury-cream/60 hover:text-luxury-gold transition-colors duration-300"
                       >
                         +
                       </button>
@@ -214,15 +214,15 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
 
                 {/* Tabs for detailed content */}
                 <div>
-                  <div className="flex border-b border-neutral-100 dark:border-neutral-900">
+                  <div className="flex border-b border-luxury-gold/10">
                     {["description", "shipping", "returns"].map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
                         className={`pb-2 pr-6 text-xs uppercase tracking-wider font-semibold transition-colors duration-300 ${
                           activeTab === tab
-                            ? "text-black dark:text-white border-b-2 border-black dark:border-white"
-                            : "text-neutral-400 dark:text-neutral-500 hover:text-neutral-600"
+                            ? "text-luxury-gold border-b-2 border-luxury-gold"
+                            : "text-luxury-cream/50 hover:text-luxury-cream/70"
                         }`}
                       >
                         {tab}
@@ -230,7 +230,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                     ))}
                   </div>
 
-                  <div className="py-4 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                  <div className="py-4 text-xs leading-relaxed text-luxury-cream/70">
                     {activeTab === "description" && (
                       <p>{product.description || "A luxury, masterfully formulated fragrance blending rare, selected botanicals. Creates a long-lasting, sophisticated sensory footprint."}</p>
                     )}
@@ -245,12 +245,12 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
               </div>
 
               {/* Actions & checkout triggers */}
-              <div className="space-y-3 pt-6 border-t border-neutral-100 dark:border-neutral-900">
+              <div className="space-y-3 pt-6 border-t border-luxury-gold/10">
                 <div className="flex gap-3">
                   <button
                     onClick={() => handleAddToCart(false)}
                     disabled={product.stock <= 0 || isAdding}
-                    className="flex-1 py-3 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors duration-300"
+                    className="flex-1 py-3 border border-luxury-gold text-luxury-gold hover:bg-luxury-gold/10 rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors duration-300"
                   >
                     {isAdding ? (
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -265,7 +265,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                   <button
                     onClick={() => handleAddToCart(true)}
                     disabled={product.stock <= 0 || isBuyingNow}
-                    className="flex-1 py-3 bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors duration-300"
+                    className="flex-1 py-3 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors duration-300"
                   >
                     {isBuyingNow ? (
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -279,17 +279,17 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                 </div>
 
                 {/* Trust Badges */}
-                <div className="grid grid-cols-3 gap-2 pt-2 text-[10px] text-center text-neutral-400 dark:text-neutral-500">
-                  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-900/50">
-                    <ShieldCheck size={14} className="text-emerald-500" />
+                <div className="grid grid-cols-3 gap-2 pt-2 text-[10px] text-center text-luxury-cream/50">
+                  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-luxury-ink">
+                    <ShieldCheck size={14} className="text-emerald-400" />
                     <span>Secure Payment</span>
                   </div>
-                  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-900/50">
-                    <Truck size={14} className="text-blue-500" />
+                  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-luxury-ink">
+                    <Truck size={14} className="text-blue-400" />
                     <span>Signature Delivery</span>
                   </div>
-                  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-900/50">
-                    <RefreshCw size={14} className="text-amber-500" />
+                  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-luxury-ink">
+                    <RefreshCw size={14} className="text-luxury-gold" />
                     <span>Easy Returns</span>
                   </div>
                 </div>

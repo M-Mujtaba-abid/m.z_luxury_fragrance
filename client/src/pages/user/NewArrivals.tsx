@@ -36,21 +36,21 @@ const NewArrivals = () => {
 
   if (error) {
     return (
-      <div className="mt-12 p-6 bg-red-50/50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl text-center text-rose-500">
+      <div className="mt-12 p-6 bg-red-950/40 border border-red-900/50 rounded-2xl text-center text-red-300">
         Error loading new arrivals. Please try again.
       </div>
     );
   }
 
   return (
-    <div className="rounded-3xl p-8 border border-neutral-100 dark:border-neutral-900 bg-white/40 dark:bg-neutral-950/20 backdrop-blur-md relative">
+    <div className="rounded-3xl p-8 border border-luxury-gold/10 bg-luxury-card backdrop-blur-md relative">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <span className="text-[10px] tracking-[0.2em] text-neutral-400 dark:text-neutral-500 font-bold uppercase">
+          <span className="text-[10px] tracking-[0.2em] text-luxury-gold font-bold uppercase">
             Fresh Releases
           </span>
-          <h2 className="text-3xl font-light tracking-wide text-neutral-900 dark:text-white mt-1">
+          <h2 className="font-logo text-3xl font-light tracking-wide text-luxury-cream mt-1">
             New Arrivals
           </h2>
         </div>
@@ -58,7 +58,7 @@ const NewArrivals = () => {
         <Link
           to="/web/all-products"
           state={{ category: "newArrival" }}
-          className="text-xs tracking-wider uppercase font-semibold text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-colors duration-300 border-b border-neutral-300 dark:border-neutral-700 pb-0.5"
+          className="text-xs tracking-wider uppercase font-semibold text-luxury-gold hover:text-luxury-gold-bright transition-colors duration-300 border-b border-luxury-gold/30 pb-0.5"
         >
           View More
         </Link>
@@ -69,14 +69,14 @@ const NewArrivals = () => {
         <>
           <button
             onClick={scrollLeft}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-black/80 hover:bg-white dark:hover:bg-neutral-900 p-3 rounded-full shadow-lg border border-neutral-100 dark:border-neutral-800 text-neutral-800 dark:text-white transition duration-300 backdrop-blur-md"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-luxury-elevated/80 hover:bg-luxury-elevated p-3 rounded-full shadow-lg border border-luxury-gold/20 text-luxury-cream transition-colors duration-300 backdrop-blur-md"
             aria-label="Scroll Left"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={scrollRight}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-black/80 hover:bg-white dark:hover:bg-neutral-900 p-3 rounded-full shadow-lg border border-neutral-100 dark:border-neutral-800 text-neutral-800 dark:text-white transition duration-300 backdrop-blur-md"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-luxury-elevated/80 hover:bg-luxury-elevated p-3 rounded-full shadow-lg border border-luxury-gold/20 text-luxury-cream transition-colors duration-300 backdrop-blur-md"
             aria-label="Scroll Right"
           >
             <ChevronRight className="w-5 h-5" />
@@ -109,7 +109,7 @@ const NewArrivals = () => {
           ))}
 
           {newArrivals.length === 0 && (
-            <div className="text-center text-neutral-400 py-10 w-full">
+            <div className="text-center text-luxury-cream/50 py-10 w-full">
               No new arrivals at this time.
             </div>
           )}
@@ -130,8 +130,8 @@ const NewArrivals = () => {
               }}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                 index === activeIndex
-                  ? "w-6 bg-black dark:bg-white"
-                  : "bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400"
+                  ? "w-6 bg-luxury-gold"
+                  : "bg-luxury-cream/20 hover:bg-luxury-cream/40"
               }`}
               aria-label={`Slide ${index + 1}`}
             />

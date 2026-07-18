@@ -41,9 +41,9 @@ export const SignaturePreview: React.FC = () => {
       await dispatch(
         addToCart({ productId: productData.id, quantity: quantity })
       ).unwrap();
-      
+
       toast.success(`${productData.title} added to cart!`);
-      
+
       if (checkoutNow) {
         navigate("/web/checkout");
       }
@@ -55,12 +55,12 @@ export const SignaturePreview: React.FC = () => {
   };
 
   return (
-    <div className="mt-16 rounded-[40px] p-8 md:p-16 border border-neutral-100 dark:border-neutral-900 bg-neutral-50/50 dark:bg-neutral-950/40 backdrop-blur-md">
+    <div className="mt-16 rounded-[40px] p-8 md:p-16 border border-luxury-gold/10 bg-luxury-card backdrop-blur-md">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        
+
         {/* Left Side: Product Gallery & Zoom */}
         <div className="lg:col-span-6 flex flex-col items-center">
-          <div className="relative aspect-square w-full max-w-[450px] overflow-hidden rounded-3xl group bg-white dark:bg-neutral-900 shadow-sm border border-neutral-100 dark:border-neutral-900">
+          <div className="relative aspect-square w-full max-w-[450px] overflow-hidden rounded-3xl group bg-luxury-ink shadow-sm border border-luxury-gold/10">
             <img
               src={productData.productImage}
               alt={productData.title}
@@ -70,7 +70,7 @@ export const SignaturePreview: React.FC = () => {
                   "https://scentsnsecrets.com/cdn/shop/files/Category_Pic.jpg2_8916d01e-88d5-4da1-8116-e75e132c7451_600x.webp?v=1755089833";
               }}
             />
-            <div className="absolute right-4 bottom-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] tracking-widest text-white uppercase font-light">
+            <div className="absolute right-4 bottom-4 bg-luxury-ink/80 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] tracking-widest text-luxury-cream uppercase font-light">
               Interactive Preview
             </div>
           </div>
@@ -80,43 +80,43 @@ export const SignaturePreview: React.FC = () => {
         <div className="lg:col-span-6 space-y-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 text-[9px] tracking-widest font-bold bg-amber-500 text-white rounded-full uppercase">
+              <span className="px-2.5 py-0.5 text-[9px] tracking-widest font-bold bg-luxury-gold text-luxury-ink rounded-full uppercase">
                 Signature Collection
               </span>
-              <div className="flex text-amber-400 items-center gap-0.5">
+              <div className="flex text-luxury-gold items-center gap-0.5">
                 <Star size={12} fill="currentColor" className="stroke-none" />
-                <span className="text-xs text-neutral-800 dark:text-neutral-200 font-semibold ml-0.5">
+                <span className="text-xs text-luxury-cream font-semibold ml-0.5">
                   4.9 (182 Reviews)
                 </span>
               </div>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-light text-neutral-900 dark:text-white tracking-wide">
+            <h2 className="font-logo text-3xl sm:text-4xl font-light text-luxury-cream tracking-wide">
               {productData.title}
             </h2>
           </div>
 
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed font-light">
+          <p className="text-sm text-luxury-cream/70 leading-relaxed font-light">
             {productData.description}
           </p>
 
           {/* Pricing */}
           <div className="flex items-baseline gap-3 pt-2">
-            <span className="text-3xl font-semibold text-neutral-900 dark:text-white">
+            <span className="text-3xl font-semibold text-luxury-gold">
               Rs. {displayPrice}
             </span>
-            <span className="text-sm text-neutral-400 line-through">
+            <span className="text-sm text-luxury-cream/40 line-through">
               Rs. {productData.originalPrice}
             </span>
-            <span className="text-xs text-emerald-500 font-medium ml-2">
+            <span className="text-xs text-emerald-400 font-medium ml-2">
               In Stock (Guaranteed Delivery)
             </span>
           </div>
 
           {/* Selection configuration */}
-          <div className="space-y-4 pt-4 border-t border-neutral-100 dark:border-neutral-900">
+          <div className="space-y-4 pt-4 border-t border-luxury-gold/10">
             {/* Size Variants */}
             <div>
-              <span className="text-xs uppercase tracking-widest text-neutral-400 dark:text-neutral-500 font-semibold block mb-2">
+              <span className="text-xs uppercase tracking-widest text-luxury-cream/50 font-semibold block mb-2">
                 Size / Volume
               </span>
               <div className="flex gap-3">
@@ -126,8 +126,8 @@ export const SignaturePreview: React.FC = () => {
                     onClick={() => setSelectedSize(size)}
                     className={`px-4 py-2 text-xs font-semibold tracking-wider rounded-lg border transition-all duration-300 ${
                       selectedSize === size
-                        ? "bg-black dark:bg-white text-white dark:text-black border-transparent shadow-md"
-                        : "border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 bg-transparent hover:border-neutral-400"
+                        ? "bg-luxury-gold text-luxury-ink border-transparent shadow-md"
+                        : "border-luxury-gold/20 text-luxury-cream/70 bg-transparent hover:border-luxury-gold/50"
                     }`}
                   >
                     {size}
@@ -138,22 +138,22 @@ export const SignaturePreview: React.FC = () => {
 
             {/* Quantity */}
             <div>
-              <span className="text-xs uppercase tracking-widest text-neutral-400 dark:text-neutral-500 font-semibold block mb-2">
+              <span className="text-xs uppercase tracking-widest text-luxury-cream/50 font-semibold block mb-2">
                 Quantity
               </span>
-              <div className="inline-flex items-center border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-neutral-50 dark:bg-neutral-900/50">
+              <div className="inline-flex items-center border border-luxury-gold/20 rounded-lg overflow-hidden bg-luxury-ink">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3.5 py-1.5 text-neutral-500 hover:text-black dark:hover:text-white transition-colors duration-300"
+                  className="px-3.5 py-1.5 text-luxury-cream/60 hover:text-luxury-gold transition-colors duration-300"
                 >
                   -
                 </button>
-                <span className="px-4 text-xs font-semibold text-neutral-800 dark:text-neutral-200">
+                <span className="px-4 text-xs font-semibold text-luxury-cream">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="px-3.5 py-1.5 text-neutral-500 hover:text-black dark:hover:text-white transition-colors duration-300"
+                  className="px-3.5 py-1.5 text-luxury-cream/60 hover:text-luxury-gold transition-colors duration-300"
                 >
                   +
                 </button>
@@ -167,7 +167,7 @@ export const SignaturePreview: React.FC = () => {
               <button
                 onClick={() => handleAddToCart(false)}
                 disabled={isAdding}
-                className="flex-1 py-3.5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition duration-300"
+                className="flex-1 py-3.5 border border-luxury-gold text-luxury-gold hover:bg-luxury-gold/10 rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors duration-300"
               >
                 {isAdding ? (
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -180,24 +180,24 @@ export const SignaturePreview: React.FC = () => {
               </button>
               <button
                 onClick={() => handleAddToCart(true)}
-                className="flex-1 py-3.5 bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-xl text-xs font-semibold uppercase tracking-wider transition duration-300"
+                className="flex-1 py-3.5 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors duration-300"
               >
                 Buy Now
               </button>
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-2 pt-4 text-[10px] text-center text-neutral-400 dark:text-neutral-500">
-              <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-white dark:bg-neutral-900/40 border border-neutral-100 dark:border-neutral-900">
-                <ShieldCheck size={14} className="text-emerald-500" />
+            <div className="grid grid-cols-3 gap-2 pt-4 text-[10px] text-center text-luxury-cream/50">
+              <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-luxury-ink border border-luxury-gold/10">
+                <ShieldCheck size={14} className="text-emerald-400" />
                 <span>Secure SSL Checkout</span>
               </div>
-              <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-white dark:bg-neutral-900/40 border border-neutral-100 dark:border-neutral-900">
-                <Truck size={14} className="text-blue-500" />
+              <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-luxury-ink border border-luxury-gold/10">
+                <Truck size={14} className="text-blue-400" />
                 <span>Complimentary Delivery</span>
               </div>
-              <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-white dark:bg-neutral-900/40 border border-neutral-100 dark:border-neutral-900">
-                <RefreshCw size={14} className="text-amber-500" />
+              <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-luxury-ink border border-luxury-gold/10">
+                <RefreshCw size={14} className="text-luxury-gold" />
                 <span>Easy Exchange Sizing</span>
               </div>
             </div>
