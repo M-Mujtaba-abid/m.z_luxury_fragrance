@@ -8,6 +8,7 @@ import cartReducer from "./slices/CartSlice";
 import orderReducer from "./slices/OrderSlice";
 import loaderReducer from "./slices/LoaderSlice";
 import paymentReducer from "./slices/PaymentSlice";
+import reviewReducer from "./slices/ReviewSlice";
 
 
 
@@ -19,9 +20,10 @@ export const store = configureStore({
     order: orderReducer,
     loader: loaderReducer,
      payment: paymentReducer,
-      
+     review: reviewReducer,
+
   },
-  
+
 });
 
 // 🔹 TypeScript types

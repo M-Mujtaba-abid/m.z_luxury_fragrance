@@ -13,6 +13,7 @@ import cartItemRoute from "./routes/cartItem.route.js";
 import orderRoute from "./routes/order.route.js";
 import paymentRoute from "./routes/payment.route.js";
 import webhookRoute from "./routes/webhook.route.js";
+import reviewRoute from "./routes/review.route.js";
 
 const app = express();
 dotenv.config();
@@ -53,6 +54,7 @@ app.use("/product", ProductRoute);
 app.use("/cartitem", cartItemRoute);
 app.use("/order", orderRoute);
 app.use("/payment", paymentRoute);
+app.use("/review", reviewRoute);
 // app.use("/record", webhookRoute);
 
 // Test route
