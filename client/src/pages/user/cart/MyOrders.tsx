@@ -7,6 +7,15 @@ import { fetchEligibleOrders } from "../../../redux/thunks/ReviewThunk";
 import { useNavigate } from "react-router-dom";
 import ReviewFormModal from "../../../components/user/ReviewFormModal";
 
+// Same status color language used on Order Tracking / admin Order Directory.
+const statusStyles: Record<string, string> = {
+  pending: "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30",
+  confirmed: "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30",
+  shipped: "bg-blue-500/15 text-blue-300 border border-blue-500/30",
+  delivered: "bg-green-500/15 text-green-300 border border-green-500/30",
+  cancelled: "bg-red-500/15 text-red-300 border border-red-500/30",
+};
+
 const MyOrders: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -35,14 +44,14 @@ const MyOrders: React.FC = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen pt-[80px] flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
-          <p className="text-gray-800 dark:text-gray-100 mb-4 font-medium">
+      <div className="min-h-screen pt-[80px] flex items-center justify-center bg-luxury-ink">
+        <div className="bg-luxury-card border border-luxury-gold/10 shadow-md p-6 rounded-xl text-center">
+          <p className="text-luxury-cream mb-4 font-medium">
             Please login first to see your orders.
           </p>
           <button
             onClick={() => navigate("/login")}
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+            className="px-4 py-2 rounded-lg bg-luxury-gold text-luxury-ink font-semibold hover:bg-luxury-gold-bright transition-colors duration-300"
           >
             Go to Login
           </button>
@@ -53,29 +62,31 @@ const MyOrders: React.FC = () => {
 
   // if (loading) {
   //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-  //       <p className="text-gray-700 dark:text-gray-300">Loading orders...</p>
+  //     <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
+  //       <p className="text-luxury-cream/70">Loading orders...</p>
   //     </div>
   //   );
   // }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <p className="text-red-500 font-semibold">{error}</p>
+      <div className="min-h-screen pt-[80px] flex items-center justify-center bg-luxury-ink">
+        <div className="bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg p-4 text-sm">
+          {error}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-[80px] bg-gray-100 dark:bg-gray-900 py-12 px-4">
+    <div className="min-h-screen pt-[80px] bg-luxury-ink py-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        <h1 className="font-logo text-3xl font-bold text-luxury-cream mb-8">
           My Orders
         </h1>
 
         {orders?.length === 0 ? (
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-luxury-cream/60">
             You have no orders yet.
           </p>
         ) : (
@@ -83,44 +94,46 @@ const MyOrders: React.FC = () => {
             {orders?.map((order: any) => (
               <div
                 key={order.id}
-                className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6"
+                className="bg-luxury-card border border-luxury-gold/10 shadow-md rounded-xl p-6"
               >
                 {/* Order Header */}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h2 className="font-logo text-lg font-semibold text-luxury-gold">
                     Order #{order.id}
                   </h2>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-luxury-cream/50">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </span>
                 </div>
 
                 {/* Address */}
-                <div className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+                <div className="mb-4 text-sm text-luxury-cream/80">
                   <p>
-                    <span className="font-medium">Delivery Address:</span>{" "}
-                    {order.shippingStreet}, {order.shippingCity}
+                    <span className="font-medium text-luxury-gold">Delivery Address:</span>{" "}
+                    <span className="text-luxury-cream">
+                      {order.shippingStreet}, {order.shippingCity}
+                    </span>
                   </p>
                 </div>
 
                 {/* Products */}
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                <div className="divide-y divide-luxury-gold/10">
                   {order.OrderItems?.map((item: any) => (
                     <div key={item.id} className="flex items-center py-3 gap-4">
                       <img
                         src={item.Product?.productImage}
                         alt={item.Product?.title}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-16 h-16 object-cover rounded-lg"
                       />
                       <div className="flex-1">
-                        <h3 className="text-gray-900 dark:text-white font-medium">
+                        <h3 className="text-luxury-cream font-medium">
                           {item.Product?.title}
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-luxury-cream/60">
                           Qty: {item.quantity}
                         </p>
                       </div>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">
+                      <span className="font-semibold text-luxury-gold">
                         Rs. {item.priceAtPurchase * item.quantity}
                       </span>
                       {order.status === "delivered" && (
@@ -139,7 +152,7 @@ const MyOrders: React.FC = () => {
                             Write a Review
                           </button>
                         ) : (
-                          <span className="ml-2 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 whitespace-nowrap">
+                          <span className="ml-2 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
                             Reviewed
                           </span>
                         )
@@ -149,38 +162,15 @@ const MyOrders: React.FC = () => {
                 </div>
 
                 {/* Total */}
-                <div className="mt-4  flex justify-end font-semibold text-gray-900 dark:text-white">
-                  <span className="font-bold ">Total: </span>
-                  <span>Rs. {order.totalAmount}</span>
+                <div className="mt-4 flex justify-end font-semibold text-luxury-cream">
+                  <span className="font-bold">Total: </span>
+                  <span className="text-luxury-gold">Rs. {order.totalAmount}</span>
                 </div>
                 <div className="mt-4 flex justify-end">
                   <span
-                    className={`px-4 py-1 rounded-full text-sm font-semibold tracking-wide 
-      ${
-        order.status === "pending"
-          ? "bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100"
-          : ""
-      }
-      ${
-        order.status === "confirmed"
-          ? "bg-indigo-200 text-indigo-800 dark:bg-indigo-600 dark:text-indigo-100"
-          : ""
-      }
-      ${
-        order.status === "shipped"
-          ? "bg-blue-200 text-blue-800 dark:bg-blue-600 dark:text-blue-100"
-          : ""
-      }
-      ${
-        order.status === "delivered"
-          ? "bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-100"
-          : ""
-      }
-      ${
-        order.status === "cancelled"
-          ? "bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-100"
-          : ""
-      }`}
+                    className={`px-4 py-1 rounded-full text-sm font-semibold tracking-wide ${
+                      statusStyles[order.status] || ""
+                    }`}
                   >
                     {order.status.charAt(0).toUpperCase() +
                       order.status.slice(1)}

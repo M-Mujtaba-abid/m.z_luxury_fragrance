@@ -10,6 +10,7 @@ import ProductCard from "../../components/user/ProductCard";
 import { ProductsGridSkeleton } from "../../components/ui/ProductCardSkeleton";
 import QuickViewModal from "../../components/user/QuickViewModal";
 import SEO from "../../components/ui/SEO";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const AllProductsRender = () => {
   const location = useLocation();
@@ -53,22 +54,29 @@ const AllProductsRender = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 dark:bg-neutral-950 py-12">
+    <div className="min-h-screen bg-luxury-ink py-12">
       <SEO title={titleText} description={`${titleText} - ${tagText}`} />
       <div className="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
-        
+
         {/* Header */}
         <div className="pt-16 mb-10">
-          <span className="text-[10px] tracking-[0.3em] text-neutral-400 dark:text-neutral-500 font-bold uppercase">
+          <Breadcrumb
+            items={[
+              { label: "Home", path: "/web" },
+              { label: "Collection", path: "/web/all" },
+              { label: titleText },
+            ]}
+          />
+          <span className="text-[10px] tracking-[0.3em] text-luxury-gold font-bold uppercase">
             {tagText}
           </span>
-          <h1 className="text-4xl font-light text-neutral-900 dark:text-white tracking-wide mt-2">
+          <h1 className="font-logo text-4xl font-light text-luxury-cream tracking-wide mt-2">
             {titleText}
           </h1>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 rounded-2xl text-center">
+          <div className="mb-6 p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-2xl text-center">
             Failed to retrieve collection. Please try again.
           </div>
         )}
@@ -94,7 +102,7 @@ const AllProductsRender = () => {
         )}
 
         {!isLoading && productsToShow.length === 0 && (
-          <div className="text-center py-20 text-neutral-500">
+          <div className="text-center py-20 text-luxury-cream/50">
             No items in this collection.
           </div>
         )}

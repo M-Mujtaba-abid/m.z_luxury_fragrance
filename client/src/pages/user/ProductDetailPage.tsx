@@ -9,6 +9,7 @@ import {
 import type { RootState, AppDispatch } from "../../redux/store";
 import AddToCartButton from "../../components/user/AddToCartButton";
 import ProductReviews from "../../components/user/ProductReviews";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -59,6 +60,14 @@ const ProductDetailPage = () => {
   return (
     <div className="min-h-screen py-8  bg-luxury-ink">
       <div className="max-w-4xl pt-10 mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", path: "/web" },
+            { label: "Collection", path: "/web/all" },
+            { label: currentProduct.category, path: `/web/${currentProduct.category}` },
+            { label: currentProduct.title },
+          ]}
+        />
         <div className="bg-luxury-ink border border-luxury-gold/10 rounded-lg shadow-md overflow-hidden">
           {/* Header */}
           <div className="px-6 py-4 border-b border-luxury-gold/10">

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { getProductById, deleteProduct } from "../../../redux/thunks/ProductThunk";
 import { clearError, clearCurrentProduct } from "../../../redux/slices/ProductSlice";
 import type { RootState, AppDispatch } from "../../../redux/store";
+import Breadcrumb from "../../../components/ui/Breadcrumb";
 
 const infoRowClass =
   "flex items-center justify-between p-4 bg-luxury-ink border border-luxury-gold/10 rounded-lg";
@@ -74,6 +75,13 @@ const ProductDetailPage = () => {
   return (
     <div className="min-h-screen py-8 bg-luxury-ink">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", path: "/admin" },
+            { label: "Products", path: "/admin/products" },
+            { label: currentProduct.title },
+          ]}
+        />
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

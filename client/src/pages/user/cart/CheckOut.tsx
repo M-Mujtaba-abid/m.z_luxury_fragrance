@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../../redux/store";
 import { CreditCard, MapPin, User } from "lucide-react";
+import Breadcrumb from "../../../components/ui/Breadcrumb";
 import { createOrder } from "../../../redux/thunks/OrderThunk";
 import { createCheckoutSession } from "../../../redux/thunks/PaymentThunk";
 import { getUserCart } from "../../../redux/thunks/CartThunk";
@@ -111,7 +112,7 @@ const CheckOut = () => {
 
   if (showChoiceScreen) {
     return (
-      <div className="min-h-screen bg-luxury-ink py-12 flex items-center justify-center px-4">
+      <div className="min-h-screen pt-[80px] bg-luxury-ink py-12 flex items-center justify-center px-4">
         <div className="bg-luxury-card border border-luxury-gold/10 rounded-lg shadow-md p-8 max-w-md w-full text-center">
           <h1 className="font-logo text-2xl font-bold text-luxury-cream mb-2">
             Checkout
@@ -139,8 +140,15 @@ const CheckOut = () => {
   }
 
   return (
-    <div className="min-h-screen bg-luxury-ink py-12">
-      <div className="max-w-6xl mx-auto py-[50px] sm:py-0 px-4">
+    <div className="min-h-screen pt-[80px] bg-luxury-ink py-12">
+      <div className="max-w-6xl mx-auto px-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", path: "/web" },
+            { label: "Cart", path: "/web/cart" },
+            { label: "Checkout" },
+          ]}
+        />
         <h1 className="font-logo text-3xl font-bold text-luxury-cream mb-8">
           Checkout
         </h1>
