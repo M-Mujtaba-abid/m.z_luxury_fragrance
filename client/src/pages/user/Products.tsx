@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../redux/thunks/ProductThunk";
 import type { RootState, AppDispatch } from "../../redux/store";
 import { useParams, Link } from "react-router-dom";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,7 +30,17 @@ const Products = () => {
   return (
     <div className="min-h-screen  bg-luxury-ink py-8">
       <div className="max-w-7xl  p-4 sm:p-6 lg:p-8 mx-auto">
-        <h1 className="font-logo text-3xl pt-[35px] font-bold text-luxury-cream mb-6">
+        {category && category !== "all" && (
+          <Breadcrumb
+            className="pt-[35px]"
+            items={[
+              { label: "Home", path: "/web" },
+              { label: "Collection", path: "/web/all" },
+              { label: category },
+            ]}
+          />
+        )}
+        <h1 className={`font-logo text-3xl font-bold text-luxury-cream mb-6 ${category && category !== "all" ? "" : "pt-[35px]"}`}>
           {category && category !== "all" ? `${category} Products` : "All Products"}
         </h1>
 

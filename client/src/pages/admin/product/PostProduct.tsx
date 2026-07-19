@@ -16,6 +16,7 @@ import ImageDropzone from "../../../components/admin/product-form/ImageDropzone"
 import VariantsEditor from "../../../components/admin/product-form/VariantsEditor";
 import RichTextEditor from "../../../components/admin/product-form/RichTextEditor";
 import ProductPreviewCard from "../../../components/admin/product-form/ProductPreviewCard";
+import Breadcrumb from "../../../components/ui/Breadcrumb";
 
 const slugify = (text: string) =>
   text
@@ -197,6 +198,13 @@ const PostProduct = () => {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        items={[
+          { label: "Dashboard", path: "/admin" },
+          { label: "Products", path: "/admin/products" },
+          { label: isEditMode ? `Edit ${currentProduct?.title || "Product"}` : "Add Product" },
+        ]}
+      />
       <div className="flex justify-between items-center">
         <h1 className="font-logo text-3xl font-bold text-luxury-cream">
           {isEditMode ? "Edit Product" : "Add New Product"}

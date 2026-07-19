@@ -12,6 +12,7 @@ import {
 import { clearError, updateItemQuantityLocally } from "../../../redux/slices/CartSlice";
 import type { RootState, AppDispatch } from "../../../redux/store";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
+import Breadcrumb from "../../../components/ui/Breadcrumb";
 
 const Cart = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -100,6 +101,7 @@ const Cart = () => {
   return (
     <div className="min-h-screen pt-[80px] bg-luxury-ink py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
+        <Breadcrumb items={[{ label: "Home", path: "/web" }, { label: "Cart" }]} />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="font-logo text-2xl sm:text-3xl font-bold text-luxury-cream mb-4 sm:mb-0">
             Shopping Cart ({cartItems.length} items)
