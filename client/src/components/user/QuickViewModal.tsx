@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { X, Star, ShieldCheck, Truck, RefreshCw, ShoppingCart, CreditCard } from "lucide-react";
+import { X, Star, ShieldCheck, Truck, RefreshCw, ShoppingCart, CreditCard, Heart, ArrowRightLeft } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/thunks/CartThunk";
 import type { AppDispatch } from "../../redux/store";
 import type { Product } from "../../redux/types/productTypes";
 import { ImageLoader } from "../ui/ImageLoader";
+import { useWishlist } from "../../hooks/useWishlist";
+import { useCompare } from "../../hooks/useCompare";
+import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
 import toast from "react-hot-toast";
 
 interface QuickViewModalProps {
@@ -25,6 +28,14 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
   const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "shipping" | "returns">("description");
 
+  const { isFavorite, toggleWishlist, loadingId: wishlistLoadingId } = useWishlist();
+  const {
+    isComparing,
+    toggleCompare,
+    loadingId: compareLoadingId,
+    isFull: isCompareFull,
+  } = useCompare();
+
   // Reset states when product changes
   useEffect(() => {
     if (product) {
@@ -34,6 +45,12 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
   }, [product]);
 
   if (!product) return null;
+
+  const isWishlisted = isFavorite(product.id);
+  const isWishlistBusy = wishlistLoadingId === product.id;
+  const isCompared = isComparing(product.id);
+  const isCompareBusy = compareLoadingId === product.id;
+  const compareDisabled = isCompareBusy || (isCompareFull && !isCompared);
 
   // Price calculations
   let basePrice = product.price;
@@ -119,6 +136,47 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                     Signature
                   </span>
                 )}
+              </div>
+
+              {/* Wishlist / Compare quick actions - top-16 keeps clear of the modal's own close (X) button, which shares this corner on the stacked mobile layout */}
+              <div className="absolute right-6 top-16 flex flex-col gap-2">
+                <button
+                  onClick={() => !isWishlistBusy && toggleWishlist(product.id)}
+                  disabled={isWishlistBusy}
+                  title="Add to Wishlist"
+                  className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-wait ${
+                    isWishlisted
+                      ? "bg-red-500 text-white"
+                      : "bg-luxury-elevated/80 text-luxury-cream hover:bg-red-500 hover:text-white"
+                  }`}
+                >
+                  {isWishlistBusy ? (
+                    <div className="w-[15px] h-[15px] border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Heart size={15} fill={isWishlisted ? "currentColor" : "none"} />
+                  )}
+                </button>
+
+                <button
+                  onClick={() => !compareDisabled && toggleCompare(product.id)}
+                  disabled={compareDisabled}
+                  title={
+                    isCompareFull && !isCompared
+                      ? `You can only compare up to ${MAX_COMPARE_ITEMS} products`
+                      : "Compare Product"
+                  }
+                  className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${
+                    isCompared
+                      ? "bg-blue-600 text-white"
+                      : "bg-luxury-elevated/80 text-luxury-cream hover:bg-blue-600 hover:text-white"
+                  }`}
+                >
+                  {isCompareBusy ? (
+                    <div className="w-[15px] h-[15px] border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <ArrowRightLeft size={15} />
+                  )}
+                </button>
               </div>
             </div>
 

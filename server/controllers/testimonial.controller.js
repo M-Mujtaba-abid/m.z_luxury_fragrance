@@ -56,3 +56,12 @@ export const editTestimonial = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, testimonial, "Testimonial updated successfully"));
 });
+
+// Admin-only: remove a testimonial permanently
+export const deleteTestimonial = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  await testimonialService.deleteTestimonial({ id });
+
+  res.status(200).json(new ApiResponse(200, null, "Testimonial deleted successfully"));
+});

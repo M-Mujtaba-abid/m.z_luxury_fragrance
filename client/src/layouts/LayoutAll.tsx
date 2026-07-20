@@ -27,6 +27,8 @@ const ProductDetailPage = React.lazy(() => import("../pages/admin/product/Produc
 const OrderDirectory = React.lazy(() => import("../pages/admin/order/OrderDirectory"));
 const OrderDetails = React.lazy(() => import("../pages/admin/order/Orderdetails"));
 const ReviewDirectory = React.lazy(() => import("../pages/admin/review/ReviewDirectory"));
+const ContactDirectory = React.lazy(() => import("../pages/admin/contact/ContactDirectory"));
+const TestimonialDirectory = React.lazy(() => import("../pages/admin/testimonial/TestimonialDirectory"));
 const Profile = React.lazy(() => import("../components/admin/Profile"));
 const UpdateProfile = React.lazy(() => import("../components/admin/UpdateProfile"));
 
@@ -43,6 +45,8 @@ const ThankYouContent = React.lazy(() => import("../pages/user/cart/ThankYouCont
 const MyOrders = React.lazy(() => import("../pages/user/cart/MyOrders"));
 const OrderTracking = React.lazy(() => import("../pages/user/OrderTracking"));
 const SearchResults = React.lazy(() => import("../components/user/SearchResults"));
+const Wishlist = React.lazy(() => import("../pages/user/Wishlist"));
+const Compare = React.lazy(() => import("../pages/user/Compare"));
 const Success = React.lazy(() => import("../pages/payment/Success"));
 const Cancel = React.lazy(() => import("../pages/payment/Cancel"));
 
@@ -93,6 +97,8 @@ const LayoutAll = () => {
             <Route path="orders" element={<OrderDirectory />} />
             <Route path="orders/:id" element={<OrderDetails />} />
             <Route path="reviews" element={<ReviewDirectory />} />
+            <Route path="contact-messages" element={<ContactDirectory />} />
+            <Route path="testimonials" element={<TestimonialDirectory />} />
             <Route path="profile" element={<Profile />} />
             <Route path="profile/update" element={<UpdateProfile />} />
           </Route>
@@ -103,6 +109,8 @@ const LayoutAll = () => {
             <Route path="home" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<ContactUs />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="compare" element={<Compare />} />
             <Route path=":category" element={<Products />} />
             <Route
               path="product-detail/:productId"

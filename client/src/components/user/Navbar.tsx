@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/store";
-import { Menu, X, Search, ShoppingBag, User } from "lucide-react";
+import { Menu, X, Search, ShoppingBag, User, MoreVertical } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import SearchBar from "./SearchBar";
 import { logoutUser } from "../../redux/thunks/AuthThunk";
+import { useWishlistQuery } from "../../queries/wishlistQueries";
+import { useCompareQuery } from "../../queries/compareQueries";
 
 const NAV_LINKS = [
   { name: "Home", path: "/web" },
@@ -25,9 +27,18 @@ const Navbar: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const searchRef = useRef<HTMLDivElement | null>(null);
   const accountRef = useRef<HTMLDivElement | null>(null);
+  const moreRef = useRef<HTMLDivElement | null>(null);
+
+  // Shared TanStack Query cache with ProductCard's wishlist hook, so the
+  // badge here updates the instant a toggle mutation elsewhere succeeds.
+  const { data: wishlistData } = useWishlistQuery();
+  const wishlistCount = wishlistData?.total ?? 0;
+  const { data: compareData } = useCompareQuery();
+  const compareCount = compareData?.total ?? 0;
 
   // Solid background only after the page has scrolled past the hero
   useEffect(() => {
@@ -46,6 +57,9 @@ const Navbar: React.FC = () => {
       if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
         setAccountOpen(false);
       }
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
     };
     const timer = setTimeout(() => document.addEventListener("click", onDocClick), 100);
     return () => {
@@ -59,6 +73,7 @@ const Navbar: React.FC = () => {
     setDrawerOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
+    setMoreOpen(false);
   }, [location.pathname]);
 
   const isActive = (path: string) => location.pathname === path;
@@ -112,15 +127,13 @@ const Navbar: React.FC = () => {
                 <Link
                   key={l.name}
                   to={l.path}
-                  className={`group relative text-xs font-medium uppercase tracking-[0.2em] transition-colors duration-300 ${
-                    isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold-bright"
-                  }`}
+                  className={`group relative text-xs font-medium uppercase tracking-[0.2em] transition-colors duration-300 ${isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold-bright"
+                    }`}
                 >
                   {l.name}
                   <span
-                    className={`absolute left-0 -bottom-1.5 h-px bg-luxury-gold-bright transition-all duration-300 ${
-                      isActive(l.path) ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
+                    className={`absolute left-0 -bottom-1.5 h-px bg-luxury-gold-bright transition-all duration-300 ${isActive(l.path) ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
                   />
                 </Link>
               ))}
@@ -172,6 +185,62 @@ const Navbar: React.FC = () => {
                   </span>
                 )}
               </motion.button>
+
+              <div className="relative" ref={moreRef}>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMoreOpen((s) => !s);
+                  }}
+                  className="relative text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
+                  aria-label="More options"
+                >
+                  <MoreVertical className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-luxury-gold px-1 text-[10px] font-semibold text-luxury-ink">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </motion.button>
+
+                <AnimatePresence>
+                  {moreOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-5 w-52 overflow-hidden rounded-md border border-luxury-gold-bright/20 bg-luxury-elevated/80 backdrop-blur-xl shadow-xl"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Link
+                        to="/web/wishlist"
+                        className="flex items-center justify-between px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
+                      >
+                        <span>My Wishlist</span>
+                        {wishlistCount > 0 && (
+                          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-luxury-gold px-1 text-[10px] font-semibold text-luxury-ink">
+                            {wishlistCount}
+                          </span>
+                        )}
+                      </Link>
+                      <Link
+                        to="/web/compare"
+                        className="flex items-center justify-between px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
+                      >
+                        <span>Compare list</span>
+                        {compareCount > 0 && (
+                          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-luxury-gold px-1 text-[10px] font-semibold text-luxury-ink">
+                            {compareCount}
+                          </span>
+                        )}
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {token ? (
                 <div className="relative" ref={accountRef}>
@@ -277,13 +346,29 @@ const Navbar: React.FC = () => {
                   <Link
                     key={l.name}
                     to={l.path}
-                    className={`border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-colors duration-300 ${
-                      isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold-bright"
-                    }`}
+                    className={`border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-colors duration-300 ${isActive(l.path) ? "text-luxury-gold" : "text-luxury-cream/80 hover:text-luxury-gold-bright"
+                      }`}
                   >
                     {l.name}
                   </Link>
                 ))}
+                <Link
+                  to="/web/wishlist"
+                  className="flex items-center justify-between border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] text-luxury-cream/80 transition-colors duration-300 hover:text-luxury-gold-bright"
+                >
+                  <span>❤️ My Wishlist</span>
+                  {wishlistCount > 0 && (
+                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-luxury-gold px-1 text-[10px] font-semibold text-luxury-ink">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  to="/web/compare"
+                  className="border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] text-luxury-cream/80 transition-colors duration-300 hover:text-luxury-gold-bright"
+                >
+                  🔄 Compare
+                </Link>
               </nav>
 
               <div className="mt-auto flex items-center gap-6 border-t border-luxury-gold/15 px-6 py-6">

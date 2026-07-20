@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import { Heart, ArrowRightLeft } from "lucide-react";
 import { getProductById } from "../../redux/thunks/ProductThunk";
 import {
   clearError,
@@ -11,6 +12,9 @@ import AddToCartButton from "../../components/user/AddToCartButton";
 import ProductReviews from "../../components/user/ProductReviews";
 import RelatedProducts from "../../components/user/RelatedProducts";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import { useWishlist } from "../../hooks/useWishlist";
+import { useCompare } from "../../hooks/useCompare";
+import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +23,13 @@ const ProductDetailPage = () => {
   const { loading, error, currentProduct } = useSelector(
     (state: RootState) => state.products
   );
+  const { isFavorite, toggleWishlist, loadingId: wishlistLoadingId } = useWishlist();
+  const {
+    isComparing,
+    toggleCompare,
+    loadingId: compareLoadingId,
+    isFull: isCompareFull,
+  } = useCompare();
 
   useEffect(() => {
     if (productId) {
@@ -217,7 +228,61 @@ const ProductDetailPage = () => {
                       </button>
                     </div>
                     )} */}
-                    <AddToCartButton productId={currentProduct.id} className="p-4 pt-0" />
+                    <div className="flex items-stretch gap-3 p-4 pt-0">
+                      <div className="flex-1">
+                        <AddToCartButton productId={currentProduct.id} className="!p-0" />
+                      </div>
+
+                      {(() => {
+                        const isWishlisted = isFavorite(currentProduct.id);
+                        const isWishlistBusy = wishlistLoadingId === currentProduct.id;
+                        const isCompared = isComparing(currentProduct.id);
+                        const isCompareBusy = compareLoadingId === currentProduct.id;
+                        const compareDisabled = isCompareBusy || (isCompareFull && !isCompared);
+
+                        return (
+                          <>
+                            <button
+                              onClick={() => !isWishlistBusy && toggleWishlist(currentProduct.id)}
+                              disabled={isWishlistBusy}
+                              title="Add to Wishlist"
+                              className={`mt-3 flex items-center justify-center w-12 rounded-md border transition-colors duration-300 disabled:cursor-wait ${
+                                isWishlisted
+                                  ? "bg-red-500 border-red-500 text-white"
+                                  : "border-luxury-gold/30 text-luxury-cream hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
+                              }`}
+                            >
+                              {isWishlistBusy ? (
+                                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
+                              )}
+                            </button>
+
+                            <button
+                              onClick={() => !compareDisabled && toggleCompare(currentProduct.id)}
+                              disabled={compareDisabled}
+                              title={
+                                isCompareFull && !isCompared
+                                  ? `You can only compare up to ${MAX_COMPARE_ITEMS} products`
+                                  : "Compare Product"
+                              }
+                              className={`mt-3 flex items-center justify-center w-12 rounded-md border transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${
+                                isCompared
+                                  ? "bg-blue-600 border-blue-600 text-white"
+                                  : "border-luxury-gold/30 text-luxury-cream hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
+                              }`}
+                            >
+                              {isCompareBusy ? (
+                                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <ArrowRightLeft size={18} />
+                              )}
+                            </button>
+                          </>
+                        );
+                      })()}
+                    </div>
                 </div>
               </div>
             </div>
