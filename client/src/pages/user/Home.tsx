@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import type { RootState, AppDispatch } from "../../redux/store";
-import { fetchProducts } from "../../redux/thunks/ProductThunk";
+import { useProductsQuery } from "../../queries/productQueries";
 import FeaturedProducts from "./FeaturedProducts";
 import NewArrivals from "./NewArrivals";
 import OnSaleProducts from "./OnSaleProducts";
@@ -34,18 +31,11 @@ const CATEGORY_INFO = [
 ];
 
 const Home = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { products } = useSelector((state: RootState) => state.products);
-
-  useEffect(() => {
-    dispatch(fetchProducts(undefined));
-  }, [dispatch]);
+  const { data: products = [] } = useProductsQuery();
 
   // Show a real product per category instead of stock imagery
   const categories = CATEGORY_INFO.map((cat) => {
-    const representativeProduct = products?.find(
-      (p: any) => p.category === cat.title
-    );
+    const representativeProduct = products.find((p: any) => p.category === cat.title);
     return { ...cat, image: representativeProduct?.productImage as string | undefined };
   });
 
@@ -111,15 +101,13 @@ const Home = () => {
           ))}
         </div>
 
-        {/* ✅ Separate Sections */}
-
+        {/* Separate Sections */}
         <div className="mt-16 min-h-[360px]">
           <NewArrivals />
         </div>
         <div className="mt-16 min-h-[400px]">
           <FeaturedProducts />
         </div>
-
         <div className="mt-16 min-h-[400px]">
           <OnSaleProducts />
         </div>

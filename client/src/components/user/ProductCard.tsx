@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Eye, ArrowRightLeft, Star, ShoppingBag } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/thunks/CartThunk";
-import type { AppDispatch } from "../../redux/store";
 import type { Product } from "../../redux/types/productTypes";
 import { ImageLoader } from "../ui/ImageLoader";
 import { useWishlist } from "../../hooks/useWishlist";
 import { useCompare } from "../../hooks/useCompare";
 import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
+import { useCart } from "../../hooks/useCart";
 import toast from "react-hot-toast";
 
 interface ProductCardProps {
@@ -18,7 +16,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { addToCart } = useCart();
   const { isFavorite, toggleWishlist, loadingId } = useWishlist();
   const {
     isComparing,
@@ -40,10 +38,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
     e.stopPropagation();
     setIsAdding(true);
     try {
-      await dispatch(addToCart({ productId: product.id, quantity: 1 })).unwrap();
+      await addToCart(product.id, 1);
       toast.success(`${product.title} added to cart`);
     } catch (error: any) {
-      toast.error(error || "Failed to add to cart");
+      toast.error(error?.message || "Failed to add to cart");
     } finally {
       setIsAdding(false);
     }

@@ -1,16 +1,10 @@
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import type { RootState } from "../../../redux/store";
-import {
-  fetchOrderById,
-  updateOrderStatus,
-} from "../../../redux/thunks/OrderThunk";
+import { useOrderByIdQuery, useUpdateOrderStatusMutation } from "../../../queries/orderQueries";
 import OrderSlip from "./OrderSlip";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
 
-// Same status color language used on Order Tracking / admin Order Directory.
 const statusStyles: Record<string, string> = {
   pending: "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30",
   confirmed: "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30",
@@ -21,15 +15,12 @@ const statusStyles: Record<string, string> = {
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams();
-  const dispatch = useDispatch<any>();
-  const { order } = useSelector((state: RootState) => state.order);
-  const { loading } = useSelector((state: RootState) => state.loader);
+  const orderId = id ? Number(id) : undefined;
+
+  const { data: order, isLoading: loading } = useOrderByIdQuery(orderId);
+  const updateStatusMutation = useUpdateOrderStatusMutation();
 
   const [status, setStatus] = useState(order?.status || "pending");
-
-  useEffect(() => {
-    if (id) dispatch(fetchOrderById(Number(id)));
-  }, [dispatch, id]);
 
   useEffect(() => {
     if (order) setStatus(order.status);
@@ -38,8 +29,9 @@ const OrderDetails: React.FC = () => {
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
     setStatus(newStatus);
-    if (order?.id)
-      dispatch(updateOrderStatus({ id: order.id, status: newStatus }));
+    if (order?.id) {
+      updateStatusMutation.mutate({ id: order.id, status: newStatus });
+    }
   };
 
   if (loading || !order) {
@@ -65,11 +57,7 @@ const OrderDetails: React.FC = () => {
           <h1 className="font-logo text-2xl font-bold text-luxury-gold">
             Order #{order.id}
           </h1>
-          <span
-            className={`px-4 py-1 rounded-full text-sm font-semibold tracking-wide capitalize ${
-              statusStyles[status] || ""
-            }`}
-          >
+          <span className={`px-4 py-1 rounded-full text-sm font-semibold tracking-wide capitalize ${statusStyles[status] || ""}`}>
             {status}
           </span>
         </div>
@@ -106,7 +94,8 @@ const OrderDetails: React.FC = () => {
             <select
               value={status}
               onChange={handleStatusChange}
-              className="px-3 py-1.5 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
+              disabled={updateStatusMutation.isPending}
+              className="px-3 py-1.5 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60 disabled:opacity-50"
             >
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>

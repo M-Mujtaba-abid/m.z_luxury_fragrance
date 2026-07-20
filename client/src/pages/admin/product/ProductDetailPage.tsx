@@ -1,10 +1,6 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { getProductById, deleteProduct } from "../../../redux/thunks/ProductThunk";
-import { clearError, clearCurrentProduct } from "../../../redux/slices/ProductSlice";
-import type { RootState, AppDispatch } from "../../../redux/store";
+import { useAdminSingleProductQuery, useDeleteProductMutation } from "../../../queries/productQueries";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
 
 const infoRowClass =
@@ -12,33 +8,21 @@ const infoRowClass =
 const labelClass = "text-sm font-semibold text-luxury-cream/70";
 
 const ProductDetailPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
-  const { loading, error, currentProduct } = useSelector(
-    (state: RootState) => state.products
-  ) as any;
+  const parsedId = productId ? parseInt(productId) : undefined;
 
-  useEffect(() => {
-    if (productId) {
-      dispatch(getProductById({ id: parseInt(productId), includeAll: true }));
-    }
-
-    return () => {
-      dispatch(clearError());
-      dispatch(clearCurrentProduct());
-    };
-  }, [dispatch, productId]);
+  const { data: currentProduct, isLoading: loading, error } = useAdminSingleProductQuery(parsedId);
+  const deleteMutation = useDeleteProductMutation();
 
   const handleDelete = async () => {
     if (!currentProduct) return;
-
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await dispatch(deleteProduct(currentProduct.id)).unwrap();
+        await deleteMutation.mutateAsync(currentProduct.id);
         navigate("/admin/products");
-      } catch (error) {
-        console.error("Failed to delete product:", error);
+      } catch (err) {
+        console.error("Failed to delete product:", err);
       }
     }
   };
@@ -51,7 +35,7 @@ const ProductDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
-        <div className="text-xl font-semibold text-luxury-cream/70">Loading product details...</div>
+        <div className="w-10 h-10 rounded-full border-2 border-luxury-gold/20 border-t-luxury-gold animate-spin" />
       </div>
     );
   }
@@ -59,7 +43,7 @@ const ProductDetailPage = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
-        <div className="text-xl font-semibold text-red-400">{error}</div>
+        <div className="text-xl font-semibold text-red-400">{error.message}</div>
       </div>
     );
   }
@@ -156,64 +140,41 @@ const ProductDetailPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {/* Price */}
                   <div className="flex items-center justify-between p-4 bg-luxury-gold/10 border border-luxury-gold/20 rounded-lg">
                     <span className={labelClass}>Price:</span>
-                    <span className="text-2xl font-bold text-luxury-gold">
-                      Rs. {currentProduct.price}
-                    </span>
+                    <span className="text-2xl font-bold text-luxury-gold">Rs. {currentProduct.price}</span>
                   </div>
-
-                  {/* Status */}
                   <div className={infoRowClass}>
                     <span className={labelClass}>Status:</span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        currentProduct.status === "available"
-                          ? "bg-green-500/15 text-green-400 border border-green-500/30"
-                          : "bg-red-500/15 text-red-400 border border-red-500/30"
-                      }`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${currentProduct.status === "available" ? "bg-green-500/15 text-green-400 border border-green-500/30" : "bg-red-500/15 text-red-400 border border-red-500/30"}`}>
                       {currentProduct.status}
                     </span>
                   </div>
-
-                  {/* Stock */}
                   <div className={infoRowClass}>
                     <span className={labelClass}>Stock:</span>
                     <span className="text-luxury-cream">{currentProduct.stock} units</span>
                   </div>
-
-                  {/* Category */}
                   <div className={infoRowClass}>
                     <span className={labelClass}>Category:</span>
                     <span className="text-luxury-cream capitalize">{currentProduct.category}</span>
                   </div>
-
-                  {/* Gender */}
                   {currentProduct.gender && (
                     <div className={infoRowClass}>
                       <span className={labelClass}>Gender:</span>
                       <span className="text-luxury-cream">{currentProduct.gender}</span>
                     </div>
                   )}
-
-                  {/* Quantity */}
                   <div className={infoRowClass}>
                     <span className={labelClass}>Default Size:</span>
                     <span className="text-luxury-cream">{currentProduct.Quantity}</span>
                   </div>
 
-                  {/* Variants */}
                   {currentProduct.ProductVariants?.length > 0 && (
                     <div className={infoRowClass}>
                       <span className={labelClass}>Variants:</span>
                       <div className="flex flex-wrap justify-end gap-1.5">
                         {currentProduct.ProductVariants.map((v: any) => (
-                          <span
-                            key={v.id}
-                            className="text-xs px-2 py-1 rounded-full bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/20"
-                          >
+                          <span key={v.id} className="text-xs px-2 py-1 rounded-full bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/20">
                             {v.size} — Rs. {v.price}
                           </span>
                         ))}
@@ -221,89 +182,43 @@ const ProductDetailPage = () => {
                     </div>
                   )}
 
-                  {/* Notes */}
-                  {(currentProduct.topNotes?.length ||
-                    currentProduct.heartNotes?.length ||
-                    currentProduct.baseNotes?.length) && (
+                  {(currentProduct.topNotes?.length || currentProduct.heartNotes?.length || currentProduct.baseNotes?.length) && (
                     <div className="p-4 bg-luxury-ink border border-luxury-gold/10 rounded-lg space-y-2">
-                      {currentProduct.topNotes?.length > 0 && (
-                        <p className="text-sm">
-                          <span className={labelClass}>Top: </span>
-                          <span className="text-luxury-cream/80">{currentProduct.topNotes.join(", ")}</span>
-                        </p>
-                      )}
-                      {currentProduct.heartNotes?.length > 0 && (
-                        <p className="text-sm">
-                          <span className={labelClass}>Heart: </span>
-                          <span className="text-luxury-cream/80">{currentProduct.heartNotes.join(", ")}</span>
-                        </p>
-                      )}
-                      {currentProduct.baseNotes?.length > 0 && (
-                        <p className="text-sm">
-                          <span className={labelClass}>Base: </span>
-                          <span className="text-luxury-cream/80">{currentProduct.baseNotes.join(", ")}</span>
-                        </p>
-                      )}
+                      {currentProduct.topNotes?.length > 0 && <p className="text-sm"><span className={labelClass}>Top: </span><span className="text-luxury-cream/80">{currentProduct.topNotes.join(", ")}</span></p>}
+                      {currentProduct.heartNotes?.length > 0 && <p className="text-sm"><span className={labelClass}>Heart: </span><span className="text-luxury-cream/80">{currentProduct.heartNotes.join(", ")}</span></p>}
+                      {currentProduct.baseNotes?.length > 0 && <p className="text-sm"><span className={labelClass}>Base: </span><span className="text-luxury-cream/80">{currentProduct.baseNotes.join(", ")}</span></p>}
                     </div>
                   )}
 
-                  {/* Homepage Control Fields */}
                   <div className={infoRowClass}>
                     <span className={labelClass}>Featured Product:</span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        currentProduct.isFeatured
-                          ? "bg-luxury-gold/15 text-luxury-gold border border-luxury-gold/30"
-                          : "bg-luxury-cream/5 text-luxury-cream/50 border border-luxury-cream/10"
-                      }`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${currentProduct.isFeatured ? "bg-luxury-gold/15 text-luxury-gold border border-luxury-gold/30" : "bg-luxury-cream/5 text-luxury-cream/50 border border-luxury-cream/10"}`}>
                       {currentProduct.isFeatured ? "Yes" : "No"}
                     </span>
                   </div>
-
                   <div className={infoRowClass}>
                     <span className={labelClass}>New Arrival:</span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        currentProduct.isNewArrival
-                          ? "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30"
-                          : "bg-luxury-cream/5 text-luxury-cream/50 border border-luxury-cream/10"
-                      }`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${currentProduct.isNewArrival ? "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30" : "bg-luxury-cream/5 text-luxury-cream/50 border border-luxury-cream/10"}`}>
                       {currentProduct.isNewArrival ? "Yes" : "No"}
                     </span>
                   </div>
-
                   <div className={infoRowClass}>
                     <span className={labelClass}>On Sale:</span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        currentProduct.isOnSale
-                          ? "bg-red-500/15 text-red-300 border border-red-500/30"
-                          : "bg-luxury-cream/5 text-luxury-cream/50 border border-luxury-cream/10"
-                      }`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${currentProduct.isOnSale ? "bg-red-500/15 text-red-300 border border-red-500/30" : "bg-luxury-cream/5 text-luxury-cream/50 border border-luxury-cream/10"}`}>
                       {currentProduct.isOnSale ? "Yes" : "No"}
                     </span>
                   </div>
 
-                  {/* Discount Price */}
                   {currentProduct.isOnSale && currentProduct.discountPrice && (
                     <div className="flex items-center justify-between p-4 bg-red-950/30 border border-red-900/40 rounded-lg">
                       <span className={labelClass}>Discount Price:</span>
-                      <span className="text-2xl font-bold text-red-400">
-                        Rs. {currentProduct.discountPrice}
-                      </span>
+                      <span className="text-2xl font-bold text-red-400">Rs. {currentProduct.discountPrice}</span>
                     </div>
                   )}
-
-                  {/* Created Date */}
                   {currentProduct.createdAt && (
                     <div className={infoRowClass}>
                       <span className={labelClass}>Created:</span>
-                      <span className="text-luxury-cream">
-                        {new Date(currentProduct.createdAt).toLocaleDateString()}
-                      </span>
+                      <span className="text-luxury-cream">{new Date(currentProduct.createdAt).toLocaleDateString()}</span>
                     </div>
                   )}
                 </div>
@@ -320,9 +235,10 @@ const ProductDetailPage = () => {
                   </motion.button>
                   <button
                     onClick={handleDelete}
-                    className="flex-1 px-6 py-3 text-red-400 border border-red-400/50 font-semibold rounded-lg hover:bg-red-500/10 hover:border-red-400 transition-colors duration-300"
+                    disabled={deleteMutation.isPending}
+                    className="flex-1 px-6 py-3 text-red-400 border border-red-400/50 font-semibold rounded-lg hover:bg-red-500/10 hover:border-red-400 transition-colors duration-300 disabled:opacity-50"
                   >
-                    Delete Product
+                    {deleteMutation.isPending ? "Deleting..." : "Delete Product"}
                   </button>
                 </div>
               </div>

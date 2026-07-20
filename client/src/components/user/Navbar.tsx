@@ -5,7 +5,9 @@ import type { AppDispatch, RootState } from "../../redux/store";
 import { Menu, X, Search, ShoppingBag, User, MoreVertical } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import SearchBar from "./SearchBar";
-import { logoutUser } from "../../redux/thunks/AuthThunk";
+import { logout as reduxLogout } from "../../redux/slices/AuthSlice";
+import { useLogoutMutation } from "../../queries/authQueries";
+import { useCart } from "../../hooks/useCart";
 import { useWishlistQuery } from "../../queries/wishlistQueries";
 import { useCompareQuery } from "../../queries/compareQueries";
 
@@ -20,8 +22,12 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
-  const { cartItems } = useSelector((s: RootState) => s.cart);
+  // Live cart count from React Query (no longer from Redux CartSlice)
+  const { cartItems } = useCart();
+  const cartCount = cartItems.length;
   const { token } = useSelector((s: RootState) => s.user);
+
+  const logoutMutation = useLogoutMutation();
 
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -81,10 +87,11 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser()).unwrap();
+      await logoutMutation.mutateAsync();
     } catch (_) {
-      // ignore - navigate away regardless
+      // ignore — clear state regardless
     }
+    dispatch(reduxLogout());
     setAccountOpen(false);
     setDrawerOpen(false);
     navigate("/login");

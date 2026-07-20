@@ -4,13 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { hideCartModal } from "../../../redux/slices/CartSlice";
 import type { RootState, AppDispatch } from "../../../redux/store";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "../../../hooks/useCart";
 
 const CartModal = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { showCartModal, lastAddedItem, cartItems } = useSelector(
+  const { showCartModal, lastAddedItem } = useSelector(
     (state: RootState) => state.cart
   );
+  // Read live cart count from React Query instead of stale Redux state
+  const { cartItems } = useCart();
 
   const handleClose = () => {
     dispatch(hideCartModal());

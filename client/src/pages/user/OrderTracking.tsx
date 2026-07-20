@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useTrackGuestOrderQuery } from "../../queries/orderQueries";
 import { useLocation } from "react-router-dom";
-import type { RootState, AppDispatch } from "../../redux/store";
-import { trackGuestOrder } from "../../redux/thunks/OrderThunk";
-import { clearTrackedOrder } from "../../redux/slices/OrderSlice";
 import { Search } from "lucide-react";
 
 const statusStyles: Record<string, string> = {
@@ -15,29 +12,27 @@ const statusStyles: Record<string, string> = {
 };
 
 const OrderTracking: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const initial = (location.state as { orderId?: number; email?: string }) || {};
 
   const [orderId, setOrderId] = useState(initial.orderId ? String(initial.orderId) : "");
   const [email, setEmail] = useState(initial.email || "");
 
-  const { trackedOrder, loading, error } = useSelector((state: RootState) => state.order);
+  // Query params used to trigger the fetch — null means "not yet submitted"
+  const [queryParams, setQueryParams] = useState<
+    { id: string; email: string } | null
+  >(
+    initial.orderId && initial.email
+      ? { id: String(initial.orderId), email: initial.email }
+      : null
+  );
 
-  useEffect(() => {
-    if (initial.orderId && initial.email) {
-      dispatch(trackGuestOrder({ id: initial.orderId, email: initial.email }));
-    }
-    return () => {
-      dispatch(clearTrackedOrder());
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data: trackedOrder, isFetching: loading, error } = useTrackGuestOrderQuery(queryParams);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderId || !email) return;
-    dispatch(trackGuestOrder({ id: orderId, email }));
+    setQueryParams({ id: orderId, email });
   };
 
   return (
@@ -82,7 +77,7 @@ const OrderTracking: React.FC = () => {
 
         {error && (
           <div className="bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg p-4 mb-6 text-sm">
-            {error}
+            {error.message}
           </div>
         )}
 

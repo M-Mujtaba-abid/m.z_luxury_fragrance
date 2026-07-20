@@ -1,18 +1,14 @@
-
-
 // AddToCartButton.tsx
 import React from "react";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/thunks/CartThunk";
-import type { AppDispatch } from "../../redux/store";
-import { toast } from "react-hot-toast"; // toast library
+import { toast } from "react-hot-toast";
+import { useCart } from "../../hooks/useCart";
 
 type AddToCartButtonProps = {
   productId: number;
   quantity?: number;
   onClick?: () => void;
   className?: string;
-}
+};
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   productId,
@@ -20,11 +16,11 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   onClick,
   className,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { addToCart, isAdding } = useCart();
 
   const handleAddToCart = async () => {
     try {
-      await dispatch(addToCart({ productId, quantity })).unwrap();
+      await addToCart(productId, quantity);
       toast.success("Product added to cart!");
       if (onClick) onClick();
     } catch (error) {
@@ -37,9 +33,10 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     <div className={`p-4 pt-0 ${className || ""}`}>
       <button
         onClick={handleAddToCart}
-        className="mt-3 w-full border border-luxury-gold/30 bg-transparent text-luxury-cream py-2 rounded-md transition-colors duration-300 hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
+        disabled={isAdding}
+        className="mt-3 w-full border border-luxury-gold/30 bg-transparent text-luxury-cream py-2 rounded-md transition-colors duration-300 hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold disabled:opacity-50"
       >
-        Add to Cart
+        {isAdding ? "Adding..." : "Add to Cart"}
       </button>
     </div>
   );

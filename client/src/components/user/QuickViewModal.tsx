@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { X, Star, ShieldCheck, Truck, RefreshCw, ShoppingCart, CreditCard, Heart, ArrowRightLeft } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/thunks/CartThunk";
-import type { AppDispatch } from "../../redux/store";
 import type { Product } from "../../redux/types/productTypes";
 import { ImageLoader } from "../ui/ImageLoader";
 import { useWishlist } from "../../hooks/useWishlist";
 import { useCompare } from "../../hooks/useCompare";
 import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
+import { useCart } from "../../hooks/useCart";
 import toast from "react-hot-toast";
 
 interface QuickViewModalProps {
@@ -19,7 +17,7 @@ interface QuickViewModalProps {
 }
 
 export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClose }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const [selectedSize, setSelectedSize] = useState<string>("");
@@ -71,20 +69,15 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
   const handleAddToCart = async (checkoutAfter = false) => {
     setIsAdding(!checkoutAfter);
     setIsBuyingNow(checkoutAfter);
-
     try {
-      await dispatch(
-        addToCart({ productId: product.id, quantity: selectedQuantity })
-      ).unwrap();
-
+      await addToCart(product.id, selectedQuantity);
       toast.success(`${product.title} added to cart!`);
-
       if (checkoutAfter) {
         onClose();
         navigate("/web/checkout");
       }
     } catch (error: any) {
-      toast.error(error || "Failed to add to cart");
+      toast.error(error?.message || "Failed to add to cart");
     } finally {
       setIsAdding(false);
       setIsBuyingNow(false);

@@ -121,6 +121,70 @@ export const useProductsByCategoryQuery = (category: string | undefined) => {
   });
 };
 
+// Admin-only: fetch all products including drafts
+export const useAdminProductsQuery = () => {
+  return useQuery<Product[]>({
+    queryKey: ["products", "admin", "all"],
+    queryFn: async () => {
+      const response = await API.get("/product/getallproduct", {
+        params: { includeAll: "true" },
+      });
+      return response.data.data || response.data;
+    },
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
+    retry: 2,
+  });
+};
+
+// Admin-only: fetch single product including drafts (for edit form)
+export const useAdminSingleProductQuery = (productId: number | undefined) => {
+  return useQuery<Product>({
+    queryKey: ["product", productId, "admin"],
+    queryFn: async () => {
+      if (!productId) throw new Error("No product ID provided");
+      const response = await API.get(`/product/getsingleproduct/${productId}`, {
+        params: { includeAll: "true" },
+      });
+      return response.data.data || response.data;
+    },
+    enabled: !!productId,
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
+    retry: 1,
+  });
+};
+
+// Related products for "You May Also Like" section on product detail page
+export const useRelatedProductsQuery = (productId: number | undefined) => {
+  return useQuery<Product[]>({
+    queryKey: ["products", "related", productId],
+    queryFn: async () => {
+      if (!productId) return [];
+      const response = await API.get(`/product/getrelatedproducts/${productId}`);
+      return response.data.data || response.data;
+    },
+    enabled: !!productId,
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
+    retry: 1,
+  });
+};
+
+// Total published products count for admin dashboard KPI
+export const useTotalProductsCountQuery = () => {
+  return useQuery<number>({
+    queryKey: ["products", "admin", "total"],
+    queryFn: async () => {
+      const response = await API.get("/product/getNumberOfTotalproduct");
+      return response.data.data.totalProducts;
+    },
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
+    retry: 1,
+  });
+};
+
 // --- Mutations for Admin & Invalidation ---
 
 export const useCreateProductMutation = () => {

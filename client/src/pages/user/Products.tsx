@@ -1,10 +1,6 @@
 
-
-
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../../redux/thunks/ProductThunk";
-import type { RootState, AppDispatch } from "../../redux/store";
+import { useState } from "react";
+import { useProductsQuery } from "../../queries/productQueries";
 import { useParams } from "react-router-dom";
 import Breadcrumb from "../../components/ui/Breadcrumb";
 import ProductCard from "../../components/user/ProductCard";
@@ -12,23 +8,14 @@ import QuickViewModal from "../../components/user/QuickViewModal";
 import type { Product } from "../../redux/types/productTypes";
 
 const Products = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { products, loading, error } = useSelector(
-    (state: RootState) => state.products
-  );
-
   const { category } = useParams<{ category: string }>();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
-    dispatch(fetchProducts(undefined));
-  }, [dispatch]);
+  const { data: products = [], isLoading: loading, error } = useProductsQuery();
 
   const filteredProducts =
     category && category !== "all"
-      ? products.filter(
-          (p: any) => p.category.toLowerCase() === category.toLowerCase()
-        )
+      ? products.filter((p) => p.category.toLowerCase() === category.toLowerCase())
       : products;
 
   return (
@@ -51,11 +38,11 @@ const Products = () => {
         {loading && <p className="text-luxury-cream/60">Loading...</p>}
         {error && (
           <div className="mb-4 p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded">
-            {error}
+            {error.message}
           </div>
         )}
 
-        {/* Product Grid - shared ProductCard gives every product its wishlist/compare icons */}
+        {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product: Product) => (
             <ProductCard

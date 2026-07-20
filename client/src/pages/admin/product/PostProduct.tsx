@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import {
-  createProduct,
-  updateProduct,
-  getProductById,
-} from "../../../redux/thunks/ProductThunk";
-import { clearError, clearCurrentProduct } from "../../../redux/slices/ProductSlice";
-import type { RootState, AppDispatch } from "../../../redux/store";
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useAdminSingleProductQuery,
+} from "../../../queries/productQueries";
 import type { ProductVariant } from "../../../redux/types/productTypes";
 import TagInput from "../../../components/admin/product-form/TagInput";
 import ImageDropzone from "../../../components/admin/product-form/ImageDropzone";
@@ -33,12 +30,19 @@ const labelClass = "block text-sm font-medium text-luxury-cream/80 mb-2";
 const sectionClass = "bg-luxury-card border border-luxury-gold/10 rounded-xl p-6 space-y-4";
 
 const PostProduct = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const isEditMode = !!productId;
+  const parsedId = productId ? parseInt(productId) : undefined;
 
-  const { loading, error, currentProduct } = useSelector((state: RootState) => state.products);
+  // React Query: fetch product for edit mode
+  const { data: currentProduct } = useAdminSingleProductQuery(parsedId);
+
+  // React Query: mutations
+  const createMutation = useCreateProductMutation();
+  const updateMutation = useUpdateProductMutation();
+
+  const loading = createMutation.isPending || updateMutation.isPending;
 
   const [formData, setFormData] = useState({
     title: "",
@@ -68,16 +72,7 @@ const PostProduct = () => {
   const [coverIndex, setCoverIndex] = useState(0);
   const [formErrors, setFormErrors] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (isEditMode && productId) {
-      dispatch(getProductById({ id: parseInt(productId), includeAll: true }));
-    }
-    return () => {
-      dispatch(clearError());
-      dispatch(clearCurrentProduct());
-    };
-  }, [dispatch, productId, isEditMode]);
-
+  // Populate form when editing an existing product
   useEffect(() => {
     if (isEditMode && currentProduct) {
       setFormData({
@@ -99,7 +94,7 @@ const PostProduct = () => {
         slug: currentProduct.slug || "",
         publishStatus: currentProduct.publishStatus || "draft",
       });
-      setSlugTouched(true); // existing slug — don't auto-overwrite it on edit
+      setSlugTouched(true);
       setTopNotes(currentProduct.topNotes || []);
       setHeartNotes(currentProduct.heartNotes || []);
       setBaseNotes(currentProduct.baseNotes || []);
@@ -107,9 +102,7 @@ const PostProduct = () => {
     }
   }, [currentProduct, isEditMode]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: value };
@@ -178,17 +171,17 @@ const PostProduct = () => {
 
     try {
       if (isEditMode && productId) {
-        await dispatch(updateProduct({ id: parseInt(productId), ...payload })).unwrap();
+        await updateMutation.mutateAsync({ id: parseInt(productId), ...payload });
         toast.success("Product updated successfully");
       } else {
-        await dispatch(createProduct(payload)).unwrap();
+        await createMutation.mutateAsync(payload);
         toast.success(
           publishStatusOverride === "published" ? "Product published" : "Product saved as draft"
         );
       }
       navigate("/admin/products");
     } catch (err: any) {
-      toast.error(err || "Something went wrong");
+      toast.error(err?.message || "Something went wrong");
     }
   };
 
@@ -217,11 +210,6 @@ const PostProduct = () => {
         </button>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg">
-          {error}
-        </div>
-      )}
       {formErrors.length > 0 && (
         <div className="p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg text-sm space-y-1">
           {formErrors.map((msg, i) => (
@@ -237,26 +225,12 @@ const PostProduct = () => {
             <h2 className="font-logo text-lg font-semibold text-luxury-cream">Basics</h2>
             <div>
               <label className={labelClass}>Product Title *</label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="e.g. Oud Royale"
-                className={inputClass}
-              />
+              <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g. Oud Royale" className={inputClass} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Brand</label>
-                <input
-                  type="text"
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleInputChange}
-                  placeholder="e.g. M.Z Atelier"
-                  className={inputClass}
-                />
+                <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} placeholder="e.g. M.Z Atelier" className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>Gender</label>
@@ -414,13 +388,11 @@ const PostProduct = () => {
           <div className={sectionClass}>
             <div className="flex items-center justify-between">
               <span className="text-sm text-luxury-cream/70">Status</span>
-              <span
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                  formData.publishStatus === "published"
-                    ? "bg-green-500/15 text-green-400 border border-green-500/30"
-                    : "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
-                }`}
-              >
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                formData.publishStatus === "published"
+                  ? "bg-green-500/15 text-green-400 border border-green-500/30"
+                  : "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
+              }`}>
                 {formData.publishStatus === "published" ? "Published" : "Draft"}
               </span>
             </div>

@@ -1,41 +1,19 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  fetchProducts,
-  getProductById,
-} from "../../../redux/thunks/ProductThunk";
-import { clearError } from "../../../redux/slices/ProductSlice";
-import type { RootState, AppDispatch } from "../../../redux/store";
+import { useAdminProductsQuery } from "../../../queries/productQueries";
 
 const ListProduct = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { products, loading, error } = useSelector(
-    (state: RootState) => state.products
-  );
+  const { data: products = [], isLoading: loading, error } = useAdminProductsQuery();
 
-  useEffect(() => {
-    dispatch(fetchProducts(true));
-    return () => {
-      dispatch(clearError());
-    };
-  }, [dispatch]);
-
-  const handleDetailView = async (productId: number) => {
-    try {
-      await dispatch(getProductById({ id: productId, includeAll: true })).unwrap();
-      navigate(`/admin/product-detail/${productId}`);
-    } catch (error) {
-      console.error("Failed to fetch product details:", error);
-    }
+  const handleDetailView = (productId: number) => {
+    navigate(`/admin/product-detail/${productId}`);
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-luxury-ink flex items-center justify-center">
-        <div className="text-xl font-semibold text-luxury-cream/70">Loading products...</div>
+        <div className="w-10 h-10 rounded-full border-2 border-luxury-gold/20 border-t-luxury-gold animate-spin" />
       </div>
     );
   }
@@ -49,7 +27,7 @@ const ListProduct = () => {
 
         {error && (
           <div className="mb-4 p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg">
-            {error}
+            {error.message}
           </div>
         )}
 
@@ -74,53 +52,36 @@ const ListProduct = () => {
               </span>
 
               <div className="w-full h-48 overflow-hidden">
-                <img
-                  src={product.productImage}
-                  alt={product.title}
-                  className="w-full h-full object-cover"
-                />
+                <img src={product.productImage} alt={product.title} className="w-full h-full object-cover" />
               </div>
 
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-luxury-cream mb-1 truncate">
-                  {product.title}
-                </h3>
+                <h3 className="text-lg font-semibold text-luxury-cream mb-1 truncate">{product.title}</h3>
                 <p className="text-luxury-cream/60 text-sm mb-2 line-clamp-2">
                   {product.description?.replace(/<[^>]*>/g, "").slice(0, 60)}...
                 </p>
 
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-lg font-bold text-luxury-gold">Rs. {product.price}</span>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      product.status === "available"
-                        ? "bg-green-500/15 text-green-400 border border-green-500/30"
-                        : "bg-red-500/15 text-red-400 border border-red-500/30"
-                    }`}
-                  >
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    product.status === "available"
+                      ? "bg-green-500/15 text-green-400 border border-green-500/30"
+                      : "bg-red-500/15 text-red-400 border border-red-500/30"
+                  }`}>
                     {product.status}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap justify-between gap-2 mb-3 text-xs">
-                  <span className="text-luxury-cream/70">
-                    Stock: <span className="text-luxury-cream/50">{product.stock}</span>
-                  </span>
-                  <span className="text-luxury-cream/70 capitalize">
-                    Category: <span className="text-luxury-cream/50">{product.category}</span>
-                  </span>
-                  <span className="text-luxury-cream/70 capitalize">
-                    Size: <span className="text-luxury-cream/50">{product.Quantity}</span>
-                  </span>
+                  <span className="text-luxury-cream/70">Stock: <span className="text-luxury-cream/50">{product.stock}</span></span>
+                  <span className="text-luxury-cream/70 capitalize">Category: <span className="text-luxury-cream/50">{product.category}</span></span>
+                  <span className="text-luxury-cream/70 capitalize">Size: <span className="text-luxury-cream/50">{product.Quantity}</span></span>
                 </div>
 
                 {product.ProductVariants?.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-3">
                     {product.ProductVariants.map((variant: any) => (
-                      <span
-                        key={variant.id ?? variant.size}
-                        className="px-2 py-1 text-xs rounded-full bg-luxury-elevated text-luxury-cream/70 border border-luxury-gold/10"
-                      >
+                      <span key={variant.id ?? variant.size} className="px-2 py-1 text-xs rounded-full bg-luxury-elevated text-luxury-cream/70 border border-luxury-gold/10">
                         {variant.size}: Rs. {variant.price} ({variant.stock} in stock)
                       </span>
                     ))}
@@ -128,21 +89,9 @@ const ListProduct = () => {
                 )}
 
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {product.isFeatured && (
-                    <span className="px-2 py-1 text-xs rounded-full bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30">
-                      Featured
-                    </span>
-                  )}
-                  {product.isNewArrival && (
-                    <span className="px-2 py-1 text-xs rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-                      New
-                    </span>
-                  )}
-                  {product.isOnSale && (
-                    <span className="px-2 py-1 text-xs rounded-full bg-red-500/15 text-red-300 border border-red-500/30">
-                      Sale
-                    </span>
-                  )}
+                  {product.isFeatured && <span className="px-2 py-1 text-xs rounded-full bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30">Featured</span>}
+                  {product.isNewArrival && <span className="px-2 py-1 text-xs rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">New</span>}
+                  {product.isOnSale && <span className="px-2 py-1 text-xs rounded-full bg-red-500/15 text-red-300 border border-red-500/30">Sale</span>}
                 </div>
 
                 {product.isOnSale && product.discountPrice && (

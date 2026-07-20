@@ -1,21 +1,28 @@
 
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import type { RootState, AppDispatch } from "../../../redux/store";
+import type { RootState } from "../../../redux/store";
 import { CreditCard, MapPin, User } from "lucide-react";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
-import { createOrder } from "../../../redux/thunks/OrderThunk";
-import { createCheckoutSession } from "../../../redux/thunks/PaymentThunk";
-import { getUserCart } from "../../../redux/thunks/CartThunk";
+import { useCreateOrderMutation } from "../../../queries/orderQueries";
+import { useCreateCheckoutSessionMutation } from "../../../queries/paymentQueries";
+import { useCart } from "../../../hooks/useCart";
 
 const CheckOut = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
 
-  const { cartItems } = useSelector((state: RootState) => state.cart);
+  // Cart and user state
+  const { cartItems } = useCart();
   const { user, token } = useSelector((state: RootState) => state.user);
-  const { loading, error } = useSelector((state: RootState) => state.order);
+
+  // Mutations
+  const createOrderMutation = useCreateOrderMutation();
+  const checkoutSessionMutation = useCreateCheckoutSessionMutation();
+
+  const loading = createOrderMutation.isPending || checkoutSessionMutation.isPending;
+  const error =
+    createOrderMutation.error?.message ?? checkoutSessionMutation.error?.message ?? null;
 
   // Non-logged-in users see a Guest/Login choice first; logged-in users skip straight to the form
   const [guestCheckoutStarted, setGuestCheckoutStarted] = useState(false);
@@ -43,33 +50,20 @@ const CheckOut = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce(
-      (total: number, item: any) => total + item.totalPrice,
-      0
-    );
-  };
+  const calculateTotal = () =>
+    cartItems.reduce((total: number, item: any) => total + item.totalPrice, 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formData.paymentMethod === "COD") {
-      // 🔹 Normal COD order flow
+      // Normal COD order flow
       try {
-        const result = await dispatch(
-          createOrder({ ...formData, cartItems })
-        ).unwrap();
+        const result = await createOrderMutation.mutateAsync({ ...formData, cartItems });
         const orderId = result?.data?.id;
-
-        // reflect the backend clearing the cart after order creation
-        dispatch(getUserCart());
-
         navigate("/web/thankyou", {
           state: { orderId, email: formData.customerEmail },
         });
@@ -77,9 +71,9 @@ const CheckOut = () => {
         console.error("Failed to create order:", err);
       }
     } else if (formData.paymentMethod === "CreditCard") {
-      // 🔹 Stripe Payment Flow - userId/guestId are derived server-side, no need to send them
-      const resultAction = await dispatch(
-        createCheckoutSession({
+      // Stripe Payment Flow
+      try {
+        const data = await checkoutSessionMutation.mutateAsync({
           items: cartItems.map((item: any) => ({
             name: item.Product?.title,
             price: item.totalPrice / item.quantity,
@@ -97,11 +91,12 @@ const CheckOut = () => {
             (sum: number, item: any) => sum + item.totalPrice,
             0
           ),
-        })
-      );
-
-      if (createCheckoutSession.fulfilled.match(resultAction)) {
-        window.location.href = resultAction.payload.url; // ✅ Stripe checkout page
+        });
+        if (data?.url) {
+          window.location.href = data.url; // Redirect to Stripe checkout page
+        }
+      } catch (err) {
+        console.error("Failed to create checkout session:", err);
       }
     } else {
       alert("Other payment methods not yet implemented.");
@@ -262,8 +257,6 @@ const CheckOut = () => {
               >
                 <option value="COD">Cash on Delivery</option>
                 <option value="CreditCard">Credit Card</option>
-                {/* <option value="PayPal">PayPal</option> */}
-                {/* <option value="BankTransfer">Bank Transfer</option> */}
               </select>
             </div>
           </div>

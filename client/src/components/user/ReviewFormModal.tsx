@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { useDispatch } from "react-redux";
 import { X, Star, ImagePlus, Trash2 } from "lucide-react";
-import { submitReview } from "../../redux/thunks/ReviewThunk";
-import type { AppDispatch } from "../../redux/store";
+import { useSubmitReviewMutation } from "../../queries/reviewQueries";
 import toast from "react-hot-toast";
 
 interface ReviewFormModalProps {
@@ -25,13 +23,12 @@ export const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
   productTitle,
   productImage,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const submitReviewMutation = useSubmitReviewMutation();
 
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const [images, setImages] = useState<File[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     setRating(0);
@@ -55,25 +52,25 @@ export const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (rating < 1) {
       toast.error("Please select a star rating");
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      await dispatch(
-        submitReview({ orderId, productId, rating, comment: comment.trim() || undefined, images })
-      ).unwrap();
-      toast.success("Thank you! Your review is now live.");
-      resetForm();
-      onClose();
-    } catch (error: any) {
-      toast.error(error || "Failed to submit review");
-    } finally {
-      setIsSubmitting(false);
-    }
+    submitReviewMutation.mutate(
+      { orderId, productId, rating, comment: comment.trim() || undefined, images },
+      {
+        onSuccess: () => {
+          toast.success("Thank you! Your review is now live.");
+          resetForm();
+          onClose();
+        },
+        onError: (error: any) => {
+          toast.error(error?.response?.data?.message || "Failed to submit review");
+        },
+      }
+    );
   };
 
   return (
@@ -197,10 +194,10 @@ export const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={submitReviewMutation.isPending}
                 className="w-full py-3 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink font-semibold text-xs tracking-widest uppercase rounded-lg shadow-lg transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                {isSubmitting ? (
+                {submitReviewMutation.isPending ? (
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <span>Submit Review</span>

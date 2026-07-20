@@ -1,28 +1,39 @@
-
-
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../redux/store";
-import { loginUser } from "../../redux/thunks/AuthThunk";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../redux/store";
 import { Link, useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
+import { useAuth } from "../../hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../redux/slices/AuthSlice";
+import type { AppDispatch } from "../../redux/store";
 
 const Login: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { login, loginLoading, loginError } = useAuth();
 
-  const { loading, error, user, token } = useSelector(
-    (state: RootState) => state.user
-  );
+  // Read from Redux to detect already-logged-in state (ProtectedRoute depends on this)
+  const { user, token } = useSelector((state: RootState) => state.user);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // toggle password
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
+    try {
+      const data = await login({ email, password });
+      // Sync the Redux slice so ProtectedRoute updates without page refresh
+      const userData = data?.user || data?.data?.user;
+      const tokenData = data?.token || data?.data?.token;
+      if (userData && tokenData) {
+        dispatch(loginSuccess({ user: userData, token: tokenData }));
+      }
+    } catch {
+      // error shown via loginError
+    }
   };
 
   useEffect(() => {
@@ -59,13 +70,11 @@ const Login: React.FC = () => {
         </h2>
 
         {/* Error message */}
-        {error && <p className="text-red-400 text-center font-medium">{error}</p>}
+        {loginError && <p className="text-red-400 text-center font-medium">{loginError}</p>}
 
         {/* Email */}
         <div className="flex flex-col">
-          <label className="text-sm font-semibold text-luxury-cream/80 mb-2">
-            Email
-          </label>
+          <label className="text-sm font-semibold text-luxury-cream/80 mb-2">Email</label>
           <input
             type="email"
             placeholder="Enter your email"
@@ -78,9 +87,7 @@ const Login: React.FC = () => {
 
         {/* Password with show/hide */}
         <div className="flex flex-col relative">
-          <label className="text-sm font-semibold text-luxury-cream/80 mb-2">
-            Password
-          </label>
+          <label className="text-sm font-semibold text-luxury-cream/80 mb-2">Password</label>
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
@@ -107,16 +114,16 @@ const Login: React.FC = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
-          disabled={loading}
+          disabled={loginLoading}
           className="w-full bg-luxury-gold text-luxury-ink p-3 rounded-xl font-semibold hover:bg-luxury-gold-bright hover:shadow-[0_0_25px_rgba(224,186,106,0.5)] transition-all duration-300 disabled:opacity-50"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loginLoading ? "Logging in..." : "Login"}
         </motion.button>
 
         {/* Links */}
         <div className="flex justify-between text-sm text-luxury-cream/70">
           <p>
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="text-luxury-gold font-medium hover:underline underline-offset-2 transition-colors duration-300">
               Sign up
             </Link>
