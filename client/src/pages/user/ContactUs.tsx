@@ -151,7 +151,26 @@ const ContactUs = () => {
               );
             })}
 
-
+            <div className="pt-2">
+              <p className="text-[10px] uppercase tracking-widest text-luxury-cream/50 mb-3">
+                Follow Us
+              </p>
+              <div className="flex gap-3">
+                {SOCIAL_LINKS.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      aria-label={social.label}
+                      className="w-10 h-10 rounded-xl border border-luxury-gold/10 bg-luxury-card flex items-center justify-center text-luxury-cream/70 hover:text-luxury-gold hover:border-luxury-gold/30 transition-colors duration-300"
+                    >
+                      <Icon size={16} strokeWidth={1.5} />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           </motion.div>
 
           {/* Contact Form */}
