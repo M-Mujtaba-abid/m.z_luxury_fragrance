@@ -21,8 +21,8 @@ const ListProduct = () => {
   return (
     <div className="min-h-screen bg-luxury-ink">
       <div className="bg-luxury-card border border-luxury-gold/10 rounded-xl shadow-md p-6">
-        <h1 className="font-logo text-3xl font-bold text-luxury-cream mb-6">
-          Product List <span className="text-luxury-cream/50 font-sans text-xl">({products.length})</span>
+        <h1 className="font-logo text-2xl sm:text-3xl font-bold text-luxury-cream mb-5 pl-14 md:pl-0">
+          Product List <span className="text-luxury-cream/50 font-sans text-base sm:text-xl">({products.length})</span>
         </h1>
 
         {error && (

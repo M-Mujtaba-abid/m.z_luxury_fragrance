@@ -52,12 +52,13 @@ const OrderDetails: React.FC = () => {
         ]}
       />
 
-      <div className="bg-luxury-card border border-luxury-gold/10 shadow-md rounded-xl p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="font-logo text-2xl font-bold text-luxury-gold">
+      <div className="bg-luxury-card border border-luxury-gold/10 shadow-md rounded-xl p-4 sm:p-6">
+        {/* Header: flex-wrap so badge stacks below title on very small screens */}
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <h1 className="font-logo text-xl sm:text-2xl font-bold text-luxury-gold">
             Order #{order.id}
           </h1>
-          <span className={`px-4 py-1 rounded-full text-sm font-semibold tracking-wide capitalize ${statusStyles[status] || ""}`}>
+          <span className={`px-3 py-1.5 rounded-full text-sm font-semibold tracking-wide capitalize whitespace-nowrap ${statusStyles[status] || ""}`}>
             {status}
           </span>
         </div>
@@ -88,14 +89,14 @@ const OrderDetails: React.FC = () => {
             <span className="text-luxury-cream">{order.paymentMethod}</span>
           </p>
 
-          {/* Status */}
-          <div className="flex items-center gap-3 pt-1">
-            <span className="font-semibold text-luxury-gold">Update Status:</span>
+          {/* Status update: wraps on mobile */}
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <span className="font-semibold text-luxury-gold whitespace-nowrap">Update Status:</span>
             <select
               value={status}
               onChange={handleStatusChange}
               disabled={updateStatusMutation.isPending}
-              className="px-3 py-1.5 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60 disabled:opacity-50"
+              className="flex-1 min-w-[160px] px-3 py-2.5 min-h-[44px] rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold/60 disabled:opacity-50 text-sm"
             >
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
