@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LayoutDashboard, PackagePlus, Package, ClipboardList, Star, Mail } from "lucide-react";
+import { Menu, X, LayoutDashboard, PackagePlus, Package, ClipboardList, Star, Mail, Quote } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: "/admin/orders", label: "Order Management", icon: ClipboardList },
   { to: "/admin/reviews", label: "Review Management", icon: Star },
   { to: "/admin/contact-messages", label: "Contact Messages", icon: Mail },
+  { to: "/admin/testimonials", label: "Testimonials t", icon: Quote },
 ];
 
 const Sidebar = () => {
@@ -56,11 +57,10 @@ const Sidebar = () => {
                   )}
                   <Link
                     to={to}
-                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-300 ${
-                      active
+                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-300 ${active
                         ? "bg-luxury-gold/10 text-luxury-gold font-medium"
                         : "text-luxury-cream/70 hover:bg-luxury-gold/5 hover:text-luxury-cream"
-                    }`}
+                      }`}
                     onClick={() => setIsOpen(false)}
                   >
                     <Icon className="w-4 h-4" />

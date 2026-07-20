@@ -28,6 +28,7 @@ const OrderDirectory = React.lazy(() => import("../pages/admin/order/OrderDirect
 const OrderDetails = React.lazy(() => import("../pages/admin/order/Orderdetails"));
 const ReviewDirectory = React.lazy(() => import("../pages/admin/review/ReviewDirectory"));
 const ContactDirectory = React.lazy(() => import("../pages/admin/contact/ContactDirectory"));
+const TestimonialDirectory = React.lazy(() => import("../pages/admin/testimonial/TestimonialDirectory"));
 const Profile = React.lazy(() => import("../components/admin/Profile"));
 const UpdateProfile = React.lazy(() => import("../components/admin/UpdateProfile"));
 
@@ -97,6 +98,7 @@ const LayoutAll = () => {
             <Route path="orders/:id" element={<OrderDetails />} />
             <Route path="reviews" element={<ReviewDirectory />} />
             <Route path="contact-messages" element={<ContactDirectory />} />
+            <Route path="testimonials" element={<TestimonialDirectory />} />
             <Route path="profile" element={<Profile />} />
             <Route path="profile/update" element={<UpdateProfile />} />
           </Route>

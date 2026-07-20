@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import FeaturedProducts from "../../pages/user/FeaturedProducts";
@@ -9,6 +10,8 @@ import SignaturePreview from "../component/SignaturePreview";
 import { Star, Mail, ShieldCheck, Award, MessageSquare } from "lucide-react";
 import SEO from "../../components/ui/SEO";
 import toast from "react-hot-toast";
+import { usePublicTestimonialsQuery } from "../../queries/testimonialQueries";
+import TestimonialFormModal from "../../components/user/TestimonialFormModal";
 
 
 const categories = [
@@ -41,28 +44,10 @@ const categories = [
   },
 ];
 
-const REVIEWS = [
-  {
-    name: "Genevieve R.",
-    text: "The sillage of Oud & Gold is absolute perfection. It commands presence without overpowering the room.",
-    rating: 5,
-    role: "Paris, France"
-  },
-  {
-    name: "Marcus A.",
-    text: "Aesop meets Tom Ford. Incredible craftsmanship and packaging. The customer service feels like a private concierge.",
-    rating: 5,
-    role: "London, UK"
-  },
-  {
-    name: "Elena S.",
-    text: "A truly premium sensory experience. The bottle itself is a work of art on my vanity.",
-    rating: 5,
-    role: "Milan, Italy"
-  }
-];
-
 const Home = () => {
+  const { data: testimonials } = usePublicTestimonialsQuery();
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-luxury-ink text-luxury-cream font-sans">
       <SEO title="Signature Perfume Impressions & Olfactive Journeys" />
@@ -206,36 +191,50 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <MessageSquare className="w-8 h-8 text-luxury-gold/60 mx-auto mb-3" />
-            <h2 className="font-logo text-3xl font-light text-luxury-cream tracking-wide">
+            <h2 className="font-logo text-3xl font-light text-luxury-cream tracking-wide mb-5">
               Global Reviews
             </h2>
+            <button
+              onClick={() => setIsTestimonialModalOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink text-xs font-semibold uppercase tracking-wider transition-colors duration-300"
+            >
+              <MessageSquare size={14} />
+              Share Your Thoughts
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {REVIEWS.map((rev, idx) => (
-              <div
-                key={idx}
-                className="p-8 rounded-2xl bg-luxury-elevated border border-luxury-gold/10 shadow-sm flex flex-col justify-between"
-              >
-                <div className="space-y-4">
-                  <div className="flex text-luxury-gold gap-0.5">
-                    {Array.from({ length: rev.rating }).map((_, i) => (
-                      <Star key={i} size={13} fill="currentColor" className="stroke-none" />
-                    ))}
+          {!!testimonials?.length && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial) => (
+                <div
+                  key={testimonial.id}
+                  className="p-8 rounded-2xl bg-luxury-elevated border border-luxury-gold/10 shadow-sm flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    <div className="flex text-luxury-gold gap-0.5">
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
+                        <Star key={i} size={13} fill="currentColor" className="stroke-none" />
+                      ))}
+                    </div>
+                    <p className="text-xs text-luxury-cream/70 italic leading-relaxed">
+                      "{testimonial.thinking}"
+                    </p>
                   </div>
-                  <p className="text-xs text-luxury-cream/70 italic leading-relaxed">
-                    "{rev.text}"
-                  </p>
+                  <div className="pt-6 border-t border-luxury-gold/10 mt-6 flex justify-between items-center text-[11px] text-luxury-cream/50">
+                    <span className="font-semibold text-luxury-cream">{testimonial.name}</span>
+                    <span>{testimonial.country}</span>
+                  </div>
                 </div>
-                <div className="pt-6 border-t border-luxury-gold/10 mt-6 flex justify-between items-center text-[11px] text-luxury-cream/50">
-                  <span className="font-semibold text-luxury-cream">{rev.name}</span>
-                  <span>{rev.role}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      <TestimonialFormModal
+        isOpen={isTestimonialModalOpen}
+        onClose={() => setIsTestimonialModalOpen(false)}
+      />
 
       {/* 10. Luxury Newsletter Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
