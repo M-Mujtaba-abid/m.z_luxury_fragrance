@@ -10,7 +10,7 @@ export const SignaturePreview: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const [selectedSize, setSelectedSize] = useState<string>("100ML");
+  const [selectedSize, setSelectedSize] = useState<string>("50ML");
   const [quantity, setQuantity] = useState<number>(1);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -31,8 +31,6 @@ export const SignaturePreview: React.FC = () => {
   let displayPrice = productData.price;
   if (selectedSize === "15ML") {
     displayPrice = Math.round(displayPrice * 0.4);
-  } else if (selectedSize === "50ML") {
-    displayPrice = Math.round(displayPrice * 0.75);
   }
 
   const handleAddToCart = async (checkoutNow = false) => {
@@ -120,7 +118,7 @@ export const SignaturePreview: React.FC = () => {
                 Size / Volume
               </span>
               <div className="flex gap-3">
-                {["15ML", "50ML", "100ML"].map((size) => (
+                {["15ML", "50ML"].map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}

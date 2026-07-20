@@ -46,8 +46,8 @@ const PostProduct = () => {
     status: "available" as "available" | "not available",
     price: "",
     stock: "",
-    category: "Men" as "Men" | "Women" | "Children",
-    Quantity: "15ML" as "15ML" | "50ML" | "100ML",
+    category: "Men" as "Men" | "Women",
+    Quantity: "15ML" as "15ML" | "50ML",
     isFeatured: false,
     isNewArrival: false,
     isOnSale: false,
@@ -294,7 +294,6 @@ const PostProduct = () => {
                 <select name="category" value={formData.category} onChange={handleInputChange} className={inputClass}>
                   <option value="Men">Men</option>
                   <option value="Women">Women</option>
-                  <option value="Children">Children</option>
                 </select>
               </div>
               <div>
@@ -302,7 +301,6 @@ const PostProduct = () => {
                 <select name="Quantity" value={formData.Quantity} onChange={handleInputChange} className={inputClass}>
                   <option value="15ML">15ML</option>
                   <option value="50ML">50ML</option>
-                  <option value="100ML">100ML</option>
                 </select>
               </div>
             </div>

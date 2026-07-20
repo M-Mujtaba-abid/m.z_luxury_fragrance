@@ -29,11 +29,11 @@ const Product = sequelize.define(
       allowNull: false,
     },
     category: {
-      type: DataTypes.ENUM("Men", "Women", "Children"),
+      type: DataTypes.ENUM("Men", "Women"),
       allowNull: false,
     },
     Quantity: {
-      type: DataTypes.ENUM("15ML", "50ML", "100ML"),
+      type: DataTypes.ENUM("15ML", "50ML"),
       allowNull: false,
     },
 
@@ -61,9 +61,9 @@ const Product = sequelize.define(
       allowNull: true,
     },
     // Fragrance-industry classification, distinct from `category` above:
-    // `category` drives storefront navigation (Men/Women/Children sections),
-    // `gender` is who the scent is marketed for (a unisex scent can still
-    // live under either category section).
+    // `category` drives storefront navigation (Men/Women sections), `gender`
+    // is who the scent is marketed for (a unisex scent can still live under
+    // either category section).
     gender: {
       type: DataTypes.ENUM("Men", "Women", "Unisex"),
       allowNull: true,

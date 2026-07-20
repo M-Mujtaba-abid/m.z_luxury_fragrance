@@ -7,7 +7,7 @@ import slugify from "../utils/slugify.js";
 import { Op, where, col, cast } from "sequelize";
 import * as reviewService from "./review.service.js";
 
-const ALLOWED_CATEGORIES = ["Men", "Women", "Children"];
+const ALLOWED_CATEGORIES = ["Men", "Women"];
 const PUBLISHED_ONLY = { publishStatus: "published" };
 
 const listIncludes = [
