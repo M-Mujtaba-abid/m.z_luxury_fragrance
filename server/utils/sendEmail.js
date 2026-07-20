@@ -12,7 +12,12 @@ const buildTransporter = () =>
     },
   });
 
-const sendEmail = async (to, subject, text) => {
+// `body` is either a plain string (legacy callers - text-only email) or
+// `{ text, html }` (html email with a plain-text fallback for clients that
+// don't render HTML).
+const sendEmail = async (to, subject, body) => {
+  const { text, html } = typeof body === "string" ? { text: body, html: undefined } : body;
+
   try {
     const transporter = buildTransporter();
     const mailOptions = {
@@ -20,6 +25,7 @@ const sendEmail = async (to, subject, text) => {
       to,
       subject,
       text,
+      ...(html ? { html } : {}),
     };
 
     await transporter.sendMail(mailOptions);
