@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LayoutDashboard, PackagePlus, Package, ClipboardList, Star } from "lucide-react";
+import { Menu, X, LayoutDashboard, PackagePlus, Package, ClipboardList, Star, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { to: "/admin/products", label: "All Products", icon: Package },
   { to: "/admin/orders", label: "Order Management", icon: ClipboardList },
   { to: "/admin/reviews", label: "Review Management", icon: Star },
+  { to: "/admin/contact-messages", label: "Contact Messages", icon: Mail },
 ];
 
 const Sidebar = () => {
