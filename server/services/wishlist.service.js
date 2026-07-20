@@ -36,7 +36,28 @@ export const getUserWishlist = async ({ userId, guestId }) => {
 
   const wishlistItems = await Wishlist.findAll({
     where: owner,
-    include: [{ model: Product, attributes: ["id", "title", "price", "productImage", "stock"] }],
+    include: [
+      {
+        model: Product,
+        // Full enough for the storefront ProductCard component to render
+        // as-is (badges, size tag, sale price) - not just an id/title stub.
+        attributes: [
+          "id",
+          "title",
+          "description",
+          "status",
+          "price",
+          "stock",
+          "productImage",
+          "category",
+          "Quantity",
+          "isFeatured",
+          "isNewArrival",
+          "isOnSale",
+          "discountPrice",
+        ],
+      },
+    ],
     order: [["createdAt", "DESC"]],
   });
 

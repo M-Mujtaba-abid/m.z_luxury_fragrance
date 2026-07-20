@@ -4,7 +4,28 @@ import ApiError from "../utils/apiError.js";
 import resolveOwner from "../utils/resolveOwner.js";
 
 const MAX_COMPARE_ITEMS = 2;
-const productAttributes = ["id", "title", "price", "productImage", "stock"];
+// Wide enough for a real side-by-side spec table (notes, brand, gender,
+// size) - not just an id/title/price stub.
+const productAttributes = [
+  "id",
+  "title",
+  "description",
+  "status",
+  "price",
+  "stock",
+  "productImage",
+  "category",
+  "Quantity",
+  "brand",
+  "gender",
+  "topNotes",
+  "heartNotes",
+  "baseNotes",
+  "isFeatured",
+  "isNewArrival",
+  "isOnSale",
+  "discountPrice",
+];
 
 // Toggle: if the product is already in the compare list, remove it.
 // Otherwise add it, unless the owner has already hit the 2-item cap.

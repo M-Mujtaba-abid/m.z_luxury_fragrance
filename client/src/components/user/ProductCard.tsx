@@ -7,6 +7,9 @@ import { addToCart } from "../../redux/thunks/CartThunk";
 import type { AppDispatch } from "../../redux/store";
 import type { Product } from "../../redux/types/productTypes";
 import { ImageLoader } from "../ui/ImageLoader";
+import { useWishlist } from "../../hooks/useWishlist";
+import { useCompare } from "../../hooks/useCompare";
+import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
 import toast from "react-hot-toast";
 
 interface ProductCardProps {
@@ -16,9 +19,21 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isCompared, setIsCompared] = useState(false);
+  const { isFavorite, toggleWishlist, loadingId } = useWishlist();
+  const {
+    isComparing,
+    toggleCompare,
+    loadingId: compareLoadingId,
+    isFull: isCompareFull,
+  } = useCompare();
   const [isAdding, setIsAdding] = useState(false);
+
+  const isWishlisted = isFavorite(product.id);
+  const isWishlistBusy = loadingId === product.id;
+
+  const isCompared = isComparing(product.id);
+  const isCompareBusy = compareLoadingId === product.id;
+  const compareDisabled = isCompareBusy || (isCompareFull && !isCompared);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,21 +52,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-    toast.success(
-      isWishlisted ? "Removed from Wishlist" : "Added to Wishlist",
-      { icon: "❤️" }
-    );
+    if (isWishlistBusy) return;
+    toggleWishlist(product.id);
   };
 
   const handleCompare = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsCompared(!isCompared);
-    toast.success(
-      isCompared ? "Removed from Compare" : "Added to Compare list",
-      { icon: "🔄" }
-    );
+    if (compareDisabled) return;
+    toggleCompare(product.id);
   };
 
   // Badges
@@ -106,25 +115,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
           <div className="absolute right-4 top-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
             <button
               onClick={handleWishlist}
-              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md ${
+              disabled={isWishlistBusy}
+              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-wait ${
                 isWishlisted
                   ? "bg-red-500 text-white"
                   : "bg-luxury-elevated/80 text-luxury-cream hover:bg-red-500 hover:text-white"
               }`}
               title="Add to Wishlist"
             >
-              <Heart size={15} fill={isWishlisted ? "currentColor" : "none"} />
+              {isWishlistBusy ? (
+                <div className="w-[15px] h-[15px] border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Heart size={15} fill={isWishlisted ? "currentColor" : "none"} />
+              )}
             </button>
             <button
               onClick={handleCompare}
-              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md ${
+              disabled={compareDisabled}
+              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${
                 isCompared
                   ? "bg-blue-600 text-white"
                   : "bg-luxury-elevated/80 text-luxury-cream hover:bg-blue-600 hover:text-white"
               }`}
-              title="Compare Product"
+              title={
+                isCompareFull && !isCompared
+                  ? `You can only compare up to ${MAX_COMPARE_ITEMS} products`
+                  : "Compare Product"
+              }
             >
-              <ArrowRightLeft size={15} />
+              {isCompareBusy ? (
+                <div className="w-[15px] h-[15px] border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <ArrowRightLeft size={15} />
+              )}
             </button>
             {onQuickView && (
               <button

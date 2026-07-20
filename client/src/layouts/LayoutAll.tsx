@@ -43,6 +43,8 @@ const ThankYouContent = React.lazy(() => import("../pages/user/cart/ThankYouCont
 const MyOrders = React.lazy(() => import("../pages/user/cart/MyOrders"));
 const OrderTracking = React.lazy(() => import("../pages/user/OrderTracking"));
 const SearchResults = React.lazy(() => import("../components/user/SearchResults"));
+const Wishlist = React.lazy(() => import("../pages/user/Wishlist"));
+const Compare = React.lazy(() => import("../pages/user/Compare"));
 const Success = React.lazy(() => import("../pages/payment/Success"));
 const Cancel = React.lazy(() => import("../pages/payment/Cancel"));
 
@@ -103,6 +105,8 @@ const LayoutAll = () => {
             <Route path="home" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<ContactUs />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="compare" element={<Compare />} />
             <Route path=":category" element={<Products />} />
             <Route
               path="product-detail/:productId"

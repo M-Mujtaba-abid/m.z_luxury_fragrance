@@ -45,6 +45,30 @@ const Footer = () => {
                 Contact
               </a>
             </li>
+            <li>
+              <a
+                href="/web/wishlist"
+                className="transition-colors duration-300 hover:text-luxury-gold"
+              >
+                Wishlist
+              </a>
+            </li>
+            <li>
+              <a
+                href="/web/compare"
+                className="transition-colors duration-300 hover:text-luxury-gold"
+              >
+                Compare
+              </a>
+            </li>
+            <li>
+              <a
+                href="/web/testimonials"
+                className="transition-colors duration-300 hover:text-luxury-gold"
+              >
+                Testimonials
+              </a>
+            </li>
           </ul>
         </div>
 
