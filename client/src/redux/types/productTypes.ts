@@ -25,8 +25,8 @@ export interface Product {
   price: number;
   stock: number;
   productImage: string;
-  category: 'Men' | 'Women' | 'Children';
-  Quantity: '15ML' | '50ML' | '100ML';
+  category: 'Men' | 'Women';
+  Quantity: '15ML' | '50ML';
   isFeatured: boolean;
   isNewArrival: boolean;
   isOnSale: boolean;
@@ -74,8 +74,8 @@ export interface ProductData {
   status: 'available' | 'not available';
   price: number;
   stock: number;
-  category: 'Men' | 'Women' | 'Children';
-  Quantity: '15ML' | '50ML' | '100ML';
+  category: 'Men' | 'Women';
+  Quantity: '15ML' | '50ML';
   images: File[];
   coverIndex?: number;
   isFeatured: boolean;

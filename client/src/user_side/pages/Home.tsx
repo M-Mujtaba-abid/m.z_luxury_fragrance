@@ -33,15 +33,6 @@ const categories = [
     link: "/web/Women",
     btnColor: "bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink",
   },
-  {
-    id: 3,
-    title: "Children",
-    description: "Soft, hypoallergenic chamomile & honey mist",
-    image: "https://www.juniormagazine.co.uk/wp-content/uploads/2024/07/EAU_TP_1-a594a8f-725x1024.jpg",
-    hoverImage: "https://www.juniormagazine.co.uk/wp-content/uploads/2021/03/jacadi-baby-9fbbd1c.jpeg.webp",
-    link: "/web/Children",
-    btnColor: "bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink",
-  },
 ];
 
 const Home = () => {

@@ -39,7 +39,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
   // Reset states when product changes
   useEffect(() => {
     if (product) {
-      setSelectedSize(product.Quantity || "100ML");
+      setSelectedSize(product.Quantity || "50ML");
       setSelectedQuantity(1);
     }
   }, [product]);
@@ -227,7 +227,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                       Select Size
                     </span>
                     <div className="flex gap-3">
-                      {["15ML", "50ML", "100ML"].map((size) => (
+                      {["15ML", "50ML"].map((size) => (
                         <button
                           key={size}
                           onClick={() => setSelectedSize(size)}

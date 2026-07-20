@@ -186,7 +186,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
           {/* Size Variant Tag */}
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] px-2 py-0.5 border border-luxury-gold/20 rounded bg-luxury-ink font-medium text-luxury-cream/70">
-              {product.Quantity || "100ML"}
+              {product.Quantity || "50ML"}
             </span>
             <span className="text-[10px] text-luxury-cream/40">Standard Pack</span>
           </div>
