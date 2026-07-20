@@ -89,3 +89,13 @@ export const getOnSaleProducts = asyncHandler(async (req, res) => {
   const products = await productService.getOnSaleProducts();
   res.status(200).json(new ApiResponse(200, products, "On Sale products"));
 });
+
+export const getRelatedProducts = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const currentProduct = await productService.getProductById({ id });
+  const relatedProducts = await productService.getAllRelatedProducts(currentProduct);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, relatedProducts, "Dynamic related products fetched successfully"));
+});
