@@ -24,7 +24,6 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   // Live cart count from React Query (no longer from Redux CartSlice)
   const { cartItems } = useCart();
-  const cartCount = cartItems.length;
   const { token } = useSelector((s: RootState) => s.user);
 
   const logoutMutation = useLogoutMutation();

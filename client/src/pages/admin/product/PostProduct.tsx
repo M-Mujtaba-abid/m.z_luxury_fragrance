@@ -135,6 +135,34 @@ const PostProduct = () => {
     return errors;
   };
 
+  const buildFormData = (publishStatusOverride: "draft" | "published"): FormData => {
+    const fd = new FormData();
+    fd.append("title", formData.title);
+    fd.append("description", formData.description);
+    fd.append("status", formData.status);
+    fd.append("price", String(parseFloat(formData.price)));
+    fd.append("stock", String(parseInt(formData.stock)));
+    fd.append("category", formData.category);
+    fd.append("Quantity", formData.Quantity);
+    fd.append("isFeatured", String(formData.isFeatured));
+    fd.append("isNewArrival", String(formData.isNewArrival));
+    fd.append("isOnSale", String(formData.isOnSale));
+    fd.append("publishStatus", publishStatusOverride);
+    if (formData.discountPrice) fd.append("discountPrice", String(parseFloat(formData.discountPrice)));
+    if (formData.brand) fd.append("brand", formData.brand);
+    if (formData.gender) fd.append("gender", formData.gender);
+    if (formData.metaTitle) fd.append("metaTitle", formData.metaTitle);
+    if (formData.metaDescription) fd.append("metaDescription", formData.metaDescription);
+    if (formData.slug) fd.append("slug", formData.slug);
+    if (topNotes.length) fd.append("topNotes", JSON.stringify(topNotes));
+    if (heartNotes.length) fd.append("heartNotes", JSON.stringify(heartNotes));
+    if (baseNotes.length) fd.append("baseNotes", JSON.stringify(baseNotes));
+    if (variants.length) fd.append("variants", JSON.stringify(variants));
+    fd.append("coverIndex", String(coverIndex));
+    newImages.forEach((img) => fd.append("images", img));
+    return fd;
+  };
+
   const handleSubmit = async (publishStatusOverride: "draft" | "published") => {
     const errors = validate();
     setFormErrors(errors);
@@ -143,38 +171,14 @@ const PostProduct = () => {
       return;
     }
 
-    const payload = {
-      title: formData.title,
-      description: formData.description,
-      status: formData.status,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-      category: formData.category,
-      Quantity: formData.Quantity,
-      isFeatured: formData.isFeatured,
-      isNewArrival: formData.isNewArrival,
-      isOnSale: formData.isOnSale,
-      discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
-      brand: formData.brand || undefined,
-      gender: formData.gender || undefined,
-      topNotes,
-      heartNotes,
-      baseNotes,
-      metaTitle: formData.metaTitle || undefined,
-      metaDescription: formData.metaDescription || undefined,
-      slug: formData.slug || undefined,
-      publishStatus: publishStatusOverride,
-      variants,
-      images: newImages,
-      coverIndex,
-    };
+    const fd = buildFormData(publishStatusOverride);
 
     try {
       if (isEditMode && productId) {
-        await updateMutation.mutateAsync({ id: parseInt(productId), ...payload });
+        await updateMutation.mutateAsync({ id: parseInt(productId), formData: fd });
         toast.success("Product updated successfully");
       } else {
-        await createMutation.mutateAsync(payload);
+        await createMutation.mutateAsync(fd);
         toast.success(
           publishStatusOverride === "published" ? "Product published" : "Product saved as draft"
         );

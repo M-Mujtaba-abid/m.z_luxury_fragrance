@@ -1,11 +1,6 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Heart, ArrowRightLeft } from "lucide-react";
 import { useSingleProductQuery } from "../../queries/productQueries";
-import { clearError, clearCurrentProduct } from "../../redux/slices/ProductSlice";
-import type { AppDispatch } from "../../redux/store";
 import AddToCartButton from "../../components/user/AddToCartButton";
 import ProductReviews from "../../components/user/ProductReviews";
 import RelatedProducts from "../../components/user/RelatedProducts";
@@ -15,7 +10,6 @@ import { useCompare } from "../../hooks/useCompare";
 import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
 
 const ProductDetailPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
 
@@ -25,13 +19,7 @@ const ProductDetailPage = () => {
   const { isFavorite, toggleWishlist, loadingId: wishlistLoadingId } = useWishlist();
   const { isComparing, toggleCompare, loadingId: compareLoadingId, isFull: isCompareFull } = useCompare();
 
-  // Clear ProductSlice state on unmount (keeps Redux consistent with old behavior)
-  useEffect(() => {
-    return () => {
-      dispatch(clearError());
-      dispatch(clearCurrentProduct());
-    };
-  }, [dispatch]);
+
 
   if (loading) {
     return (
