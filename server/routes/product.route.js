@@ -11,6 +11,7 @@ import {
   getFeaturedProducts,
   getNewArrivals,
   getOnSaleProducts,
+  getRelatedProducts,
 } from "../controllers/product.controller.js";
 import { upload } from "../middleware/multer.js";
 import {
@@ -51,6 +52,7 @@ router.get("/getNumberOfTotalproduct", getNumberOfTotalproduct);
 // now not use
 router.get("/search", validateSearchQuery, searchProducts);
 router.get("/getproductbycategory/:category", validateCategoryParam, getProductsByCategory);
+router.get("/getrelatedproducts/:id", validateProductId, getRelatedProducts);
 // router.delete("/search",searchProducts);
 
 export default router;

@@ -359,3 +359,51 @@ export const getOnSaleProducts = async () =>
   attachRatingSummary(
     await Product.findAll({ where: { isOnSale: true, ...PUBLISHED_ONLY }, include: listIncludes })
   );
+
+// Strips punctuation from a product title, splits it into words, and drops
+// anything shorter than 3 characters (e.g. "de", "of", "eau") so only
+// meaningful terms ("Noir", "Intense", "Oud") drive the match below.
+const extractKeywords = (title) =>
+  title
+    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .split(/\s+/)
+    .filter((word) => word.length >= 3);
+
+// Fully dynamic "related products": no static keyword list or category
+// mapping — the current product's own title is mined for search terms.
+export const getAllRelatedProducts = async (currentProduct) => {
+  const keywords = extractKeywords(currentProduct.title);
+
+  const baseWhere = {
+    ...PUBLISHED_ONLY,
+    id: { [Op.ne]: currentProduct.id },
+    stock: { [Op.gt]: 0 },
+  };
+
+  let relatedProducts = [];
+
+  if (keywords.length > 0) {
+    relatedProducts = await Product.findAll({
+      where: {
+        ...baseWhere,
+        gender: currentProduct.gender,
+        [Op.or]: keywords.map((keyword) => ({
+          title: { [Op.iLike]: `%${keyword}%` },
+        })),
+      },
+      include: listIncludes,
+    });
+  }
+
+  // Nothing matched by gender + keyword (or the title had no usable
+  // keywords at all) — fall back to any other active, in-stock product
+  // so the "Related Products" section is never empty.
+  if (relatedProducts.length === 0) {
+    relatedProducts = await Product.findAll({
+      where: baseWhere,
+      include: listIncludes,
+    });
+  }
+
+  return attachRatingSummary(relatedProducts);
+};
