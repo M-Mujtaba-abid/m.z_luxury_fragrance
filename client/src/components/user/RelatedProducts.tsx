@@ -10,6 +10,19 @@ interface RelatedProductsProps {
   productId: number;
 }
 
+// Matches the number of grid columns to how many cards there actually are,
+// so 2 or 3 related products still spread evenly across the full width
+// instead of leaving empty columns (a fixed lg:grid-cols-4 would otherwise
+// squeeze a couple of cards into the left side and leave the rest blank).
+const getGridColsClass = (count: number) => {
+  if (count <= 1) return "grid-cols-1 max-w-xs mx-auto";
+  if (count === 2) return "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto";
+  if (count === 3) return "grid-cols-1 sm:grid-cols-3";
+  if (count === 4) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+  if (count === 6) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"; // even 2x3, not 4+2
+  return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+};
+
 const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { relatedProducts, relatedProductsLoading } = useSelector(
@@ -51,7 +64,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className={`grid gap-6 ${getGridColsClass(productsToShow.length)}`}
         >
           {productsToShow.map((product) => (
             <ProductCard key={product.id} product={product} />
