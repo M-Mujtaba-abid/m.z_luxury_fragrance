@@ -17,6 +17,7 @@ import reviewRoute from "./routes/review.route.js";
 import wishlistRoute from "./routes/wishlist.route.js";
 import compareRoute from "./routes/compare.route.js";
 import contactRoute from "./routes/contact.route.js";
+import testimonialRoute from "./routes/testimonial.route.js";
 
 const app = express();
 dotenv.config();
@@ -61,6 +62,7 @@ app.use("/review", reviewRoute);
 app.use("/wishlist", wishlistRoute);
 app.use("/compare", compareRoute);
 app.use("/contact", contactRoute);
+app.use("/testimonial", testimonialRoute);
 // app.use("/record", webhookRoute);
 
 // Test route
