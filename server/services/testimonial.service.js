@@ -46,3 +46,9 @@ export const updateTestimonial = async (id, { name, country, rating, gender, thi
 
   return testimonial;
 };
+
+export const deleteTestimonial = async ({ id }) => {
+  const testimonial = await Testimonial.findByPk(id);
+  if (!testimonial) throw new ApiError(404, "Testimonial not found");
+  await testimonial.destroy();
+};
