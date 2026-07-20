@@ -7,6 +7,7 @@ import Order from "../models/order.model.js";
 import ApiError from "../utils/apiError.js";
 import uploadBufferToCloudinary from "../utils/cloudinaryUpload.js";
 import sendEmail from "../utils/sendEmail.js";
+import sendWelcomeEmail from "../utils/sendWelcomeEmail.js";
 
 const toSafeUser = (user) => ({
   id: user.id,
@@ -47,6 +48,13 @@ export const registerUser = async ({
     userRole: userRole || "User",
     profileImage: uploadedImage.secure_url,
   });
+
+  try {
+    await sendWelcomeEmail({ firstName: newUser.firstName, email: newUser.email });
+  } catch (error) {
+    // account is already created successfully - a failed email shouldn't fail registration
+    console.error("Failed to send welcome email:", error);
+  }
 
   return toSafeUser(newUser);
 };
