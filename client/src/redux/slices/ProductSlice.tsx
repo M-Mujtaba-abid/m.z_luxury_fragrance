@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createProduct, fetchProducts, deleteProduct, getProductById, updateProduct, getTotalProductsCount, fetchFeaturedProducts, fetchNewArrivals, fetchOnSaleProducts, searchProductsThunk } from "../thunks/ProductThunk";
+import { createProduct, fetchProducts, deleteProduct, getProductById, updateProduct, getTotalProductsCount, fetchFeaturedProducts, fetchNewArrivals, fetchOnSaleProducts, searchProductsThunk, fetchRelatedProducts } from "../thunks/ProductThunk";
 import type { ProductState } from "../types/productTypes";
 
 const initialState: ProductState = {
@@ -12,6 +12,8 @@ const initialState: ProductState = {
   newArrivals: [],
   searchResults: [], // 🔍 yahan store hoga
   onSaleProducts: [],
+  relatedProducts: [],
+  relatedProductsLoading: false,
 };
 
 const productSlice = createSlice({
@@ -165,6 +167,24 @@ const productSlice = createSlice({
     builder.addCase(fetchOnSaleProducts.rejected, (state: any, action) => {
       state.loading = false;
       state.error = action.payload as string;
+    });
+
+    // Related products ("You May Also Like") — dedicated loading flag so
+    // this background fetch never re-triggers ProductDetailPage's
+    // full-screen loading gate, which reads the shared `loading` field.
+    builder.addCase(fetchRelatedProducts.pending, (state: any) => {
+      state.relatedProductsLoading = true;
+      // cleared up front so navigating between products never flashes the
+      // previous product's related items while the new fetch is in flight
+      state.relatedProducts = [];
+    });
+    builder.addCase(fetchRelatedProducts.fulfilled, (state: any, action) => {
+      state.relatedProductsLoading = false;
+      state.relatedProducts = action.payload;
+    });
+    builder.addCase(fetchRelatedProducts.rejected, (state: any) => {
+      state.relatedProductsLoading = false;
+      state.relatedProducts = [];
     });
 
      // ✅ Search Products

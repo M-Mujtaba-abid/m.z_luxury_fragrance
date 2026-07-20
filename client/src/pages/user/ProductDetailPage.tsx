@@ -9,6 +9,7 @@ import {
 import type { RootState, AppDispatch } from "../../redux/store";
 import AddToCartButton from "../../components/user/AddToCartButton";
 import ProductReviews from "../../components/user/ProductReviews";
+import RelatedProducts from "../../components/user/RelatedProducts";
 import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const ProductDetailPage = () => {
@@ -224,6 +225,8 @@ const ProductDetailPage = () => {
         </div>
 
         <ProductReviews productId={currentProduct.id} />
+
+        <RelatedProducts productId={currentProduct.id} />
       </div>
     </div>
   );

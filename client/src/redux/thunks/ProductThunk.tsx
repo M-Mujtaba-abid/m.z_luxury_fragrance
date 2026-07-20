@@ -218,6 +218,22 @@ export const fetchOnSaleProducts = createAsyncThunk(
   }
 );
 
+// Related products for the Product Detail page's "You May Also Like" section
+export const fetchRelatedProducts = createAsyncThunk(
+  'products/fetchRelatedProducts',
+  async (productId: number, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(showLoader());
+      const response = await API.get(`/product/getrelatedproducts/${productId}`);
+      return response.data.data || response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch related products');
+    } finally {
+      dispatch(hideLoader());
+    }
+  }
+);
+
 
 
 // 🔍 Search Products Thunk
