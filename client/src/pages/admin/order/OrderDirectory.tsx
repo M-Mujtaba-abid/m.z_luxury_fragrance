@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../../redux/store";
-import { fetchAllOrders } from "../../../redux/thunks/OrderThunk";
+import React, { useState } from "react";
+import { useAllOrdersQuery } from "../../../queries/orderQueries";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-// Same status color language used on the customer-facing Order Tracking page.
 const statusStyles: Record<string, string> = {
   pending: "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30",
   confirmed: "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30",
@@ -15,28 +12,18 @@ const statusStyles: Record<string, string> = {
 };
 
 const OrderDirectory: React.FC = () => {
-  const dispatch = useDispatch<any>();
   const navigate = useNavigate();
-
-  const { orders } = useSelector((state: RootState) => state.order);
-  const { loading } = useSelector((state: RootState) => state.loader);
-
+  const { data: orders = [], isLoading: loading } = useAllOrdersQuery();
   const [filterStatus, setFilterStatus] = useState("all");
-
-  useEffect(() => {
-    dispatch(fetchAllOrders());
-  }, [dispatch]);
 
   const handleViewDetails = (id: number) => {
     navigate(`/admin/orders/${id}`);
   };
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterStatus(e.target.value);
-  };
-
   const filteredOrders =
-    filterStatus === "all" ? orders : orders.filter((order: any) => order.status === filterStatus);
+    filterStatus === "all"
+      ? orders
+      : orders.filter((order: any) => order.status === filterStatus);
 
   return (
     <div className="min-h-screen bg-luxury-ink">
@@ -48,7 +35,7 @@ const OrderDirectory: React.FC = () => {
           <span className="text-sm font-medium text-luxury-cream/70">Filter by Status:</span>
           <select
             value={filterStatus}
-            onChange={handleFilterChange}
+            onChange={(e) => setFilterStatus(e.target.value)}
             className="px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
           >
             <option value="all">All</option>
@@ -80,45 +67,23 @@ const OrderDirectory: React.FC = () => {
             <table className="min-w-full">
               <thead className="bg-luxury-elevated">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60">
-                    Order ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60 hidden md:table-cell">
-                    Username
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60 hidden md:table-cell">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60 hidden md:table-cell">
-                    Total Items
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60">
-                    Actions
-                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60">Order ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60 hidden md:table-cell">Username</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60 hidden md:table-cell">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60 hidden md:table-cell">Total Items</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-luxury-cream/60">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-luxury-gold/10">
                 {filteredOrders.map((order: any) => (
                   <tr key={order.id} className="bg-luxury-card hover:bg-luxury-gold/5 transition-colors duration-300">
                     <td className="px-4 py-3 text-luxury-cream font-medium">#{order.id}</td>
-                    <td className="px-4 py-3 text-luxury-cream/80 hidden md:table-cell">
-                      {order.customerName}
-                    </td>
-                    <td className="px-4 py-3 text-luxury-cream/60 hidden md:table-cell">
-                      {order.customerEmail}
-                    </td>
-                    <td className="px-4 py-3 text-luxury-cream/80 hidden md:table-cell">
-                      {order.OrderItems?.length || 0}
-                    </td>
+                    <td className="px-4 py-3 text-luxury-cream/80 hidden md:table-cell">{order.customerName}</td>
+                    <td className="px-4 py-3 text-luxury-cream/60 hidden md:table-cell">{order.customerEmail}</td>
+                    <td className="px-4 py-3 text-luxury-cream/80 hidden md:table-cell">{order.OrderItems?.length || 0}</td>
                     <td className="px-4 py-3">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide capitalize ${
-                          statusStyles[order.status] || "bg-luxury-gold/10 text-luxury-cream/60 border border-luxury-gold/20"
-                        }`}
-                      >
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide capitalize ${statusStyles[order.status] || "bg-luxury-gold/10 text-luxury-cream/60 border border-luxury-gold/20"}`}>
                         {order.status}
                       </span>
                     </td>

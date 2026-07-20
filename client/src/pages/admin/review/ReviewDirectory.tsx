@@ -1,28 +1,26 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 import { motion } from "framer-motion";
 import { Star, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-import type { RootState, AppDispatch } from "../../../redux/store";
-import { adminFetchAllReviews, adminDeleteReview } from "../../../redux/thunks/ReviewThunk";
+import {
+  useAdminAllReviewsQuery,
+  useAdminDeleteReviewMutation,
+} from "../../../queries/reviewQueries";
 
 const ReviewDirectory: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { adminReviews } = useSelector((state: RootState) => state.review);
-  const { loading } = useSelector((state: RootState) => state.loader);
+  const { data: adminReviews = [], isLoading } = useAdminAllReviewsQuery();
+  const deleteMutation = useAdminDeleteReviewMutation();
 
-  useEffect(() => {
-    dispatch(adminFetchAllReviews());
-  }, [dispatch]);
-
-  const handleDelete = async (id: number) => {
+  const handleDelete = (id: number) => {
     if (!window.confirm("Are you sure you want to delete this review?")) return;
-    try {
-      await dispatch(adminDeleteReview(id)).unwrap();
-      toast.success("Review deleted successfully");
-    } catch (err: any) {
-      toast.error(err || "Failed to delete review");
-    }
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success("Review deleted successfully");
+      },
+      onError: (error: any) => {
+        toast.error(error?.response?.data?.message || "Failed to delete review");
+      },
+    });
   };
 
   return (
@@ -30,17 +28,17 @@ const ReviewDirectory: React.FC = () => {
       <div className="bg-luxury-card border border-luxury-gold/10 rounded-xl shadow-md p-6">
         <h1 className="font-logo text-3xl font-bold text-luxury-cream mb-6">Review Management</h1>
 
-        {loading && (
+        {isLoading && (
           <div className="flex justify-center items-center py-10">
             <div className="w-10 h-10 rounded-full border-2 border-luxury-gold/20 border-t-luxury-gold animate-spin" />
           </div>
         )}
 
-        {!loading && adminReviews.length === 0 && (
+        {!isLoading && adminReviews.length === 0 && (
           <p className="text-luxury-cream/50 text-center py-10">No reviews found.</p>
         )}
 
-        {!loading && adminReviews.length > 0 && (
+        {!isLoading && adminReviews.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -94,7 +92,8 @@ const ReviewDirectory: React.FC = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleDelete(review.id)}
-                        className="flex items-center gap-1.5 bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-500/20 transition-colors duration-300"
+                        disabled={deleteMutation.isPending && deleteMutation.variables === review.id}
+                        className="flex items-center gap-1.5 bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-500/20 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Trash2 size={13} />
                         Delete

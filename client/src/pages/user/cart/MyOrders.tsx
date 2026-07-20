@@ -1,9 +1,9 @@
 
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../../redux/store";
-import { fetchMyOrders } from "../../../redux/thunks/OrderThunk";
-import { fetchEligibleOrders } from "../../../redux/thunks/ReviewThunk";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../redux/store";
+import { useMyOrdersQuery } from "../../../queries/orderQueries";
+import { useEligibleOrdersQuery } from "../../../queries/reviewQueries";
 import { useNavigate } from "react-router-dom";
 import ReviewFormModal from "../../../components/user/ReviewFormModal";
 
@@ -17,13 +17,11 @@ const statusStyles: Record<string, string> = {
 };
 
 const MyOrders: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { orders, error} = useSelector(
-    (state: RootState) => state.order
-  );
   const { token } = useSelector((state: RootState) => state.user);
-  const { eligibleOrders } = useSelector((state: RootState) => state.review);
+
+  const { data: orders = [], isLoading, error } = useMyOrdersQuery(!!token);
+  const { data: eligibleOrders = [] } = useEligibleOrdersQuery(!!token);
 
   const [reviewTarget, setReviewTarget] = useState<{
     orderId: number;
@@ -31,13 +29,6 @@ const MyOrders: React.FC = () => {
     productTitle: string;
     productImage: string;
   } | null>(null);
-
-  useEffect(() => {
-    if (token) {
-      dispatch(fetchMyOrders());
-      dispatch(fetchEligibleOrders());
-    }
-  }, [dispatch, token]);
 
   const isEligibleForReview = (orderId: number, productId: number) =>
     eligibleOrders.some((e) => e.orderId === orderId && e.productId === productId);
@@ -60,19 +51,19 @@ const MyOrders: React.FC = () => {
     );
   }
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-luxury-ink">
-  //       <p className="text-luxury-cream/70">Loading orders...</p>
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-[80px] flex items-center justify-center bg-luxury-ink">
+        <div className="w-10 h-10 rounded-full border-2 border-luxury-gold/20 border-t-luxury-gold animate-spin" />
+      </div>
+    );
+  }
 
   if (error) {
     return (
       <div className="min-h-screen pt-[80px] flex items-center justify-center bg-luxury-ink">
         <div className="bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg p-4 text-sm">
-          {error}
+          {error.message}
         </div>
       </div>
     );
@@ -85,13 +76,11 @@ const MyOrders: React.FC = () => {
           My Orders
         </h1>
 
-        {orders?.length === 0 ? (
-          <p className="text-luxury-cream/60">
-            You have no orders yet.
-          </p>
+        {orders.length === 0 ? (
+          <p className="text-luxury-cream/60">You have no orders yet.</p>
         ) : (
           <div className="space-y-6">
-            {orders?.map((order: any) => (
+            {orders.map((order: any) => (
               <div
                 key={order.id}
                 className="bg-luxury-card border border-luxury-gold/10 shadow-md rounded-xl p-6"
@@ -172,8 +161,7 @@ const MyOrders: React.FC = () => {
                       statusStyles[order.status] || ""
                     }`}
                   >
-                    {order.status.charAt(0).toUpperCase() +
-                      order.status.slice(1)}
+                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                   </span>
                 </div>
               </div>

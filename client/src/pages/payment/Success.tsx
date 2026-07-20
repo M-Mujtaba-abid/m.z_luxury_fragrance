@@ -1,86 +1,25 @@
-// // pages/Success.tsx
-// import React, { useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useSearchParams } from "react-router-dom";
-// import { getCheckoutSession } from "../redux/payment/PaymentThunk";
-// import type { RootState } from "../redux/store";
-// import { clearCart, getUserCart } from "../redux/user/cart/CartThunk";
-
-// const Success: React.FC = () => {
-//   const dispatch = useDispatch<any>();
-//   const [searchParams] = useSearchParams();
-//   const sessionId = searchParams.get("session_id"); // ✅ Stripe sends ?session_id=
-
-//   const { session, loading, error } = useSelector(
-//     (state: RootState) => state.payment
-//   );
-
-//   useEffect(() => {
-//     if (sessionId) {
-//       dispatch(getCheckoutSession(sessionId));
-//     }
-//   }, [dispatch, sessionId]);
-
-//   // When session is fetched and paid, clear cart once
-//   useEffect(() => {
-//     if (session && session.payment_status === "paid") {
-//       dispatch(clearCart());
-//       dispatch(getUserCart());
-//     }
-//   }, [dispatch, session]);
-
-//   if (loading) return <p>Loading payment details...</p>;
-//   if (error) return <p className="text-red-500">Error: {error}</p>;
-//   if (!session) return <p>No session found.</p>;
-
-//   return (
-//     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white">
-//       <h1 className="text-3xl font-bold mb-4">🎉 Payment Successful!</h1>
-//       <p>Thank you, {session.customer_details?.name}</p>
-//       <p>Email: {session.customer_details?.email}</p>
-//       <p>
-//         Amount Paid: {session.amount_total / 100}{" "}
-//         {session.currency.toUpperCase()}
-//       </p>
-//       <p className="mt-2 text-green-600">Your order has been placed successfully.</p>
-//     </div>
-//   );
-// };
-
-// export default Success;
-
-
-
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getCheckoutSession } from "../../redux/thunks/PaymentThunk";
-import type { RootState } from "../../redux/store";
-import { clearCart, getUserCart } from "../../redux/thunks/CartThunk";
+import { useCheckoutSessionQuery } from "../../queries/paymentQueries";
+import { useCart } from "../../hooks/useCart";
 
 const Success: React.FC = () => {
-  const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
-  const { session, loading, error } = useSelector(
-    (state: RootState) => state.payment
-  );
+  const { data: session, isLoading: loading, error } = useCheckoutSessionQuery(sessionId);
+  const { clearCart } = useCart();
 
-  useEffect(() => {
-    if (sessionId) dispatch(getCheckoutSession(sessionId));
-  }, [dispatch, sessionId]);
-
+  // When session is fetched and paid, clear the cart
   useEffect(() => {
     if (session && session.payment_status === "paid") {
-      dispatch(clearCart());
-      dispatch(getUserCart());
+      clearCart().catch(() => {});
     }
-  }, [dispatch, session]);
+  }, [session]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <p>Loading payment details...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
+  if (error) return <p className="text-red-500">Error: {error.message}</p>;
   if (!session) return <p>No session found.</p>;
 
   return (

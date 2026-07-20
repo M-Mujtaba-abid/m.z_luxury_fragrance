@@ -60,6 +60,11 @@ export interface ProductState {
   newArrivals?: Product[];
   onSaleProducts?: Product[];
   searchResults: Product[];
+  relatedProducts: Product[];
+  // Separate from `loading` on purpose — ProductDetailPage's full-screen
+  // "Loading product details..." gate reads the shared `loading` flag, so
+  // this section fetching in the background must not re-trigger it.
+  relatedProductsLoading: boolean;
 }
 
 // Product data for creation

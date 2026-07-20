@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import {
-  createProduct,
-  updateProduct,
-  getProductById,
-} from "../../../redux/thunks/ProductThunk";
-import { clearError, clearCurrentProduct } from "../../../redux/slices/ProductSlice";
-import type { RootState, AppDispatch } from "../../../redux/store";
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useAdminSingleProductQuery,
+} from "../../../queries/productQueries";
 import type { ProductVariant } from "../../../redux/types/productTypes";
 import TagInput from "../../../components/admin/product-form/TagInput";
 import ImageDropzone from "../../../components/admin/product-form/ImageDropzone";
@@ -33,12 +30,19 @@ const labelClass = "block text-sm font-medium text-luxury-cream/80 mb-2";
 const sectionClass = "bg-luxury-card border border-luxury-gold/10 rounded-xl p-6 space-y-4";
 
 const PostProduct = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const isEditMode = !!productId;
+  const parsedId = productId ? parseInt(productId) : undefined;
 
-  const { loading, error, currentProduct } = useSelector((state: RootState) => state.products);
+  // React Query: fetch product for edit mode
+  const { data: currentProduct } = useAdminSingleProductQuery(parsedId);
+
+  // React Query: mutations
+  const createMutation = useCreateProductMutation();
+  const updateMutation = useUpdateProductMutation();
+
+  const loading = createMutation.isPending || updateMutation.isPending;
 
   const [formData, setFormData] = useState({
     title: "",
@@ -68,16 +72,7 @@ const PostProduct = () => {
   const [coverIndex, setCoverIndex] = useState(0);
   const [formErrors, setFormErrors] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (isEditMode && productId) {
-      dispatch(getProductById({ id: parseInt(productId), includeAll: true }));
-    }
-    return () => {
-      dispatch(clearError());
-      dispatch(clearCurrentProduct());
-    };
-  }, [dispatch, productId, isEditMode]);
-
+  // Populate form when editing an existing product
   useEffect(() => {
     if (isEditMode && currentProduct) {
       setFormData({
@@ -99,7 +94,7 @@ const PostProduct = () => {
         slug: currentProduct.slug || "",
         publishStatus: currentProduct.publishStatus || "draft",
       });
-      setSlugTouched(true); // existing slug — don't auto-overwrite it on edit
+      setSlugTouched(true);
       setTopNotes(currentProduct.topNotes || []);
       setHeartNotes(currentProduct.heartNotes || []);
       setBaseNotes(currentProduct.baseNotes || []);
@@ -107,9 +102,7 @@ const PostProduct = () => {
     }
   }, [currentProduct, isEditMode]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: value };
@@ -142,6 +135,34 @@ const PostProduct = () => {
     return errors;
   };
 
+  const buildFormData = (publishStatusOverride: "draft" | "published"): FormData => {
+    const fd = new FormData();
+    fd.append("title", formData.title);
+    fd.append("description", formData.description);
+    fd.append("status", formData.status);
+    fd.append("price", String(parseFloat(formData.price)));
+    fd.append("stock", String(parseInt(formData.stock)));
+    fd.append("category", formData.category);
+    fd.append("Quantity", formData.Quantity);
+    fd.append("isFeatured", String(formData.isFeatured));
+    fd.append("isNewArrival", String(formData.isNewArrival));
+    fd.append("isOnSale", String(formData.isOnSale));
+    fd.append("publishStatus", publishStatusOverride);
+    if (formData.discountPrice) fd.append("discountPrice", String(parseFloat(formData.discountPrice)));
+    if (formData.brand) fd.append("brand", formData.brand);
+    if (formData.gender) fd.append("gender", formData.gender);
+    if (formData.metaTitle) fd.append("metaTitle", formData.metaTitle);
+    if (formData.metaDescription) fd.append("metaDescription", formData.metaDescription);
+    if (formData.slug) fd.append("slug", formData.slug);
+    if (topNotes.length) fd.append("topNotes", JSON.stringify(topNotes));
+    if (heartNotes.length) fd.append("heartNotes", JSON.stringify(heartNotes));
+    if (baseNotes.length) fd.append("baseNotes", JSON.stringify(baseNotes));
+    if (variants.length) fd.append("variants", JSON.stringify(variants));
+    fd.append("coverIndex", String(coverIndex));
+    newImages.forEach((img) => fd.append("images", img));
+    return fd;
+  };
+
   const handleSubmit = async (publishStatusOverride: "draft" | "published") => {
     const errors = validate();
     setFormErrors(errors);
@@ -150,45 +171,21 @@ const PostProduct = () => {
       return;
     }
 
-    const payload = {
-      title: formData.title,
-      description: formData.description,
-      status: formData.status,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-      category: formData.category,
-      Quantity: formData.Quantity,
-      isFeatured: formData.isFeatured,
-      isNewArrival: formData.isNewArrival,
-      isOnSale: formData.isOnSale,
-      discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
-      brand: formData.brand || undefined,
-      gender: formData.gender || undefined,
-      topNotes,
-      heartNotes,
-      baseNotes,
-      metaTitle: formData.metaTitle || undefined,
-      metaDescription: formData.metaDescription || undefined,
-      slug: formData.slug || undefined,
-      publishStatus: publishStatusOverride,
-      variants,
-      images: newImages,
-      coverIndex,
-    };
+    const fd = buildFormData(publishStatusOverride);
 
     try {
       if (isEditMode && productId) {
-        await dispatch(updateProduct({ id: parseInt(productId), ...payload })).unwrap();
+        await updateMutation.mutateAsync({ id: parseInt(productId), formData: fd });
         toast.success("Product updated successfully");
       } else {
-        await dispatch(createProduct(payload)).unwrap();
+        await createMutation.mutateAsync(fd);
         toast.success(
           publishStatusOverride === "published" ? "Product published" : "Product saved as draft"
         );
       }
       navigate("/admin/products");
     } catch (err: any) {
-      toast.error(err || "Something went wrong");
+      toast.error(err?.message || "Something went wrong");
     }
   };
 
@@ -217,11 +214,6 @@ const PostProduct = () => {
         </button>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg">
-          {error}
-        </div>
-      )}
       {formErrors.length > 0 && (
         <div className="p-4 bg-red-950/40 border border-red-900/50 text-red-300 rounded-lg text-sm space-y-1">
           {formErrors.map((msg, i) => (
@@ -237,26 +229,12 @@ const PostProduct = () => {
             <h2 className="font-logo text-lg font-semibold text-luxury-cream">Basics</h2>
             <div>
               <label className={labelClass}>Product Title *</label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="e.g. Oud Royale"
-                className={inputClass}
-              />
+              <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g. Oud Royale" className={inputClass} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Brand</label>
-                <input
-                  type="text"
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleInputChange}
-                  placeholder="e.g. M.Z Atelier"
-                  className={inputClass}
-                />
+                <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} placeholder="e.g. M.Z Atelier" className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>Gender</label>
@@ -414,13 +392,11 @@ const PostProduct = () => {
           <div className={sectionClass}>
             <div className="flex items-center justify-between">
               <span className="text-sm text-luxury-cream/70">Status</span>
-              <span
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                  formData.publishStatus === "published"
-                    ? "bg-green-500/15 text-green-400 border border-green-500/30"
-                    : "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
-                }`}
-              >
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                formData.publishStatus === "published"
+                  ? "bg-green-500/15 text-green-400 border border-green-500/30"
+                  : "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
+              }`}>
                 {formData.publishStatus === "published" ? "Published" : "Draft"}
               </span>
             </div>

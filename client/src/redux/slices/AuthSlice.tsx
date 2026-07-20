@@ -201,6 +201,13 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    // Called by React Query login mutation so ProtectedRoute re-evaluates without page refresh.
+    loginSuccess: (state, action: { payload: { user: any; token: string } }) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.error = null;
+      state.loading = false;
+    },
     logout: (state) => {
       state.user = null;
       state.success = false;
@@ -419,5 +426,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, clearProfileError, clearUpdateSuccess, clearPasswordUpdateState, clearForgotFlow } = userSlice.actions;
+export const { loginSuccess, logout, clearProfileError, clearUpdateSuccess, clearPasswordUpdateState, clearForgotFlow } = userSlice.actions;
 export default userSlice.reducer;

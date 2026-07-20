@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { X, ArrowRightLeft, ShoppingBag } from "lucide-react";
-import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { useCompare } from "../../hooks/useCompare";
 import { useRemoveFromCompareMutation, useClearCompareMutation, MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
-import { addToCart } from "../../redux/thunks/CartThunk";
-import type { AppDispatch } from "../../redux/store";
+import { useCart } from "../../hooks/useCart";
 import type { Product } from "../../redux/types/productTypes";
 import { ImageLoader } from "../../components/ui/ImageLoader";
 import { ProductsGridSkeleton } from "../../components/ui/ProductCardSkeleton";
@@ -70,7 +68,7 @@ const EmptySlot = () => (
 );
 
 const Compare = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { addToCart } = useCart();
   const { compareItems, totalItems, isLoading, isError } = useCompare();
   const removeMutation = useRemoveFromCompareMutation();
   const clearMutation = useClearCompareMutation();
@@ -95,10 +93,10 @@ const Compare = () => {
 
   const handleAddToCart = async (product: Product) => {
     try {
-      await dispatch(addToCart({ productId: product.id, quantity: 1 })).unwrap();
+      await addToCart(product.id, 1);
       toast.success(`${product.title} added to cart`);
     } catch (error: any) {
-      toast.error(error || "Failed to add to cart");
+      toast.error(error?.message || "Failed to add to cart");
     }
   };
 

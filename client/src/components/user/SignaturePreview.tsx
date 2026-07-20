@@ -1,21 +1,18 @@
 import React, { useState } from "react";
 import { ShoppingBag, Star, ShieldCheck, Truck, RefreshCw } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/thunks/CartThunk";
-import type { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useCart } from "../../hooks/useCart";
 
 export const SignaturePreview: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [selectedSize, setSelectedSize] = useState<string>("100ML");
   const [quantity, setQuantity] = useState<number>(1);
   const [isAdding, setIsAdding] = useState(false);
 
   // Mock product details that align with existing database ID or schema
-  // Signature product: "Oud & Gold Special Edition"
   const productData = {
     id: 2, // Matches Oud & Gold Edition ID if seeded, or fallback
     title: "Oud & Gold Special Edition",
@@ -23,9 +20,9 @@ export const SignaturePreview: React.FC = () => {
     price: 8500,
     description:
       "A mysterious, warm, and highly captivating blend. We combine rare organic agarwood (oud) with amber resin, patchouli leaf, and a top note of dry saffron. Perfectly distilled and housed in our handcrafted crystal vessel.",
-    productImage: "/m.z.jpg", // Local image used on landing pages
+    productImage: "/m.z.jpg",
     category: "Men",
-    stock: 12
+    stock: 12,
   };
 
   let displayPrice = productData.price;
@@ -38,17 +35,11 @@ export const SignaturePreview: React.FC = () => {
   const handleAddToCart = async (checkoutNow = false) => {
     setIsAdding(true);
     try {
-      await dispatch(
-        addToCart({ productId: productData.id, quantity: quantity })
-      ).unwrap();
-      
+      await addToCart(productData.id, quantity);
       toast.success(`${productData.title} added to cart!`);
-      
-      if (checkoutNow) {
-        navigate("/web/checkout");
-      }
+      if (checkoutNow) navigate("/web/checkout");
     } catch (err: any) {
-      toast.error(err || "Failed to add to cart");
+      toast.error(err?.message || "Failed to add to cart");
     } finally {
       setIsAdding(false);
     }
@@ -57,7 +48,7 @@ export const SignaturePreview: React.FC = () => {
   return (
     <div className="mt-16 rounded-[40px] p-8 md:p-16 border border-neutral-100 dark:border-neutral-900 bg-neutral-50/50 dark:bg-neutral-950/40 backdrop-blur-md">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        
+
         {/* Left Side: Product Gallery & Zoom */}
         <div className="lg:col-span-6 flex flex-col items-center">
           <div className="relative aspect-square w-full max-w-[450px] overflow-hidden rounded-3xl group bg-white dark:bg-neutral-900 shadow-sm border border-neutral-100 dark:border-neutral-900">
@@ -202,7 +193,6 @@ export const SignaturePreview: React.FC = () => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

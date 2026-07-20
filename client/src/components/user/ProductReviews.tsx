@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Star, ThumbsUp, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { fetchProductReviews, markReviewHelpful } from "../../redux/thunks/ReviewThunk";
-import { clearProductReviews } from "../../redux/slices/ReviewSlice";
-import type { RootState, AppDispatch } from "../../redux/store";
-import type { Review } from "../../redux/types/reviewTypes";
+import { useProductReviewsQuery, useMarkReviewHelpfulMutation } from "../../queries/reviewQueries";
+import type { Review, RatingBreakdownRow } from "../../redux/types/reviewTypes";
 
 interface ProductReviewsProps {
   productId: number;
+}
+
+interface ReviewSummary {
+  averageRating: number;
+  totalReviews: number;
+  ratingBreakdown: RatingBreakdownRow[];
 }
 
 const StarRow: React.FC<{ rating: number; size?: number }> = ({ rating, size = 14 }) => (
@@ -25,44 +28,54 @@ const StarRow: React.FC<{ rating: number; size?: number }> = ({ rating, size = 1
 );
 
 export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { productReviews } = useSelector((state: RootState) => state.review);
-
   const [page, setPage] = useState(1);
   const [accumulated, setAccumulated] = useState<Review[]>([]);
+  // Kept separate from the live per-page query result so summary stats
+  // (and the already-loaded list) stay visible while a later page is
+  // still fetching in the background — averageRating/totalReviews/
+  // ratingBreakdown are identical across pages anyway.
+  const [summary, setSummary] = useState<ReviewSummary | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  const { data: pageResult } = useProductReviewsQuery(productId, page, 10);
+  const markHelpfulMutation = useMarkReviewHelpfulMutation();
 
   useEffect(() => {
     setPage(1);
     setAccumulated([]);
-    dispatch(fetchProductReviews({ productId, page: 1 }));
-    return () => {
-      dispatch(clearProductReviews());
-    };
-  }, [dispatch, productId]);
+    setSummary(null);
+  }, [productId]);
 
   useEffect(() => {
-    if (!productReviews) return;
-    setAccumulated((prev) => (page === 1 ? productReviews.reviews : [...prev, ...productReviews.reviews]));
-  }, [productReviews, page]);
+    if (!pageResult) return;
+    setSummary({
+      averageRating: pageResult.averageRating,
+      totalReviews: pageResult.totalReviews,
+      ratingBreakdown: pageResult.ratingBreakdown,
+    });
+    setAccumulated((prev) => (page === 1 ? pageResult.reviews : [...prev, ...pageResult.reviews]));
+  }, [pageResult, page]);
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    dispatch(fetchProductReviews({ productId, page: nextPage }));
+    setPage((p) => p + 1);
   };
 
-  const handleHelpful = async (reviewId: number) => {
-    try {
-      await dispatch(markReviewHelpful(reviewId)).unwrap();
-    } catch (err: any) {
-      toast.error(err || "Please login to mark this helpful");
-    }
+  const handleHelpful = (reviewId: number) => {
+    markHelpfulMutation.mutate(reviewId, {
+      onSuccess: (result) => {
+        setAccumulated((prev) =>
+          prev.map((r) => (r.id === reviewId ? { ...r, helpfulCount: result.helpfulCount } : r))
+        );
+      },
+      onError: (err: any) => {
+        toast.error(err?.response?.data?.message || "Please login to mark this helpful");
+      },
+    });
   };
 
-  if (!productReviews) return null;
+  if (!summary) return null;
 
-  const { averageRating, totalReviews, ratingBreakdown } = productReviews;
+  const { averageRating, totalReviews, ratingBreakdown } = summary;
   const hasMore = accumulated.length < totalReviews;
 
   return (
