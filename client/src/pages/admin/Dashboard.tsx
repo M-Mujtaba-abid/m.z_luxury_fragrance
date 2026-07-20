@@ -152,17 +152,18 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center relative">
+      {/* pl-14 md:pl-0 — mobile pe hamburger (top-4 left-4 w-11) ke liye space */}
+      <div className="flex flex-wrap justify-between items-start gap-3 relative pl-14 md:pl-0">
         <div>
-          <h1 className="font-logo text-3xl font-bold text-luxury-cream ml-10 md:ml-0">Dashboard</h1>
-          <p className="text-sm text-luxury-cream/60">Welcome back — here's how the boutique is doing.</p>
+          <h1 className="font-logo text-2xl sm:text-3xl font-bold text-luxury-cream">Dashboard</h1>
+          <p className="text-xs sm:text-sm text-luxury-cream/60">Welcome back — here's how the boutique is doing.</p>
         </div>
 
         {/* Account dropdown */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((s) => !s)}
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 border border-luxury-gold/20 bg-luxury-card text-luxury-cream hover:border-luxury-gold/40 transition-colors duration-300"
+            className="inline-flex items-center gap-2 rounded-full px-3 py-2 sm:px-4 border border-luxury-gold/20 bg-luxury-card text-luxury-cream text-sm hover:border-luxury-gold/40 transition-colors duration-300 min-h-[44px]"
           >
             Account
             <svg className={`w-4 h-4 transition-transform duration-300 ${menuOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none">
@@ -244,11 +245,13 @@ const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-luxury-card border border-luxury-gold/10 rounded-xl p-6 shadow-md"
+        className="bg-luxury-card border border-luxury-gold/10 rounded-xl p-4 sm:p-6 shadow-md"
       >
-        <h2 className="font-logo text-lg font-semibold text-luxury-cream mb-4">
-          Sales Over Time <span className="text-sm font-sans text-luxury-cream/50">(last 30 days)</span>
+        <h2 className="font-logo text-base sm:text-lg font-semibold text-luxury-cream mb-4">
+          Sales Over Time <span className="text-xs sm:text-sm font-sans text-luxury-cream/50">(last 30 days)</span>
         </h2>
+        {/* min-h-[180px] mobile pe chart crush na ho */}
+        <div className="w-full" style={{ minHeight: "180px" }}>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={salesOverTime}>
             <defs>
@@ -267,11 +270,12 @@ const Dashboard = () => {
             <Area type="monotone" dataKey="revenue" stroke="#c9a24b" strokeWidth={2} fill="url(#revenueGradient)" />
           </AreaChart>
         </ResponsiveContainer>
+        </div>
       </motion.div>
 
       {/* Top-selling + Low-stock */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.3 }} className="bg-luxury-card border border-luxury-gold/10 rounded-xl p-6 shadow-md">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.3 }} className="bg-luxury-card border border-luxury-gold/10 rounded-xl p-4 sm:p-6 shadow-md">
           <h2 className="font-logo text-lg font-semibold text-luxury-cream mb-4">Top-Selling Perfumes</h2>
           {topSelling.length === 0 ? (
             <p className="text-sm text-luxury-cream/50">No sales data yet.</p>
@@ -291,7 +295,7 @@ const Dashboard = () => {
           )}
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 }} className="bg-luxury-card border border-luxury-gold/10 rounded-xl p-6 shadow-md">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 }} className="bg-luxury-card border border-luxury-gold/10 rounded-xl p-4 sm:p-6 shadow-md">
           <h2 className="font-logo text-lg font-semibold text-luxury-cream mb-4 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-red-400" />
             Low Stock Alert

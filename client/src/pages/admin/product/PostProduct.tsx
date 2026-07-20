@@ -202,15 +202,15 @@ const PostProduct = () => {
           { label: isEditMode ? `Edit ${currentProduct?.title || "Product"}` : "Add Product" },
         ]}
       />
-      <div className="flex justify-between items-center">
-        <h1 className="font-logo text-3xl font-bold text-luxury-cream">
+      <div className="flex flex-wrap justify-between items-center gap-3">
+        <h1 className="font-logo text-2xl sm:text-3xl font-bold text-luxury-cream">
           {isEditMode ? "Edit Product" : "Add New Product"}
         </h1>
         <button
           onClick={() => navigate("/admin/products")}
-          className="px-4 py-2 border border-luxury-gold text-luxury-gold rounded-lg hover:bg-luxury-gold/10 transition-colors duration-300"
+          className="px-4 py-2.5 min-h-[44px] border border-luxury-gold text-luxury-gold rounded-lg hover:bg-luxury-gold/10 transition-colors duration-300 text-sm"
         >
-          Back
+          ← Back
         </button>
       </div>
 
@@ -231,7 +231,7 @@ const PostProduct = () => {
               <label className={labelClass}>Product Title *</label>
               <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g. Oud Royale" className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Brand</label>
                 <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} placeholder="e.g. M.Z Atelier" className={inputClass} />
@@ -266,7 +266,7 @@ const PostProduct = () => {
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
             <h2 className="font-logo text-lg font-semibold text-luxury-cream">Category & Pricing</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Category *</label>
                 <select name="category" value={formData.category} onChange={handleInputChange} className={inputClass}>
@@ -282,7 +282,7 @@ const PostProduct = () => {
                 </select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Price (Rs.) *</label>
                 <input type="number" name="price" value={formData.price} onChange={handleInputChange} className={inputClass} />
@@ -334,7 +334,7 @@ const PostProduct = () => {
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className={sectionClass}>
             <h2 className="font-logo text-lg font-semibold text-luxury-cream">Merchandising</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Availability</label>
                 <select name="status" value={formData.status} onChange={handleInputChange} className={inputClass}>
