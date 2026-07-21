@@ -11,6 +11,7 @@ import { Star, Mail, ShieldCheck, Award, MessageSquare } from "lucide-react";
 import SEO from "../../components/ui/SEO";
 import toast from "react-hot-toast";
 import { usePublicTestimonialsQuery } from "../../queries/testimonialQueries";
+import { useSubscribeNewsletterMutation } from "../../queries/newsletterQueries";
 import TestimonialFormModal from "../../components/user/TestimonialFormModal";
 
 
@@ -38,6 +39,21 @@ const categories = [
 const Home = () => {
   const { data: testimonials } = usePublicTestimonialsQuery();
   const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const subscribeMutation = useSubscribeNewsletterMutation();
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    subscribeMutation.mutate(newsletterEmail, {
+      onSuccess: () => {
+        toast.success("Thank you for joining our exclusive circle! Please check your inbox.");
+        setNewsletterEmail("");
+      },
+      onError: (error: any) => {
+        toast.error(error?.response?.data?.message || "Something went wrong. Please try again.");
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-luxury-ink text-luxury-cream font-sans">
@@ -239,23 +255,31 @@ const Home = () => {
             </p>
           </div>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              toast.success("Thank you for joining our exclusive circle!");
-            }}
+            onSubmit={handleNewsletterSubmit}
             className="w-full max-w-md flex items-center border border-luxury-gold/20 rounded-2xl overflow-hidden bg-luxury-card/50 focus-within:border-luxury-gold-bright/60 transition-colors duration-300"
           >
             <input
               type="email"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
               placeholder="Your email address"
               required
-              className="flex-1 bg-transparent px-4 py-3.5 text-xs text-luxury-cream placeholder-luxury-cream/40 focus:outline-none"
+              disabled={subscribeMutation.isPending}
+              className="flex-1 bg-transparent px-4 py-3.5 text-xs text-luxury-cream placeholder-luxury-cream/40 focus:outline-none disabled:opacity-60"
             />
             <button
               type="submit"
-              className="px-6 py-3.5 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink text-xs font-semibold uppercase tracking-widest transition-colors duration-300"
+              disabled={subscribeMutation.isPending}
+              className="px-6 py-3.5 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink text-xs font-semibold uppercase tracking-widest transition-colors duration-300 disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              Subscribe
+              {subscribeMutation.isPending ? (
+                <>
+                  <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <span>Subscribing...</span>
+                </>
+              ) : (
+                "Subscribe"
+              )}
             </button>
           </form>
         </div>

@@ -21,6 +21,7 @@ import wishlistRoute from "./routes/wishlist.route.js";
 import compareRoute from "./routes/compare.route.js";
 import contactRoute from "./routes/contact.route.js";
 import testimonialRoute from "./routes/testimonial.route.js";
+import newsletterRoute from "./routes/newsletter.route.js";
 
 const app = express();
 dotenv.config();
@@ -66,6 +67,7 @@ app.use("/wishlist", wishlistRoute);
 app.use("/compare", compareRoute);
 app.use("/contact", contactRoute);
 app.use("/testimonial", testimonialRoute);
+app.use("/newsletter", newsletterRoute);
 
 // Test route
 app.get("/", (req, res) => {
