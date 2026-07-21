@@ -70,35 +70,41 @@ const CheckOut = () => {
       } catch (err) {
         console.error("Failed to create order:", err);
       }
-    } else if (formData.paymentMethod === "CreditCard") {
-      // Stripe Payment Flow
-      try {
-        const data = await checkoutSessionMutation.mutateAsync({
-          items: cartItems.map((item: any) => ({
-            name: item.Product?.title,
-            price: item.totalPrice / item.quantity,
-            quantity: item.quantity,
-          })),
-          customerName: formData.customerName,
-          customerEmail: formData.customerEmail,
-          customerPhone: formData.customerPhone,
-          shippingStreet: formData.shippingStreet,
-          shippingCity: formData.shippingCity,
-          shippingState: formData.shippingState,
-          shippingPostalCode: formData.shippingPostalCode,
-          shippingCountry: formData.shippingCountry,
-          totalAmount: cartItems.reduce(
-            (sum: number, item: any) => sum + item.totalPrice,
-            0
-          ),
-        });
-        if (data?.url) {
-          window.location.href = data.url; // Redirect to Stripe checkout page
-        }
-      } catch (err) {
-        console.error("Failed to create checkout session:", err);
-      }
-    } else {
+    }
+    // Stripe disabled - Stripe doesn't support Pakistan, COD is the only
+    // checkout method for now. To re-enable: uncomment this block, restore
+    // the "Credit Card" <option> below, and the backend route mounts in
+    // server/app.js.
+    // else if (formData.paymentMethod === "CreditCard") {
+    //   // Stripe Payment Flow
+    //   try {
+    //     const data = await checkoutSessionMutation.mutateAsync({
+    //       items: cartItems.map((item: any) => ({
+    //         name: item.Product?.title,
+    //         price: item.totalPrice / item.quantity,
+    //         quantity: item.quantity,
+    //       })),
+    //       customerName: formData.customerName,
+    //       customerEmail: formData.customerEmail,
+    //       customerPhone: formData.customerPhone,
+    //       shippingStreet: formData.shippingStreet,
+    //       shippingCity: formData.shippingCity,
+    //       shippingState: formData.shippingState,
+    //       shippingPostalCode: formData.shippingPostalCode,
+    //       shippingCountry: formData.shippingCountry,
+    //       totalAmount: cartItems.reduce(
+    //         (sum: number, item: any) => sum + item.totalPrice,
+    //         0
+    //       ),
+    //     });
+    //     if (data?.url) {
+    //       window.location.href = data.url; // Redirect to Stripe checkout page
+    //     }
+    //   } catch (err) {
+    //     console.error("Failed to create checkout session:", err);
+    //   }
+    // }
+    else {
       alert("Other payment methods not yet implemented.");
     }
   };
@@ -249,6 +255,9 @@ const CheckOut = () => {
               <h2 className="font-logo text-xl font-semibold text-luxury-cream mb-4 flex items-center">
                 <CreditCard className="w-5 h-5 mr-2 text-luxury-gold" /> Payment Method
               </h2>
+              {/* Stripe disabled - Stripe doesn't support Pakistan. COD is the
+                  only method for now; re-add the CreditCard <option> below
+                  (and the handleSubmit branch above) to re-enable. */}
               <select
                 name="paymentMethod"
                 value={formData.paymentMethod}
@@ -256,7 +265,7 @@ const CheckOut = () => {
                 className="w-full px-3 py-2 rounded-md border border-luxury-gold/20 bg-luxury-ink text-luxury-cream outline-none transition-colors duration-300 focus:border-luxury-gold-bright/60"
               >
                 <option value="COD">Cash on Delivery</option>
-                <option value="CreditCard">Credit Card</option>
+                {/* <option value="CreditCard">Credit Card</option> */}
               </select>
             </div>
           </div>

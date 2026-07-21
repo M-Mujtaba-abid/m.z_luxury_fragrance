@@ -31,6 +31,14 @@ export const createCheckoutSession = async ({
   // hardcoded production domain; falls back to CLIENT_URL if not set
   const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL;
 
+  // Carried through so the order-confirmation email sent from the webhook
+  // can list items (Stripe metadata values are capped at 500 chars, so this
+  // is skipped for large carts - the email still sends, just without the
+  // itemized list, same as before this was added).
+  const itemsJson = JSON.stringify(
+    items.map((item) => ({ name: item.name, price: item.price, quantity: item.quantity }))
+  );
+
   // Checkout Session create
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
@@ -52,6 +60,7 @@ export const createCheckoutSession = async ({
       shippingPostalCode,
       shippingCountry,
       totalAmount,
+      items: itemsJson.length <= 500 ? itemsJson : "",
     },
   });
 

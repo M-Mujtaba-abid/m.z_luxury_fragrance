@@ -118,6 +118,14 @@ const Order = sequelize.define(
       ),
       defaultValue: "pending",
     },
+
+    // Set once the delayed review-request email has been sent, so the
+    // reviewRequestJob cron doesn't email the same order twice.
+    reviewRequestSent: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     timestamps: true,

@@ -3,6 +3,7 @@ import Order from "../models/order.model.js";
 import CartItem from "../models/CartItem.model.js";
 import ApiError from "../utils/apiError.js";
 import sendOrderConfirmationEmail from "../utils/sendOrderConfirmationEmail.js";
+import sendAdminNewOrderEmail from "../utils/sendAdminNewOrderEmail.js";
 
 export const constructStripeEvent = ({ payload, signature }) => {
   try {
@@ -35,6 +36,7 @@ export const handleStripeEvent = async (event) => {
         shippingPostalCode,
         shippingCountry,
         totalAmount,
+        items: itemsJson,
       } = session.metadata;
 
       const resolvedUserId = userId ? Number(userId) : null;
@@ -71,11 +73,24 @@ export const handleStripeEvent = async (event) => {
         console.warn("Stripe webhook: no userId/guestId in session metadata, skipped cart clear");
       }
 
+      let parsedItems = [];
       try {
-        await sendOrderConfirmationEmail({ order, items: [] });
+        parsedItems = itemsJson ? JSON.parse(itemsJson) : [];
+      } catch (error) {
+        console.error("Failed to parse Stripe session items metadata:", error);
+      }
+
+      try {
+        await sendOrderConfirmationEmail({ order, items: parsedItems });
       } catch (error) {
         // order/payment already succeeded - a failed email shouldn't fail the webhook
         console.error("Failed to send order confirmation email:", error);
+      }
+
+      try {
+        await sendAdminNewOrderEmail({ order, items: parsedItems });
+      } catch (error) {
+        console.error("Failed to send admin new-order email:", error);
       }
 
       console.log("✅ Order saved to DB after payment success");
