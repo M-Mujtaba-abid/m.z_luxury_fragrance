@@ -26,14 +26,14 @@ const OnSaleProducts = () => {
   }
 
   return (
-    <div className="mt-12 rounded-3xl p-8 border border-luxury-gold/10 bg-luxury-card backdrop-blur-md">
+    <div className="mt-12">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <span className="text-[10px] tracking-[0.2em] text-luxury-gold font-bold uppercase">
             Exclusive Deals
           </span>
-          <h2 className="font-logo text-3xl font-light tracking-wide text-luxury-cream mt-1">
+          <h2 className="font-logo text-3xl font-light tracking-wide text-white mt-1">
             On Sale Impressions
           </h2>
         </div>
