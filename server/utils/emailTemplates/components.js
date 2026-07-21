@@ -60,3 +60,36 @@ export const itemsTable = (items) => {
 
 export const statusBadge = (label, color = COLORS.gold) => `
 <span style="display:inline-block; padding:4px 12px; border-radius:12px; background-color:${color}; color:${COLORS.black}; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px;">${label}</span>`;
+
+// Product spotlight cards for the newsletter campaign email: image, name,
+// price and a "View Product" link per product the admin attached.
+export const productCards = (products) => {
+  if (!products.length) return "";
+
+  const cards = products
+    .map(
+      (product) => `
+    <tr>
+      <td style="padding:16px 0; border-bottom:1px solid ${COLORS.border};">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="88" style="vertical-align:top;">
+              <img src="${product.imageUrl}" width="80" height="80" alt="${product.name}" style="display:block; border-radius:6px; object-fit:cover; width:80px; height:80px;" />
+            </td>
+            <td style="vertical-align:top; padding-left:16px;">
+              <div style="font-size:15px; font-weight:bold; color:${COLORS.black}; margin-bottom:4px;">${product.name}</div>
+              <div style="font-size:14px; color:${COLORS.muted}; margin-bottom:10px;">${product.price}</div>
+              <a href="${product.link}" style="font-size:12px; font-weight:bold; letter-spacing:0.5px; color:${COLORS.gold}; text-decoration:none; text-transform:uppercase;">View Product &rarr;</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`
+    )
+    .join("");
+
+  return `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 8px 0 20px;">
+  ${cards}
+</table>`;
+};
