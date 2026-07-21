@@ -49,7 +49,7 @@ const Home = () => {
       </div>
 
       {/* 2. Premium Category Sections */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="text-center mb-12">
           <span className="text-[10px] tracking-[0.3em] text-luxury-gold font-bold uppercase block mb-3">
             Olfactive Families
@@ -62,16 +62,15 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 gap-2 sm:gap-6 lg:gap-8 w-full max-w-6xl mx-auto px-2 sm:px-4">
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}
-              className="relative group overflow-hidden rounded-3xl border border-luxury-gold/10 bg-luxury-card flex flex-col justify-end"
+              className="relative group overflow-hidden rounded-xl sm:rounded-3xl border border-luxury-gold/10 hover:border-luxury-gold/30 bg-luxury-card flex flex-col justify-end transition-colors duration-500 h-[240px] sm:h-[340px] lg:h-[400px]"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
               viewport={{ once: true }}
-              style={{ aspectRatio: "3/4" }}
             >
               {/* Normal Image */}
               <img
@@ -86,25 +85,28 @@ const Home = () => {
                 alt={`${cat.title} Hover`}
                 className="w-full h-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transform scale-105 group-hover:scale-100 transition-all duration-700"
                 onError={(e) => {
-                  e.currentTarget.src = cat.image; // Fallback to original image if hover fails
+                  e.currentTarget.src = cat.image;
                 }}
               />
 
               {/* Overlay Content */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent flex flex-col justify-end p-6 z-10">
-                <span className="text-[10px] tracking-widest font-bold text-luxury-gold uppercase mb-1">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-2.5 sm:p-6 lg:p-6 z-10">
+                <span className="text-[7px] sm:text-[10px] tracking-wider font-bold text-luxury-gold uppercase mb-0.5">
                   Collection
                 </span>
-                <h2 className="font-logo text-2xl font-light text-luxury-cream tracking-wide">
+
+                <h2 className="font-logo text-xs sm:text-2xl lg:text-2xl font-light text-luxury-cream tracking-wide leading-tight">
                   {cat.title}
                 </h2>
-                <p className="text-xs text-luxury-cream/70 font-light mt-1.5 line-clamp-2 max-w-[85%]">
+
+                <p className="text-[8.5px] sm:text-xs text-luxury-cream/70 font-light mt-0.5 sm:mt-1 line-clamp-2 leading-tight max-w-full">
                   {cat.description}
                 </p>
-                <div className="mt-4">
+
+                <div className="mt-1.5 sm:mt-4">
                   <Link
                     to={cat.link}
-                    className={`inline-block px-5 py-2.5 rounded-xl text-xs tracking-wider uppercase font-semibold transition-colors duration-300 ${cat.btnColor}`}
+                    className={`inline-block px-2.5 py-1 sm:px-5 sm:py-2.5 rounded-md sm:rounded-xl text-[8px] sm:text-xs tracking-wider uppercase font-semibold transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${cat.btnColor}`}
                   >
                     Discover {cat.title}
                   </Link>
