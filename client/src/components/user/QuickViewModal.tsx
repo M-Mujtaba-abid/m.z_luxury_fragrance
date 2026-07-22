@@ -96,7 +96,9 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
 
           {/* Container Drawer */}
           <div
-            className="relative w-full max-w-5xl h-[90vh] md:h-auto max-h-[85vh] bg-luxury-elevated border border-luxury-gold/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-300"
+            data-lenis-prevent
+            className="relative w-full max-w-5xl h-[90vh] md:h-[80vh] max-h-[100vh] bg-luxury-elevated border border-luxury-gold/20 rounded-3xl overflow-y-auto md:overflow-hidden shadow-2xl flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-300 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]"
+            style={{ scrollbarWidth: "none" }}
           >
             {/* Close Button */}
             <button
@@ -107,13 +109,13 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
             </button>
 
             {/* Left Side: Images & Zoom Panel */}
-            <div className="w-full md:w-1/2 bg-luxury-ink p-6 flex flex-col justify-center items-center relative overflow-hidden">
-              <div className="relative aspect-square w-full max-w-[380px] group cursor-zoom-in overflow-hidden rounded-2xl">
+            <div className="w-full aspect-square md:aspect-auto md:w-1/2 bg-luxury-ink p-6 flex flex-col justify-center items-center relative overflow-hidden shrink-0 md:shrink">
+              <div className="relative w-full max-w-[380px] group cursor-zoom-in overflow-hidden rounded-2xl">
                 <ImageLoader
                   src={product.productImage}
                   alt={product.title}
                   aspectRatio="aspect-square"
-                  className="w-full h-full object-cover transform hover:scale-125 transition-transform duration-700 ease-out"
+                  className="w-full object-cover transform hover:scale-125 transition-transform duration-700 ease-out"
                 />
               </div>
 
@@ -137,11 +139,10 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                   onClick={() => !isWishlistBusy && toggleWishlist(product.id)}
                   disabled={isWishlistBusy}
                   title="Add to Wishlist"
-                  className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-wait ${
-                    isWishlisted
-                      ? "bg-red-500 text-white"
-                      : "bg-luxury-elevated/80 text-luxury-cream hover:bg-red-500 hover:text-white"
-                  }`}
+                  className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-wait ${isWishlisted
+                    ? "bg-red-500 text-white"
+                    : "bg-luxury-elevated/80 text-luxury-cream hover:bg-red-500 hover:text-white"
+                    }`}
                 >
                   {isWishlistBusy ? (
                     <div className="w-[15px] h-[15px] border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -158,11 +159,10 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                       ? `You can only compare up to ${MAX_COMPARE_ITEMS} products`
                       : "Compare Product"
                   }
-                  className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${
-                    isCompared
-                      ? "bg-blue-600 text-white"
-                      : "bg-luxury-elevated/80 text-luxury-cream hover:bg-blue-600 hover:text-white"
-                  }`}
+                  className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${isCompared
+                    ? "bg-blue-600 text-white"
+                    : "bg-luxury-elevated/80 text-luxury-cream hover:bg-blue-600 hover:text-white"
+                    }`}
                 >
                   {isCompareBusy ? (
                     <div className="w-[15px] h-[15px] border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -174,7 +174,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
             </div>
 
             {/* Right Side: Configuration & Controls */}
-            <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-between overflow-y-auto h-full">
+            <div
+              data-lenis-prevent
+              className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-between overflow-y-visible md:overflow-y-auto md:h-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] shrink-0 md:shrink"
+              style={{ scrollbarWidth: "none" }}
+            >
               <div className="space-y-6">
                 {/* Meta details & reviews */}
                 <div className="space-y-2">
@@ -224,11 +228,10 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                         <button
                           key={size}
                           onClick={() => setSelectedSize(size)}
-                          className={`px-4 py-2 text-xs font-semibold tracking-wider rounded-lg border transition-all duration-300 ${
-                            selectedSize === size
-                              ? "bg-luxury-gold text-luxury-ink border-transparent shadow-sm"
-                              : "border-luxury-gold/20 hover:border-luxury-gold/50 text-luxury-cream/70 bg-transparent"
-                          }`}
+                          className={`px-4 py-2 text-xs font-semibold tracking-wider rounded-lg border transition-all duration-300 ${selectedSize === size
+                            ? "bg-luxury-gold text-luxury-ink border-transparent shadow-sm"
+                            : "border-luxury-gold/20 hover:border-luxury-gold/50 text-luxury-cream/70 bg-transparent"
+                            }`}
                         >
                           {size}
                         </button>
@@ -270,11 +273,10 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
-                        className={`pb-2 pr-6 text-xs uppercase tracking-wider font-semibold transition-colors duration-300 ${
-                          activeTab === tab
-                            ? "text-luxury-gold border-b-2 border-luxury-gold"
-                            : "text-luxury-cream/50 hover:text-luxury-cream/70"
-                        }`}
+                        className={`pb-2 pr-6 text-xs uppercase tracking-wider font-semibold transition-colors duration-300 ${activeTab === tab
+                          ? "text-luxury-gold border-b-2 border-luxury-gold"
+                          : "text-luxury-cream/50 hover:text-luxury-cream/70"
+                          }`}
                       >
                         {tab}
                       </button>

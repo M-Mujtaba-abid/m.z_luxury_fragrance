@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
-
-const STALE_TIME = 1000 * 60 * 2; // 2 mins — cart changes frequently
-const GC_TIME = 1000 * 60 * 10; // 10 mins
+import { queryOptions } from "../lib/queryOptions";
 
 // --------------- Types ---------------
 
@@ -39,9 +37,7 @@ export const useCartQuery = () => {
       const response = await API.get("/cartitem/getallcartproduct");
       return response.data.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.cart,
   });
 };
 

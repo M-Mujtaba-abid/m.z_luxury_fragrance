@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
-
-const STALE_TIME = 1000 * 60 * 2; // 2 mins
-const GC_TIME = 1000 * 60 * 10; // 10 mins
+import { queryOptions } from "../lib/queryOptions";
 
 // --------------- Queries ---------------
 
@@ -15,9 +13,7 @@ export const useMyOrdersQuery = (enabled: boolean) => {
       return response.data.data;
     },
     enabled,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.orders,
   });
 };
 
@@ -29,9 +25,7 @@ export const useAllOrdersQuery = () => {
       const response = await API.get("/order/getallorderbyadmin");
       return response.data.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.admin,
   });
 };
 
@@ -44,9 +38,7 @@ export const useOrderByIdQuery = (id: number | undefined) => {
       return response.data.data;
     },
     enabled: !!id,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.orders,
   });
 };
 
@@ -58,9 +50,7 @@ export const useTotalOrdersQuery = () => {
       const response = await API.get("/order/gettotalorderbyadmin");
       return response.data.data.totalOrders;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.admin,
   });
 };
 
@@ -78,8 +68,8 @@ export const useTrackGuestOrderQuery = (
       return response.data.data;
     },
     enabled: !!params?.id && !!params?.email,
+    ...queryOptions.orders,
     staleTime: 0, // always fresh — guest may check their status mid-delivery
-    gcTime: GC_TIME,
     retry: 0, // a wrong ID/email gives 404 — don't retry
   });
 };

@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
-
-const GC_TIME = 1000 * 60 * 10; // 10 mins
+import { queryOptions } from "../lib/queryOptions";
 
 // --------------- Types ---------------
 
@@ -48,9 +47,7 @@ export const useCheckoutSessionQuery = (sessionId: string | null) => {
       return response.data; // Stripe session object
     },
     enabled: !!sessionId,
-    gcTime: GC_TIME,
-    retry: 1,
-    // Sessions are immutable once created — never stale.
+    ...queryOptions.orders,
     staleTime: Infinity,
   });
 };
