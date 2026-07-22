@@ -77,7 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       transition={{ duration: 0.5 }}
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-luxury-gold/10 bg-luxury-card shadow-sm hover:border-luxury-gold/30 hover:shadow-xl transition-all duration-500 ease-out"
     >
-      <Link to={`/web/product-detail/${product.id}`} className="block flex-grow">
+      <Link to={`/product-detail/${product.id}`} className="block flex-grow">
         {/* Badges Container */}
         <div className="absolute left-4 top-4 z-10 flex flex-col gap-1.5 pointer-events-none">
           {showSaleBadge && (

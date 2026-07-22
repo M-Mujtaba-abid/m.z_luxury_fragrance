@@ -112,7 +112,7 @@ const PrivacyPolicy = () => {
       <div className="pointer-events-none absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-luxury-gold/5 blur-[100px]" />
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
-        <Breadcrumb items={[{ label: "Home", path: "/web" }, { label: "Privacy Policy" }]} />
+        <Breadcrumb items={[{ label: "Home", path: "/" }, { label: "Privacy Policy" }]} />
 
         {/* Hero */}
         <motion.div

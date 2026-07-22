@@ -21,12 +21,12 @@ const CartModal = () => {
 
   const handleViewCart = () => {
     dispatch(hideCartModal());
-    navigate("/web/cart");
+    navigate("/cart");
   };
 
   const handleCheckout = () => {
     dispatch(hideCartModal());
-    navigate("/web/checkout");
+    navigate("/checkout");
   };
 
   const handleContinueShopping = () => {

@@ -23,7 +23,7 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li>
               <a
-                href="/web/Men"
+                href="/Men"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Shop
@@ -31,7 +31,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/web/about"
+                href="/about"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 About Us
@@ -39,7 +39,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/web/contact"
+                href="/contact"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Contact
@@ -47,7 +47,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/web/wishlist"
+                href="/wishlist"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Wishlist
@@ -55,7 +55,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/web/compare"
+                href="/compare"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Compare
@@ -63,7 +63,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/web/testimonials"
+                href="/testimonials"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Testimonials
@@ -80,7 +80,7 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li>
               <a
-                href="/web/privacy"
+                href="/privacy"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Privacy Policy
@@ -88,7 +88,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/web/terms"
+                href="/terms"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Terms & Conditions

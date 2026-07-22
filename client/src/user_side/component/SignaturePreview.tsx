@@ -35,7 +35,7 @@ export const SignaturePreview: React.FC = () => {
       await addToCart(product.id, quantity);
       toast.success(`${product.title} added to cart!`);
       if (checkoutNow) {
-        navigate("/web/checkout");
+        navigate("/checkout");
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to add to cart");
@@ -52,7 +52,7 @@ export const SignaturePreview: React.FC = () => {
         {/* Left Side: Product Gallery */}
         <div className="lg:col-span-6 flex flex-col items-center justify-center lg:h-full">
           <Link
-            to={`/web/product-detail/${product.id}`}
+            to={`/product-detail/${product.id}`}
             className="relative aspect-square lg:aspect-auto w-full max-w-[380px] lg:h-full lg:max-h-[420px] mx-auto overflow-hidden rounded-3xl group bg-luxury-ink shadow-sm border border-luxury-gold/10 block"
           >
             <ImageLoader

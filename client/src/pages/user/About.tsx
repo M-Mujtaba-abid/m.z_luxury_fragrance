@@ -70,7 +70,7 @@ const About = () => {
           Explore our collection and find the fragrance that tells your story.
         </p>
         <button
-          onClick={() => navigate("/web/men")}
+          onClick={() => navigate("/men")}
           className="px-6 py-3 bg-luxury-gold hover:bg-luxury-gold/90 text-luxury-ink rounded-lg font-semibold transition-colors duration-300"
         >
           Shop Now

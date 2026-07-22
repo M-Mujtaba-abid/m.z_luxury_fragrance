@@ -95,7 +95,7 @@ const LayoutAll = () => {
             <Route path="products" element={<ListProduct />} />
             <Route
               path="product-detail/:productId"
-              element={<ProductDetailPage />} 
+              element={<ProductDetailPage />}
             />
             <Route path="orders" element={<OrderDirectory />} />
             <Route path="orders/:id" element={<OrderDetails />} />
@@ -108,9 +108,8 @@ const LayoutAll = () => {
           </Route>
 
           {/* ---------------------- Web/User Routes ---------------------- */}
-          <Route path="/web" element={<WebSiteLayout />}>
+          <Route path="/" element={<WebSiteLayout />}>
             <Route index element={<Home />} />
-            <Route path="home" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<ContactUs />} />
             <Route path="wishlist" element={<Wishlist />} />
@@ -136,7 +135,6 @@ const LayoutAll = () => {
           </Route>
 
           {/* ---------------------- Default Redirects ---------------------- */}
-          <Route path="/" element={<Navigate to="/web" replace />} />
 
           <Route
             path="*"
@@ -145,7 +143,7 @@ const LayoutAll = () => {
                 user?.userRole === "Admin" ? (
                   <Navigate to="/admin" replace />
                 ) : (
-                  <Navigate to="/web" replace />
+                  <Navigate to="/" replace />
                 )
               ) : (
                 <Navigate to="/login" replace state={{ from: location }} />

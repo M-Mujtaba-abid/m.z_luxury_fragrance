@@ -41,7 +41,7 @@ const Login: React.FC = () => {
       if (user.userRole === "Admin") {
         navigate("/admin");
       } else {
-        navigate("/web");
+        navigate("/");
       }
     }
   }, [user, token, navigate]);

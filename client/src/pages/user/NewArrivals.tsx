@@ -56,7 +56,7 @@ const NewArrivals = () => {
         </div>
 
         <Link
-          to="/web/all-products"
+          to="/all-products"
           state={{ category: "newArrival" }}
           className="text-xs tracking-wider uppercase font-semibold text-luxury-gold hover:text-luxury-gold-bright transition-colors duration-300 border-b border-luxury-gold/30 pb-0.5"
         >

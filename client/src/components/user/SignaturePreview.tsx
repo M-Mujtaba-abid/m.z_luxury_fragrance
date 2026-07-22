@@ -37,7 +37,7 @@
 //     try {
 //       await addToCart(productData.id, quantity);
 //       toast.success(`${productData.title} added to cart!`);
-//       if (checkoutNow) navigate("/web/checkout");
+//       if (checkoutNow) navigate("/checkout");
 //     } catch (err: any) {
 //       toast.error(err?.message || "Failed to add to cart");
 //     } finally {

@@ -22,7 +22,7 @@ const categories = [
     image:
       "https://scentsnsecrets.com/cdn/shop/files/Category_Pic.jpg2_8916d01e-88d5-4da1-8116-e75e132c7451_600x.webp?v=1755089833",
     hoverImage: "m.z.jpg",
-    link: "/web/Men",
+    link: "/Men",
     btnColor: "bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink",
   },
   {
@@ -32,7 +32,7 @@ const categories = [
     image:
       "https://scentsnsecrets.com/cdn/shop/files/Category_Pic_b8e87aa3-8ff3-49a9-a139-93cff4fa1201_600x.webp?v=1755090022",
     hoverImage: "carosel.jpg",
-    link: "/web/Women",
+    link: "/Women",
     btnColor: "bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink",
   },
 ];

@@ -219,7 +219,7 @@ export const AppleShowcase: React.FC = () => {
                   if (productsSection) {
                     productsSection.scrollIntoView({ behavior: "smooth" });
                   } else {
-                    window.location.href = "/web/all-products";
+                    window.location.href = "/all-products";
                   }
                 }}
                 className="w-full py-3 bg-luxury-gold hover:bg-luxury-gold-bright text-luxury-ink font-semibold text-xs tracking-widest uppercase rounded-lg shadow-lg transition-colors duration-300 flex items-center justify-center gap-2"

@@ -50,9 +50,9 @@ const ProductDetailPage = () => {
       <div className="max-w-4xl pt-10 mx-auto px-4 sm:px-6 lg:px-8">
         <Breadcrumb
           items={[
-            { label: "Home", path: "/web" },
-            { label: "Collection", path: "/web/all" },
-            { label: currentProduct.category, path: `/web/${currentProduct.category}` },
+            { label: "Home", path: "/" },
+            { label: "Collection", path: "/all" },
+            { label: currentProduct.category, path: `/${currentProduct.category}` },
             { label: currentProduct.title },
           ]}
         />
