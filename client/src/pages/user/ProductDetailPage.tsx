@@ -184,8 +184,9 @@ const ProductDetailPage = () => {
         description={currentProduct.metaDescription || currentProduct.description}
       />
 
-      <div className="max-w-6xl pt-10 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl pt-24 mx-auto px-4 sm:px-6 lg:px-8">
         <Breadcrumb
+          className="mt-2 mb-6"
           items={[
             { label: "Home", path: "/" },
             { label: "Collection", path: "/all" },
