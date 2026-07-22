@@ -15,7 +15,7 @@
 //     e.preventDefault();
 //     if (!query.trim()) return;
 //     // Navigate to search results page with query param
-//     navigate(`/web/search?q=${encodeURIComponent(query.trim())}`);
+//     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
 //     // 🔹 if closeSearch exists, call it after submit
 //     if (closeSearch) closeSearch();
 //   };
@@ -64,7 +64,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ closeSearch }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    navigate(`/web/search?q=${encodeURIComponent(query.trim())}`);
+    navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     if (closeSearch) closeSearch();
   };
 

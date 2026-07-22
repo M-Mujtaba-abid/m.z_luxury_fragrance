@@ -263,7 +263,7 @@ const Profile = () => {
             {/* Action Buttons */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
-                onClick={() => navigate(isAdmin ? "/admin/profile/update" : "/web/profile/update")}
+                onClick={() => navigate(isAdmin ? "/admin/profile/update" : "/profile/update")}
                 className="w-full bg-luxury-gold text-luxury-ink py-3 px-4 rounded-lg font-medium hover:bg-luxury-gold-bright transition-colors duration-300"
               >
                 Edit Profile

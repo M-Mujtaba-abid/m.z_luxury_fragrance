@@ -30,7 +30,7 @@ const Cart = () => {
             Looks like you haven't added any items to your cart yet.
           </p>
           <button
-            onClick={() => navigate("/web")}
+            onClick={() => navigate("/")}
             className="px-5 py-2 bg-luxury-gold text-luxury-ink rounded-lg hover:bg-luxury-gold-bright transition-colors duration-300 font-medium"
           >
             Start Shopping
@@ -43,7 +43,7 @@ const Cart = () => {
   return (
     <div className="min-h-screen pt-[80px] bg-luxury-ink py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <Breadcrumb items={[{ label: "Home", path: "/web" }, { label: "Cart" }]} />
+        <Breadcrumb items={[{ label: "Home", path: "/" }, { label: "Cart" }]} />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="font-logo text-2xl sm:text-3xl font-bold text-luxury-cream mb-4 sm:mb-0">
             Shopping Cart ({cartItems.length} items)
@@ -144,7 +144,7 @@ const Cart = () => {
               </div>
 
               <button
-                onClick={() => navigate("/web/checkout")}
+                onClick={() => navigate("/checkout")}
                 className="w-full bg-luxury-gold text-luxury-ink py-3 rounded-lg hover:bg-luxury-gold-bright transition-colors duration-300 font-semibold"
               >
                 Proceed to Checkout

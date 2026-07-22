@@ -12,21 +12,21 @@ const CATEGORY_INFO = [
     title: "Men",
     description:
       "Bold, woody, and unmistakably confident — signature scents crafted for him.",
-    link: "/web/Men",
+    link: "/Men",
   },
   {
     id: 2,
     title: "Women",
     description:
       "Elegant, floral, and effortlessly captivating — fragrances crafted for her.",
-    link: "/web/Women",
+    link: "/Women",
   },
   {
     id: 3,
     title: "Children",
     description:
       "Gentle, playful, and safe for delicate skin — fragrances made for little ones.",
-    link: "/web/Children",
+    link: "/Children",
   },
 ];
 

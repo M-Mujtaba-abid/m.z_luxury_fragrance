@@ -42,7 +42,7 @@ const CheckOut = () => {
 
   useEffect(() => {
     if (cartItems.length === 0) {
-      navigate("/web/cart");
+      navigate("/cart");
     }
   }, [cartItems, navigate]);
 
@@ -64,7 +64,7 @@ const CheckOut = () => {
       try {
         const result = await createOrderMutation.mutateAsync({ ...formData, cartItems });
         const orderId = result?.data?.id;
-        navigate("/web/thankyou", {
+        navigate("/thankyou", {
           state: { orderId, email: formData.customerEmail },
         });
       } catch (err) {
@@ -145,8 +145,8 @@ const CheckOut = () => {
       <div className="max-w-6xl mx-auto px-4">
         <Breadcrumb
           items={[
-            { label: "Home", path: "/web" },
-            { label: "Cart", path: "/web/cart" },
+            { label: "Home", path: "/" },
+            { label: "Cart", path: "/cart" },
             { label: "Checkout" },
           ]}
         />

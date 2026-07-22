@@ -59,7 +59,7 @@ const EmptySlot = () => (
       Add another product to compare (up to {MAX_COMPARE_ITEMS}).
     </p>
     <Link
-      to="/web/all-products"
+      to="/all-products"
       className="text-[10px] sm:text-xs uppercase tracking-widest text-luxury-gold hover:text-luxury-gold-bright transition-colors duration-300"
     >
       Browse Products
@@ -110,7 +110,7 @@ const Compare = () => {
       <div className="max-w-5xl px-2.5 sm:px-6 lg:px-8 mx-auto">
         <div className="pt-16 mb-6 sm:mb-10 flex flex-wrap items-end justify-between gap-2 sm:gap-4">
           <div>
-            <Breadcrumb items={[{ label: "Home", path: "/web" }, { label: "Compare" }]} />
+            <Breadcrumb items={[{ label: "Home", path: "/" }, { label: "Compare" }]} />
             <span className="text-[9px] sm:text-[10px] tracking-[0.3em] text-luxury-gold font-bold uppercase">
               Side by side
             </span>
@@ -161,7 +161,7 @@ const Compare = () => {
                     <X size={14} className="hidden sm:block" />
                   </button>
 
-                  <Link to={`/web/product-detail/${product.id}`} className="block">
+                  <Link to={`/product-detail/${product.id}`} className="block">
                     <div className="relative overflow-hidden aspect-[4/5]">
                       <ImageLoader
                         src={product.productImage}

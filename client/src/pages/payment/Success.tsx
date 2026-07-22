@@ -34,13 +34,13 @@ const Success: React.FC = () => {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <button
-          onClick={() => navigate("/web")}
+          onClick={() => navigate("/")}
           className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition"
         >
           Continue Shopping
         </button>
         <button
-          onClick={() => navigate("/web/myorders")}
+          onClick={() => navigate("/myorders")}
           className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
         >
           See Orders

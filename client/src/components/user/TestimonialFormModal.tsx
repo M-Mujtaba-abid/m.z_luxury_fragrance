@@ -61,7 +61,10 @@ export const TestimonialFormModal: React.FC<TestimonialFormModalProps> = ({ isOp
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={handleClose} />
 
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-luxury-elevated border border-luxury-gold/20 rounded-3xl shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-300">
+          <div
+            data-lenis-prevent
+            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar bg-luxury-elevated border border-luxury-gold/20 rounded-3xl shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-300"
+          >
             <button
               onClick={handleClose}
               className="absolute right-6 top-6 z-20 p-2 rounded-full bg-luxury-ink text-luxury-cream/70 hover:text-luxury-gold transition-colors duration-300"

@@ -25,8 +25,8 @@ const Products = () => {
           <Breadcrumb
             className="pt-[35px]"
             items={[
-              { label: "Home", path: "/web" },
-              { label: "Collection", path: "/web/all" },
+              { label: "Home", path: "/" },
+              { label: "Collection", path: "/all" },
               { label: category },
             ]}
           />

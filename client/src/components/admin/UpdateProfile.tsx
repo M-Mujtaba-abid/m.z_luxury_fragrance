@@ -41,7 +41,7 @@ const UpdateProfile: React.FC = () => {
 
   useEffect(() => {
     if (updateSuccess) {
-      navigate(isAdmin ? "/admin/profile" : "/web/profile", { replace: true });
+      navigate(isAdmin ? "/admin/profile" : "/profile", { replace: true });
     }
   }, [updateSuccess, navigate, isAdmin]);
 

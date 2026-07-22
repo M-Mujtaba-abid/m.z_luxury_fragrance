@@ -49,7 +49,7 @@ const WebSiteLayout = () => {
       <Navbar/>
 
       {/* Scroll-scrubbed hero video for the homepage */}
-      {location.pathname === "/web" && <ScrollVideoScrub />}
+      {location.pathname === "/" && <ScrollVideoScrub />}
 
 
       <div className="w-full">

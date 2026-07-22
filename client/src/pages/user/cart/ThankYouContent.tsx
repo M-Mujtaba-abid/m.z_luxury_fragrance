@@ -65,7 +65,7 @@ const ThankYouContent: React.FC = () => {
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={() => navigate("/web")}
+            onClick={() => navigate("/")}
             className="px-6 py-3 rounded-lg border border-luxury-gold text-luxury-gold hover:bg-luxury-gold/10 transition-colors duration-300"
           >
             Continue Shopping
@@ -73,14 +73,14 @@ const ThankYouContent: React.FC = () => {
 
           {token ? (
             <Link
-              to="/web/myorders"
+              to="/myorders"
               className="px-6 py-3 rounded-lg bg-luxury-gold text-luxury-ink font-semibold hover:bg-luxury-gold-bright transition-colors duration-300"
             >
               Track My Orders
             </Link>
           ) : (
             <Link
-              to="/web/track-order"
+              to="/track-order"
               state={{ orderId, email }}
               className="px-6 py-3 rounded-lg bg-luxury-gold text-luxury-ink font-semibold hover:bg-luxury-gold-bright transition-colors duration-300"
             >

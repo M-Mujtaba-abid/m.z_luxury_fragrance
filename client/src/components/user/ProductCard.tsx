@@ -77,7 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       transition={{ duration: 0.5 }}
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-luxury-gold/10 bg-luxury-card shadow-sm hover:border-luxury-gold/30 hover:shadow-xl transition-all duration-500 ease-out"
     >
-      <Link to={`/web/product-detail/${product.id}`} className="block flex-grow">
+      <Link to={`/product-detail/${product.id}`} className="block flex-grow">
         {/* Badges Container */}
         <div className="absolute left-4 top-4 z-10 flex flex-col gap-1.5 pointer-events-none">
           {showSaleBadge && (
@@ -98,7 +98,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
         </div>
 
         {/* Image Container */}
-        <div className="relative overflow-hidden aspect-[4/5] rounded-t-2xl">
+        <div className="relative overflow-hidden aspect-[4/3] rounded-t-2xl">
           <ImageLoader
             src={product.productImage}
             alt={product.title}
@@ -114,11 +114,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             <button
               onClick={handleWishlist}
               disabled={isWishlistBusy}
-              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-wait ${
-                isWishlisted
-                  ? "bg-red-500 text-white"
-                  : "bg-luxury-elevated/80 text-luxury-cream hover:bg-red-500 hover:text-white"
-              }`}
+              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-wait ${isWishlisted
+                ? "bg-red-500 text-white"
+                : "bg-luxury-elevated/80 text-luxury-cream hover:bg-red-500 hover:text-white"
+                }`}
               title="Add to Wishlist"
             >
               {isWishlistBusy ? (
@@ -130,11 +129,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             <button
               onClick={handleCompare}
               disabled={compareDisabled}
-              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${
-                isCompared
-                  ? "bg-blue-600 text-white"
-                  : "bg-luxury-elevated/80 text-luxury-cream hover:bg-blue-600 hover:text-white"
-              }`}
+              className={`p-2.5 rounded-full backdrop-blur-md transition-colors duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${isCompared
+                ? "bg-blue-600 text-white"
+                : "bg-luxury-elevated/80 text-luxury-cream hover:bg-blue-600 hover:text-white"
+                }`}
               title={
                 isCompareFull && !isCompared
                   ? `You can only compare up to ${MAX_COMPARE_ITEMS} products`
@@ -164,7 +162,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
         </div>
 
         {/* Product Details Section */}
-        <div className="p-5 space-y-3 flex-grow">
+        <div className="p-4 space-y-2 flex-grow">
           {/* Category & Ratings Row */}
           <div className="flex justify-between items-center text-[11px] text-luxury-cream/60 tracking-widest uppercase">
             <span>{product.category}</span>
@@ -223,16 +221,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       </Link>
 
       {/* Action Button at bottom */}
-      <div className="px-5 pb-5">
+      <div className="px-4 pb-4">
         <motion.button
           whileTap={{ scale: 0.97 }}
           disabled={isOutOfStock || isAdding}
           onClick={handleAddToCart}
-          className={`w-full py-2.5 rounded-lg flex items-center justify-center gap-2 border font-medium text-xs tracking-widest uppercase transition-all duration-300 ${
-            isOutOfStock
-              ? "bg-luxury-ink border-luxury-gold/10 text-luxury-cream/30 cursor-not-allowed"
-              : "bg-luxury-gold border-transparent text-luxury-ink hover:bg-luxury-gold-bright shadow-md hover:shadow-lg"
-          }`}
+          className={`w-full py-2.5 rounded-lg flex items-center justify-center gap-2 border font-medium text-xs tracking-widest uppercase transition-all duration-300 ${isOutOfStock
+            ? "bg-luxury-ink border-luxury-gold/10 text-luxury-cream/30 cursor-not-allowed"
+            : "bg-luxury-gold border-transparent text-luxury-ink hover:bg-luxury-gold-bright shadow-md hover:shadow-lg"
+            }`}
         >
           {isAdding ? (
             <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />

@@ -62,8 +62,8 @@ const AllProductsRender = () => {
         <div className="pt-16 mb-10">
           <Breadcrumb
             items={[
-              { label: "Home", path: "/web" },
-              { label: "Collection", path: "/web/all" },
+              { label: "Home", path: "/" },
+              { label: "Collection", path: "/all" },
               { label: titleText },
             ]}
           />

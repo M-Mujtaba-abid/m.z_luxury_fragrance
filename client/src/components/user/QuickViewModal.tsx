@@ -74,7 +74,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
       toast.success(`${product.title} added to cart!`);
       if (checkoutAfter) {
         onClose();
-        navigate("/web/checkout");
+        navigate("/checkout");
       }
     } catch (error: any) {
       toast.error(error?.message || "Failed to add to cart");

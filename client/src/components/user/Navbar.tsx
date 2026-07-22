@@ -12,10 +12,10 @@ import { useWishlistQuery } from "../../queries/wishlistQueries";
 import { useCompareQuery } from "../../queries/compareQueries";
 
 const NAV_LINKS = [
-  { name: "Home", path: "/web" },
-  { name: "Collection", path: "/web/all" },
-  { name: "Story", path: "/web/about" },
-  { name: "Contact", path: "/web/contact" },
+  { name: "Home", path: "/" },
+  { name: "Collection", path: "/all" },
+  { name: "Story", path: "/about" },
+  { name: "Contact", path: "/contact" },
 ];
 
 const Navbar: React.FC = () => {
@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
   }, [location.pathname]);
 
   const isActive = (path: string) => location.pathname === path;
-  const handleCartClick = () => navigate("/web/cart");
+  const handleCartClick = () => navigate("/cart");
 
   const handleLogout = async () => {
     try {
@@ -117,7 +117,7 @@ const Navbar: React.FC = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             {/* Logo / wordmark */}
-            <Link to="/web" className="group flex items-center" aria-label="Go to homepage">
+            <Link to="/" className="group flex items-center" aria-label="Go to homepage">
               <motion.span
                 whileHover={{ letterSpacing: "0.03em" }}
                 transition={{ duration: 0.3 }}
@@ -222,7 +222,7 @@ const Navbar: React.FC = () => {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Link
-                        to="/web/wishlist"
+                        to="/wishlist"
                         className="flex items-center justify-between px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                       >
                         <span>My Wishlist</span>
@@ -233,7 +233,7 @@ const Navbar: React.FC = () => {
                         )}
                       </Link>
                       <Link
-                        to="/web/compare"
+                        to="/compare"
                         className="flex items-center justify-between px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                       >
                         <span>Compare list</span>
@@ -274,13 +274,13 @@ const Navbar: React.FC = () => {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Link
-                          to="/web/profile"
+                          to="/profile"
                           className="block px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                         >
                           Profile
                         </Link>
                         <Link
-                          to="/web/myorders"
+                          to="/myorders"
                           className="block px-4 py-3 text-xs uppercase tracking-widest text-luxury-cream/80 hover:text-luxury-gold-bright hover:bg-luxury-gold/5 transition-colors duration-300"
                         >
                           My Orders
@@ -359,7 +359,7 @@ const Navbar: React.FC = () => {
                   </Link>
                 ))}
                 <Link
-                  to="/web/wishlist"
+                  to="/wishlist"
                   className="flex items-center justify-between border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] text-luxury-cream/80 transition-colors duration-300 hover:text-luxury-gold-bright"
                 >
                   <span>❤️ My Wishlist</span>
@@ -370,7 +370,7 @@ const Navbar: React.FC = () => {
                   )}
                 </Link>
                 <Link
-                  to="/web/compare"
+                  to="/compare"
                   className="border-b border-luxury-gold/10 py-3 text-sm font-medium uppercase tracking-[0.2em] text-luxury-cream/80 transition-colors duration-300 hover:text-luxury-gold-bright"
                 >
                   🔄 Compare
@@ -409,7 +409,7 @@ const Navbar: React.FC = () => {
                   <button
                     onClick={() => {
                       setDrawerOpen(false);
-                      navigate("/web/profile");
+                      navigate("/profile");
                     }}
                     className="text-luxury-cream/80 hover:text-luxury-gold-bright transition-colors duration-300"
                     aria-label="Account"

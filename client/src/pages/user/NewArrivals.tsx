@@ -43,20 +43,20 @@ const NewArrivals = () => {
   }
 
   return (
-    <div className="rounded-3xl p-8 border border-luxury-gold/10 bg-luxury-card backdrop-blur-md relative">
+    <div className="relative mt-12">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <span className="text-[10px] tracking-[0.2em] text-luxury-gold font-bold uppercase">
             Fresh Releases
           </span>
-          <h2 className="font-logo text-3xl font-light tracking-wide text-luxury-cream mt-1">
+          <h2 className="font-logo text-3xl font-light tracking-wide text-white mt-1">
             New Arrivals
           </h2>
         </div>
 
         <Link
-          to="/web/all-products"
+          to="/all-products"
           state={{ category: "newArrival" }}
           className="text-xs tracking-wider uppercase font-semibold text-luxury-gold hover:text-luxury-gold-bright transition-colors duration-300 border-b border-luxury-gold/30 pb-0.5"
         >
