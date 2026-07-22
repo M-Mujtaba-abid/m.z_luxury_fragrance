@@ -80,7 +80,7 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li>
               <a
-                href="/privacy"
+                href="/web/privacy"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Privacy Policy
@@ -88,7 +88,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/terms"
+                href="/web/terms"
                 className="transition-colors duration-300 hover:text-luxury-gold"
               >
                 Terms & Conditions

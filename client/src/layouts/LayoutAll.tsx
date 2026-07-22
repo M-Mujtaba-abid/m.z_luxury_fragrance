@@ -50,6 +50,8 @@ const Wishlist = React.lazy(() => import("../pages/user/Wishlist"));
 const Compare = React.lazy(() => import("../pages/user/Compare"));
 const Success = React.lazy(() => import("../pages/payment/Success"));
 const Cancel = React.lazy(() => import("../pages/payment/Cancel"));
+const PrivacyPolicy = React.lazy(() => import("../pages/user/PrivacyPolicy"));
+const TermsAndConditions = React.lazy(() => import("../pages/user/TermsAndConditions"));
 
 // Elegant minimalist route loader component
 const PageLoader = () => (
@@ -127,6 +129,8 @@ const LayoutAll = () => {
             <Route path="search" element={<SearchResults />} />
             <Route path="success" element={<Success />} />
             <Route path="cancel" element={<Cancel />} />
+            <Route path="privacy" element={<PrivacyPolicy />} />
+            <Route path="terms" element={<TermsAndConditions />} />
             <Route path="profile" element={<Profile />} />
             <Route path="profile/update" element={<UpdateProfile />} />
           </Route>
