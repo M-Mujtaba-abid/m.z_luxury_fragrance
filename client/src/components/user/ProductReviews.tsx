@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Star, ThumbsUp, X } from "lucide-react";
+import { Star, ThumbsUp, X, BadgeCheck } from "lucide-react";
 import toast from "react-hot-toast";
 import { useProductReviewsQuery, useMarkReviewHelpfulMutation } from "../../queries/reviewQueries";
 import type { Review, RatingBreakdownRow } from "../../redux/types/reviewTypes";
@@ -79,7 +79,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId }) => 
   const hasMore = accumulated.length < totalReviews;
 
   return (
-    <div className="mt-8 bg-luxury-ink border border-luxury-gold/10 rounded-lg p-6 space-y-8">
+    <div id="reviews" className="mt-8 bg-luxury-ink border border-luxury-gold/10 rounded-lg p-6 space-y-8 scroll-mt-24">
       <h2 className="font-logo text-2xl font-light text-luxury-cream tracking-wide">Customer Reviews</h2>
 
       {totalReviews === 0 ? (
@@ -122,6 +122,13 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId }) => 
                       {review.User
                         ? `${review.User.firstName} ${review.User.lastName?.charAt(0) || ""}.`
                         : "Verified Buyer"}
+                    </span>
+                    <span
+                      title="This reviewer purchased the product before reviewing it"
+                      className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 text-[10px] font-medium uppercase tracking-wide"
+                    >
+                      <BadgeCheck size={11} />
+                      Verified Purchase
                     </span>
                     <StarRow rating={review.rating} />
                   </div>
