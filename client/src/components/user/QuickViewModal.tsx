@@ -96,7 +96,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
 
           {/* Container Drawer */}
           <div
-            className="relative w-full max-w-5xl h-[90vh] md:h-auto max-h-[85vh] bg-luxury-elevated border border-luxury-gold/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-300"
+            className="relative w-full max-w-5xl h-[90vh] md:h-[80vh] max-h-[720px] bg-luxury-elevated border border-luxury-gold/20 rounded-3xl overflow-y-auto md:overflow-hidden shadow-2xl flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-300 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]"
+            style={{ scrollbarWidth: "none" }}
           >
             {/* Close Button */}
             <button
@@ -174,7 +175,10 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen,
             </div>
 
             {/* Right Side: Configuration & Controls */}
-            <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-between overflow-y-auto h-full">
+            <div
+              className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-between overflow-y-visible md:overflow-y-auto md:h-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]"
+              style={{ scrollbarWidth: "none" }}
+            >
               <div className="space-y-6">
                 {/* Meta details & reviews */}
                 <div className="space-y-2">
