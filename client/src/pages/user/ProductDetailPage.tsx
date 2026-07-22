@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -17,10 +17,12 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useSingleProductQuery } from "../../queries/productQueries";
-import ProductGallery from "../../components/user/ProductGallery";
-import ProductReviews from "../../components/user/ProductReviews";
-import RelatedProducts from "../../components/user/RelatedProducts";
-import RecentlyViewed from "../../components/user/RecentlyViewed";
+const ProductGallery = lazy(() =>
+  import("../../components/user/ProductGallery")
+);
+const ProductReviews = lazy(() => import("../../components/user/ProductReviews"));
+const RelatedProducts = lazy(() => import("../../components/user/RelatedProducts"));
+const RecentlyViewed = lazy(() => import("../../components/user/RecentlyViewed"));
 import SEO from "../../components/ui/SEO";
 import Breadcrumb from "../../components/ui/Breadcrumb";
 import { useWishlist } from "../../hooks/useWishlist";
@@ -29,6 +31,11 @@ import { useCart } from "../../hooks/useCart";
 import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
 import { addRecentlyViewed } from "../../utils/recentlyViewed";
 import type { ProductVariant } from "../../redux/types/productTypes";
+import { useInView } from "react-intersection-observer";
+import RelatedProductsSkeleton from "../../components/skeletons/RelatedProductsSkeleton";
+import ReviewSkeleton from "../../components/skeletons/ReviewSkeleton";
+import RecentlyViewedSkeleton from "../../components/skeletons/RecentlyViewedSkeleton";
+import GallerySkeleton from "../../components/skeletons/GallerySkeleton";
 
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: "100% Authentic" },
@@ -54,6 +61,22 @@ const ProductDetailPage = () => {
 
   const hasVariants = !!currentProduct?.ProductVariants && currentProduct.ProductVariants.length > 0;
 
+  const {
+    ref: reviewsRef,
+    inView: reviewsInView,
+  } = useInView({
+    triggerOnce: true,
+    rootMargin: "300px",
+  });
+
+  const {
+    ref: relatedRef,
+    inView: relatedInView,
+    ref: inRecentRef,
+  } = useInView({
+    triggerOnce: true,
+    rootMargin: "300px",
+  });
   useEffect(() => {
     if (currentProduct?.ProductVariants && currentProduct.ProductVariants.length > 0) {
       setSelectedVariant(currentProduct.ProductVariants[0]);
@@ -198,7 +221,12 @@ const ProductDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
           {/* Gallery */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <ProductGallery images={images} title={currentProduct.title} />
+            <Suspense fallback={<GallerySkeleton />}>
+              <ProductGallery
+                images={images}
+                title={currentProduct.title}
+              />
+            </Suspense>
           </motion.div>
 
           {/* Info */}
@@ -262,7 +290,7 @@ const ProductDetailPage = () => {
               </div>
             )}
 
-            <div 
+            <div
               className="text-sm text-luxury-cream/60 leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_strong]:font-semibold [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_blockquote]:border-l-2 [&_blockquote]:border-luxury-gold [&_blockquote]:pl-3 [&_blockquote]:italic"
               dangerouslySetInnerHTML={{ __html: currentProduct.description || "" }}
             />
@@ -306,8 +334,8 @@ const ProductDetailPage = () => {
                           onClick={() => !disabled && setSelectedVariant(variant)}
                           disabled={disabled}
                           className={`px-4 py-2 rounded-xl border text-sm font-medium transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed ${active
-                              ? "border-luxury-gold bg-luxury-gold/10 text-luxury-gold"
-                              : "border-luxury-gold/20 text-luxury-cream/70 hover:border-luxury-gold/50"
+                            ? "border-luxury-gold bg-luxury-gold/10 text-luxury-gold"
+                            : "border-luxury-gold/20 text-luxury-cream/70 hover:border-luxury-gold/50"
                             }`}
                         >
                           {variant.size}
@@ -369,8 +397,8 @@ const ProductDetailPage = () => {
                   disabled={isWishlistBusy}
                   title="Add to Wishlist"
                   className={`flex items-center justify-center w-12 rounded-xl border transition-colors duration-300 disabled:cursor-wait ${isWishlisted
-                      ? "bg-red-500 border-red-500 text-white"
-                      : "border-luxury-gold/30 text-luxury-cream hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
+                    ? "bg-red-500 border-red-500 text-white"
+                    : "border-luxury-gold/30 text-luxury-cream hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
                     }`}
                 >
                   {isWishlistBusy ? (
@@ -385,8 +413,8 @@ const ProductDetailPage = () => {
                   disabled={compareDisabled}
                   title={isCompareFull && !isCompared ? `You can only compare up to ${MAX_COMPARE_ITEMS} products` : "Compare Product"}
                   className={`flex items-center justify-center w-12 rounded-xl border transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${isCompared
-                      ? "bg-blue-600 border-blue-600 text-white"
-                      : "border-luxury-gold/30 text-luxury-cream hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
+                    ? "bg-blue-600 border-blue-600 text-white"
+                    : "border-luxury-gold/30 text-luxury-cream hover:border-luxury-gold hover:bg-luxury-gold/10 hover:text-luxury-gold"
                     }`}
                 >
                   {isCompareBusy ? (
@@ -478,9 +506,29 @@ const ProductDetailPage = () => {
           </dl>
         </div>
 
-        <ProductReviews productId={currentProduct.id} />
-        <RelatedProducts productId={currentProduct.id} />
-        <RecentlyViewed excludeId={currentProduct.id} />
+        <div ref={reviewsRef}>
+          <Suspense fallback={<ReviewSkeleton />}>
+            {reviewsInView && (
+              <ProductReviews productId={currentProduct.id} />
+            )}
+          </Suspense>
+        </div>
+
+        <div ref={relatedRef}>
+          <Suspense fallback={<RelatedProductsSkeleton />}>
+            {relatedInView && (
+              <RelatedProducts productId={currentProduct.id} />
+            )}
+          </Suspense>
+        </div>
+
+        <div ref={inRecentRef} className="mt-16">
+          <Suspense fallback={<RecentlyViewedSkeleton />}>
+            {relatedInView && (
+              <RecentlyViewed excludeId={currentProduct.id} />
+            )}
+          </Suspense>
+        </div>
       </div>
 
       {/* Sticky purchase bar */}
