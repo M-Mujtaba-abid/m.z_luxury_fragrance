@@ -1,10 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
 import type { Product } from "../redux/types/productTypes";
-
-// Configured standard cache limits
-const STALE_TIME = 1000 * 60 * 5; // 5 mins
-const GC_TIME = 1000 * 60 * 15; // 15 mins
+import { queryOptions } from "../lib/queryOptions";
 
 // --- Queries ---
 
@@ -15,9 +12,7 @@ export const useProductsQuery = () => {
       const response = await API.get("/product/getallproduct");
       return response.data.data || response.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 2,
+    ...queryOptions.products,
   });
 };
 
@@ -30,9 +25,7 @@ export const useFeaturedProductsQuery = () => {
       });
       return response.data.data || response.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 2,
+    ...queryOptions.homeSection,
   });
 };
 
@@ -45,9 +38,7 @@ export const useNewArrivalsQuery = () => {
       });
       return response.data.data || response.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 2,
+    ...queryOptions.homeSection,
   });
 };
 
@@ -60,9 +51,7 @@ export const useOnSaleProductsQuery = () => {
       });
       return response.data.data || response.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 2,
+    ...queryOptions.homeSection,
   });
 };
 
@@ -75,9 +64,7 @@ export const useSingleProductQuery = (productId: number | undefined) => {
       return response.data.data || response.data;
     },
     enabled: !!productId,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.productDetail,
   });
 };
 
@@ -92,8 +79,7 @@ export const useSearchProductsQuery = (query: string) => {
       return response.data.data || response.data;
     },
     enabled: !!query,
-    staleTime: 1000 * 60 * 2, // 2 mins for search
-    gcTime: 1000 * 60 * 5,
+    ...queryOptions.search,
   });
 };
 
@@ -116,8 +102,7 @@ export const useProductsByCategoryQuery = (category: string | undefined) => {
       }
     },
     enabled: !!category,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
+    ...queryOptions.category,
   });
 };
 
@@ -131,9 +116,7 @@ export const useAdminProductsQuery = () => {
       });
       return response.data.data || response.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 2,
+    ...queryOptions.admin,
   });
 };
 
@@ -149,9 +132,7 @@ export const useAdminSingleProductQuery = (productId: number | undefined) => {
       return response.data.data || response.data;
     },
     enabled: !!productId,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.admin,
   });
 };
 
@@ -165,9 +146,7 @@ export const useRelatedProductsQuery = (productId: number | undefined) => {
       return response.data.data || response.data;
     },
     enabled: !!productId,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.productDetail,
   });
 };
 
@@ -179,9 +158,7 @@ export const useTotalProductsCountQuery = () => {
       const response = await API.get("/product/getNumberOfTotalproduct");
       return response.data.data.totalProducts;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.admin,
   });
 };
 

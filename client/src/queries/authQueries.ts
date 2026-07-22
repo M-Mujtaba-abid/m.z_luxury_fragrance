@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
-
-const STALE_TIME = 1000 * 60 * 5; // 5 mins
-const GC_TIME = 1000 * 60 * 15; // 15 mins
+import { queryOptions } from "../lib/queryOptions";
 
 // --------------- Queries ---------------
 
@@ -14,9 +12,7 @@ export const useUserProfileQuery = () => {
       const response = await API.get("/user/getuserprofile");
       return response.data.data || response.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.user,
   });
 };
 
@@ -28,9 +24,7 @@ export const useTotalUsersQuery = () => {
       const response = await API.get("/user/totaluser");
       return response.data.data.totalUser;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.admin,
   });
 };
 

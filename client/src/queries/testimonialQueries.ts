@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
+import { queryOptions } from "../lib/queryOptions";
 
 export interface TestimonialPayload {
   name: string;
@@ -37,8 +38,7 @@ export const usePublicTestimonialsQuery = () => {
       const response = await API.get("/testimonial");
       return response.data.data;
     },
-    staleTime: 1000 * 60 * 2,
-    gcTime: 1000 * 60 * 10,
+    ...queryOptions.testimonials,
   });
 };
 
@@ -52,8 +52,7 @@ export const useAdminTestimonialsQuery = () => {
       const response = await API.get("/testimonial/admin");
       return response.data.data;
     },
-    staleTime: 1000 * 60 * 2,
-    gcTime: 1000 * 60 * 10,
+    ...queryOptions.admin,
   });
 };
 

@@ -1,9 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
 import type { Product } from "../redux/types/productTypes";
-
-const STALE_TIME = 1000 * 60 * 2; // 2 mins
-const GC_TIME = 1000 * 60 * 10; // 10 mins
+import { queryOptions } from "../lib/queryOptions";
 
 export const MAX_COMPARE_ITEMS = 2;
 
@@ -38,9 +36,7 @@ export const useCompareQuery = () => {
       const response = await API.get("/compare/");
       return response.data.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.compare,
   });
 };
 

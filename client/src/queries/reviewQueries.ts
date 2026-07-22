@@ -6,9 +6,7 @@ import type {
   Review,
   SubmitReviewData,
 } from "../redux/types/reviewTypes";
-
-const STALE_TIME = 1000 * 60 * 2; // 2 mins
-const GC_TIME = 1000 * 60 * 10; // 10 mins
+import { queryOptions } from "../lib/queryOptions";
 
 interface HelpfulResult {
   reviewId: number;
@@ -26,9 +24,7 @@ export const useProductReviewsQuery = (productId: number, page: number = 1, limi
       return response.data.data;
     },
     enabled: !!productId,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.productDetail,
   });
 };
 
@@ -43,9 +39,7 @@ export const useEligibleOrdersQuery = (enabled: boolean) => {
       return response.data.data;
     },
     enabled,
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.orders,
   });
 };
 
@@ -56,9 +50,7 @@ export const useAdminAllReviewsQuery = () => {
       const response = await API.get("/review/admin/all");
       return response.data.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.admin,
   });
 };
 

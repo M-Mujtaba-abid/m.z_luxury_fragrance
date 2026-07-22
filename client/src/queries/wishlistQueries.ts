@@ -1,11 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../redux/apiInstance";
 import type { Product } from "../redux/types/productTypes";
-
-// Wishlist changes far more often than the product catalog, so it gets a
-// shorter staleTime than productQueries.ts uses.
-const STALE_TIME = 1000 * 60 * 2; // 2 mins
-const GC_TIME = 1000 * 60 * 10; // 10 mins
+import { queryOptions } from "../lib/queryOptions";
 
 // Mirrors wishlist.model.js - no association alias, so Sequelize nests the
 // eager-loaded row under the model name itself ("Product", capitalized).
@@ -39,9 +35,7 @@ export const useWishlistQuery = () => {
       const response = await API.get("/wishlist/getallwishlist");
       return response.data.data;
     },
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    retry: 1,
+    ...queryOptions.wishlist,
   });
 };
 
