@@ -11,9 +11,7 @@ import Testimonials from "../component/Testimonials";
 import { Mail, ShieldCheck, Award } from "lucide-react";
 import SEO from "../../components/ui/SEO";
 import toast from "react-hot-toast";
-import { usePublicTestimonialsQuery } from "../../queries/testimonialQueries";
 import { useSubscribeNewsletterMutation } from "../../queries/newsletterQueries";
-import TestimonialFormModal from "../../components/user/TestimonialFormModal";
 
 
 const categories = [
@@ -40,8 +38,6 @@ const categories = [
 ];
 
 const Home = () => {
-  const { data: testimonials } = usePublicTestimonialsQuery();
-  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const subscribeMutation = useSubscribeNewsletterMutation();
 
