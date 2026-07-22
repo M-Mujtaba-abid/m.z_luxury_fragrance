@@ -9,6 +9,8 @@ import { useCompare } from "../../hooks/useCompare";
 import { MAX_COMPARE_ITEMS } from "../../queries/compareQueries";
 import { useCart } from "../../hooks/useCart";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryOptions } from "../../lib/queryOptions";
 
 interface ProductCardProps {
   product: Product;
@@ -24,6 +26,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
     loadingId: compareLoadingId,
     isFull: isCompareFull,
   } = useCompare();
+
+  const queryClient = useQueryClient();
+  const prefetchProduct = () => {
+    queryClient.prefetchQuery(queryOptions.single(product.id));
+  };
   const [isAdding, setIsAdding] = useState(false);
 
   const isWishlisted = isFavorite(product.id);
@@ -77,7 +84,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       transition={{ duration: 0.5 }}
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-luxury-gold/10 bg-luxury-card shadow-sm hover:border-luxury-gold/30 hover:shadow-xl transition-all duration-500 ease-out"
     >
-      <Link to={`/product-detail/${product.id}`} className="block flex-grow">
+      <Link to={`/product-detail/${product.id}`}
+        onMouseEnter={prefetchProduct}
+        onFocus={prefetchProduct}
+        className="block flex-grow">
         {/* Badges Container */}
         <div className="absolute left-4 top-4 z-10 flex flex-col gap-1.5 pointer-events-none">
           {showSaleBadge && (

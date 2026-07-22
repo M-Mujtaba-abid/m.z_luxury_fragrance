@@ -57,14 +57,8 @@ export const useOnSaleProductsQuery = () => {
 
 export const useSingleProductQuery = (productId: number | undefined) => {
   return useQuery<Product>({
-    queryKey: ["product", productId],
-    queryFn: async () => {
-      if (!productId) throw new Error("No product ID provided");
-      const response = await API.get(`/product/getsingleproduct/${productId}`);
-      return response.data.data || response.data;
-    },
+    ...queryOptions.single(productId ?? 0),
     enabled: !!productId,
-    ...queryOptions.productDetail,
   });
 };
 
