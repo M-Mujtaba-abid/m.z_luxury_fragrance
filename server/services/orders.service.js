@@ -147,7 +147,6 @@ export const getGuestOrder = async ({ id, email }) => {
   const order = await Order.findOne({
     where: {
       id,
-      userId: null,
       [Op.or]: [{ guestEmail: email }, { customerEmail: email }],
     },
     include: orderIncludes,

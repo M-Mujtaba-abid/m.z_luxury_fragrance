@@ -8,6 +8,8 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { FaWhatsapp } from "react-icons/fa";
+
 gsap.registerPlugin(ScrollTrigger);
 
 const WebSiteLayout = () => {
@@ -46,7 +48,7 @@ const WebSiteLayout = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-300">
       {/* WebSiteLayout */}
-      <Navbar/>
+      <Navbar />
 
       {/* Scroll-scrubbed hero video for the homepage */}
       {location.pathname === "/" && <ScrollVideoScrub />}
@@ -56,10 +58,21 @@ const WebSiteLayout = () => {
         <Outlet /> {/* ✅ yahan child routes render honge */}
       </div>
 
-      <Footer/>
+      <Footer />
 
 
       <CartModal />
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/923261616090"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14 bg-[#25D366] text-white rounded-full shadow-2xl hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-300 hover:shadow-emerald-500/20"
+      >
+        <FaWhatsapp size={32} />
+      </a>
 
     </div>
   )
