@@ -11,13 +11,17 @@ import UserRoute from "./routes/user.route.js";
 import ProductRoute from "./routes/product.route.js";
 import cartItemRoute from "./routes/cartItem.route.js";
 import orderRoute from "./routes/order.route.js";
-import paymentRoute from "./routes/payment.route.js";
-import webhookRoute from "./routes/webhook.route.js";
+// Stripe disabled - Stripe doesn't support Pakistan. COD is the only
+// checkout method for now. To re-enable: uncomment these two imports, the
+// two app.use() mounts below, and the payment option in CheckOut.tsx.
+// import paymentRoute from "./routes/payment.route.js";
+// import webhookRoute from "./routes/webhook.route.js";
 import reviewRoute from "./routes/review.route.js";
 import wishlistRoute from "./routes/wishlist.route.js";
 import compareRoute from "./routes/compare.route.js";
 import contactRoute from "./routes/contact.route.js";
 import testimonialRoute from "./routes/testimonial.route.js";
+import newsletterRoute from "./routes/newsletter.route.js";
 
 const app = express();
 dotenv.config();
@@ -48,7 +52,7 @@ app.use(cors({
 console.log(`ye hosted version he ${process.env.CLIENT_URL} and ye local host he ${process.env.LOCAL_URL} `)
 
 app.use(cookieParser());
-app.use("/record", webhookRoute);
+// app.use("/record", webhookRoute); // Stripe disabled - see import comment above
 app.use(express.json());
 
 // ------------------- Routes -------------------
@@ -57,13 +61,13 @@ app.use("/user", UserRoute);
 app.use("/product", ProductRoute);
 app.use("/cartitem", cartItemRoute);
 app.use("/order", orderRoute);
-app.use("/payment", paymentRoute);
+// app.use("/payment", paymentRoute); // Stripe disabled - see import comment above
 app.use("/review", reviewRoute);
 app.use("/wishlist", wishlistRoute);
 app.use("/compare", compareRoute);
 app.use("/contact", contactRoute);
 app.use("/testimonial", testimonialRoute);
-// app.use("/record", webhookRoute);
+app.use("/newsletter", newsletterRoute);
 
 // Test route
 app.get("/", (req, res) => {

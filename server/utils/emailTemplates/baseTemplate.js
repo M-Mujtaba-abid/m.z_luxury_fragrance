@@ -10,7 +10,7 @@ export const COLORS = {
   border: "#E8E2D0",
 };
 
-const LOGO_URL = `${(process.env.CLIENT_URL || "https://luxuryfragrancemz.vercel.app").replace(/\/$/, "")}/logo.jpg`;
+const LOGO_URL = `${(process.env.CLIENT_URL || "https://m-z-luxury-fragrance-61m9.vercel.app").replace(/\/$/, "")}/logo.jpg`;
 
 // Single wrapper every outgoing email HTML body passes through, so
 // header/footer/branding live in exactly one place. Callers only supply the

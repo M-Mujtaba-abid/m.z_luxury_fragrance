@@ -1,6 +1,7 @@
 import dotenv from "dotenv"
 import app from "./app.js"
 import { connectDB } from "./config/db.js";
+import { startReviewRequestCron } from "./cron/reviewRequestJob.js";
 dotenv.config()
 
 const port = process.env.PORT || 8000;
@@ -19,11 +20,13 @@ const initDb = async () => {
 
 initDb();
 
-// Only start the Express listener when running outside Vercel's serverless environment
+// Only start the Express listener (and the cron scheduler, which needs a
+// long-running process) when running outside Vercel's serverless environment
 if (!process.env.VERCEL) {
   app.listen(port, () => {
     console.log("Server is running on port", port);
   });
+  startReviewRequestCron();
 }
 
 // Export default app for Vercel compatibility

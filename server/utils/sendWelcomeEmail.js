@@ -3,7 +3,7 @@ import { wrapEmailTemplate } from "./emailTemplates/baseTemplate.js";
 import { heading, paragraph, button } from "./emailTemplates/components.js";
 
 const sendWelcomeEmail = async ({ firstName, email }) => {
-  const shopUrl = process.env.CLIENT_URL || "https://luxuryfragrancemz.vercel.app";
+  const shopUrl = process.env.CLIENT_URL || "https://m-z-luxury-fragrance-61m9.vercel.app";
 
   const bodyHtml = [
     heading(`Welcome, ${firstName}!`),
