@@ -261,7 +261,10 @@ const ProductDetailPage = () => {
               </div>
             )}
 
-            <p className="text-sm text-luxury-cream/60 leading-relaxed">{currentProduct.description}</p>
+            <div 
+              className="text-sm text-luxury-cream/60 leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_strong]:font-semibold [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_blockquote]:border-l-2 [&_blockquote]:border-luxury-gold [&_blockquote]:pl-3 [&_blockquote]:italic"
+              dangerouslySetInnerHTML={{ __html: currentProduct.description || "" }}
+            />
 
             {/* Price */}
             <div ref={buyBoxRef} className="space-y-5 p-5 rounded-2xl border border-luxury-gold/10 bg-luxury-card">
