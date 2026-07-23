@@ -29,6 +29,15 @@ export const getProductById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, product, "Product fetched successfully"));
 });
 
+export const getProductBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const product = await productService.getProductBySlug({ slug });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product fetched successfully"));
+});
+
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const product = await productService.updateProduct({ id, files: req.files, ...req.body });

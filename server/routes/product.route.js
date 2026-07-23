@@ -3,6 +3,7 @@ import {
   createProduct,
   getAllProducts,
   getProductById,
+  getProductBySlug,
   updateProduct,
   deleteProduct,
   searchProducts,
@@ -38,6 +39,7 @@ router.post(
 );
 router.get("/getallproduct", getAllProducts);
 router.get("/getsingleproduct/:id", validateProductId, getProductById);
+router.get("/getproductbyslug/:slug", getProductBySlug);
 router.get("/getfeaturedproducts",getFeaturedProducts);
 router.get("/getnewarrivals",     getNewArrivals);
 router.get("/getonsaleproducts" ,   getOnSaleProducts);

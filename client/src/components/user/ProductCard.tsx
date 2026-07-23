@@ -84,7 +84,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       transition={{ duration: 0.5 }}
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-luxury-gold/10 bg-luxury-card shadow-sm hover:border-luxury-gold/30 hover:shadow-xl transition-all duration-500 ease-out"
     >
-      <Link to={`/product-detail/${product.id}`}
+      <Link to={product.slug ? `/product/${product.slug}` : `/product-detail/${product.id}`}
         onMouseEnter={prefetchProduct}
         onFocus={prefetchProduct}
         className="block flex-grow">

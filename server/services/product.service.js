@@ -194,6 +194,17 @@ export const getProductById = async ({ id, includeAll } = {}) => {
   return attachRatingSummary(product);
 };
 
+// Slug-based lookup for SEO-friendly product URLs on the storefront.
+// Only returns published products — drafts are invisible to public callers.
+export const getProductBySlug = async ({ slug }) => {
+  const product = await Product.findOne({
+    where: { slug, ...PUBLISHED_ONLY },
+    include: listIncludes,
+  });
+  if (!product) throw new ApiError(404, "Product not found");
+  return attachRatingSummary(product);
+};
+
 export const updateProduct = async ({
   id,
   files,

@@ -118,4 +118,19 @@ export const queryOptions = {
     refetchOnReconnect: true,
     refetchOnMount: false,
   }),
+
+  // Slug-based single product fetch for SEO-friendly /product/:slug URLs
+  singleBySlug: (slug: string) => ({
+    queryKey: ["product", "slug", slug],
+    queryFn: async () => {
+      const response = await API.get(`/product/getproductbyslug/${slug}`);
+      return response.data.data || response.data;
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 15,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    refetchOnMount: false,
+  }),
 };
