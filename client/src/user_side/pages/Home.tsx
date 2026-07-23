@@ -9,7 +9,8 @@ import AppleShowcase from "../component/AppleShowcase";
 import SignaturePreview from "../component/SignaturePreview";
 import Testimonials from "../component/Testimonials";
 import { Mail, ShieldCheck, Award } from "lucide-react";
-import SEO from "../../components/ui/SEO";
+import SEO from "../../seo/SEO";
+import OrganizationSchema from "../../seo/OrganizationSchema";
 import toast from "react-hot-toast";
 import { useSubscribeNewsletterMutation } from "../../queries/newsletterQueries";
 
@@ -57,7 +58,9 @@ const Home = () => {
   return (
     // Single Dark Navy/Blue Background for the Entire Page
     <div className="min-h-screen bg-luxury-ink text-luxury-cream font-sans">
-      <SEO title="Signature Perfume Impressions & Olfactive Journeys" />
+      <SEO title="Signature Perfume Impressions & Olfactive Journeys">
+        <OrganizationSchema />
+      </SEO>
 
       {/* 1. Brands Ribbon Marquee */}
       <div className="pt-2 border-b border-luxury-gold/10">

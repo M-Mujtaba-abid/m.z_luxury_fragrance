@@ -6,6 +6,7 @@ import Breadcrumb from "../../components/ui/Breadcrumb";
 import ProductCard from "../../components/user/ProductCard";
 import QuickViewModal from "../../components/user/QuickViewModal";
 import type { Product } from "../../redux/types/productTypes";
+import SEO from "../../seo/SEO";
 
 const Products = () => {
   const { category } = useParams<{ category: string }>();
@@ -18,8 +19,34 @@ const Products = () => {
       ? products.filter((p) => p.category.toLowerCase() === category.toLowerCase())
       : products;
 
+  // Dynamic Category SEO Meta Titles & Descriptions
+  const normalizedCategory = category ? category.trim() : "";
+  const isMenCategory = normalizedCategory.toLowerCase() === "men";
+  const isWomenCategory = normalizedCategory.toLowerCase() === "women";
+
+  const categoryTitle = isMenCategory
+    ? "Men Perfume Impressions"
+    : isWomenCategory
+    ? "Women Perfume Impressions"
+    : category && category !== "all"
+    ? `${category} Fragrances`
+    : "All Luxury Perfumes & Fragrances";
+
+  const categoryDescription = isMenCategory
+    ? "Explore our signature collection of long-lasting Men perfume impressions formulated with rich oud, rare woods, and organic Grasse oils."
+    : isWomenCategory
+    ? "Discover delicate floral, Madagascar vanilla, and warm amber perfume impressions crafted for Women."
+    : "Browse our complete catalog of luxury perfume impressions formulated with organic oils and fine accords.";
+
+  const categoryCanonical = category && category !== "all" ? `/${category}` : "/all-products";
+
   return (
     <div className="min-h-screen  bg-luxury-ink py-8">
+      <SEO
+        title={categoryTitle}
+        description={categoryDescription}
+        canonicalUrl={categoryCanonical}
+      />
       <div className="max-w-7xl  p-4 sm:p-6 lg:p-8 mx-auto">
         {category && category !== "all" && (
           <Breadcrumb

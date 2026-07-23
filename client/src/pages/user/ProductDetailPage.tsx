@@ -23,7 +23,7 @@ const ProductGallery = lazy(() =>
 const ProductReviews = lazy(() => import("../../components/user/ProductReviews"));
 const RelatedProducts = lazy(() => import("../../components/user/RelatedProducts"));
 const RecentlyViewed = lazy(() => import("../../components/user/RecentlyViewed"));
-import SEO from "../../components/ui/SEO";
+import ProductSEO from "../../seo/ProductSEO";
 import Breadcrumb from "../../components/ui/Breadcrumb";
 import { useWishlist } from "../../hooks/useWishlist";
 import { useCompare } from "../../hooks/useCompare";
@@ -216,10 +216,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="min-h-screen pb-24 bg-luxury-ink">
-      <SEO
-        title={currentProduct.title}
-        description={currentProduct.metaDescription || currentProduct.description}
-      />
+      <ProductSEO product={currentProduct} />
 
       <div className="max-w-6xl pt-24 mx-auto px-4 sm:px-6 lg:px-8">
         <Breadcrumb
