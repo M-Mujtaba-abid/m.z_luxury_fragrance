@@ -38,7 +38,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ excludeId }) => {
             className="shrink-0 w-36"
           >
             <Link
-              to={`/product-detail/${product.id}`}
+              to={product.slug ? `/product/${product.slug}` : `/product-detail/${product.id}`}
               className="block group"
             >
               <div className="w-36 h-36 rounded-xl overflow-hidden border border-luxury-gold/10 bg-luxury-ink">

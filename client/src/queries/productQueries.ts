@@ -62,6 +62,14 @@ export const useSingleProductQuery = (productId: number | undefined) => {
   });
 };
 
+// Slug-based product fetch for SEO-friendly /product/:slug URLs
+export const useProductBySlugQuery = (slug: string | undefined) => {
+  return useQuery<Product>({
+    ...queryOptions.singleBySlug(slug ?? ""),
+    enabled: !!slug,
+  });
+};
+
 export const useSearchProductsQuery = (query: string) => {
   return useQuery<Product[]>({
     queryKey: ["products", "search", query],

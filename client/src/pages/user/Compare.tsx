@@ -161,7 +161,7 @@ const Compare = () => {
                     <X size={14} className="hidden sm:block" />
                   </button>
 
-                  <Link to={`/product-detail/${product.id}`} className="block">
+                  <Link to={product.slug ? `/product/${product.slug}` : `/product-detail/${product.id}`} className="block">
                     <div className="relative overflow-hidden aspect-[4/5]">
                       <ImageLoader
                         src={product.productImage}

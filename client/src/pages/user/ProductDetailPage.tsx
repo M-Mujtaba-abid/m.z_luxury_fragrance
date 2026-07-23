@@ -16,7 +16,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useSingleProductQuery } from "../../queries/productQueries";
+import { useSingleProductQuery, useProductBySlugQuery } from "../../queries/productQueries";
 const ProductGallery = lazy(() =>
   import("../../components/user/ProductGallery")
 );
@@ -46,10 +46,23 @@ const TRUST_BADGES = [
 ];
 
 const ProductDetailPage = () => {
-  const { productId } = useParams<{ productId: string }>();
-  const parsedId = productId ? parseInt(productId) : undefined;
+  // Support both /product/:slug (SEO-friendly) and legacy /product-detail/:productId
+  const { productId, slug: slugParam } = useParams<{ productId?: string; slug?: string }>();
 
-  const { data: currentProduct, isLoading: loading, error } = useSingleProductQuery(parsedId);
+  // Determine if the param is a numeric ID or a slug string
+  const paramValue = slugParam || productId;
+  const isNumericId = paramValue ? /^\d+$/.test(paramValue) : false;
+  const parsedId = isNumericId ? parseInt(paramValue!) : undefined;
+  const slugValue = !isNumericId ? paramValue : undefined;
+
+  // Use the appropriate query based on param type
+  const { data: productById, isLoading: loadingById, error: errorById } = useSingleProductQuery(parsedId);
+  const { data: productBySlug, isLoading: loadingBySlug, error: errorBySlug } = useProductBySlugQuery(slugValue);
+
+  // Merge results — only one query will be enabled at a time
+  const currentProduct = productById || productBySlug;
+  const loading = (isNumericId ? loadingById : loadingBySlug);
+  const error = isNumericId ? errorById : errorBySlug;
   const { isFavorite, toggleWishlist, loadingId: wishlistLoadingId } = useWishlist();
   const { isComparing, toggleCompare, loadingId: compareLoadingId, isFull: isCompareFull } = useCompare();
   const { addToCart, isAdding } = useCart();
@@ -95,6 +108,7 @@ const ProductDetailPage = () => {
       price: currentProduct.price,
       discountPrice: currentProduct.discountPrice,
       isOnSale: currentProduct.isOnSale,
+      slug: currentProduct.slug,
     });
   }, [currentProduct]);
 

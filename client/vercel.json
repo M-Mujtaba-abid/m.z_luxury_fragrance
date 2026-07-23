@@ -1,6 +1,12 @@
 {
     "rewrites": [
         {
+            "source": "/sitemap.xml", "destination": "https://api.luxuryfragrancemz.shop/sitemap.xml"
+        },
+        {
+            "source": "/robots.txt", "destination": "https://api.luxuryfragrancemz.shop/robots.txt"
+        },
+        {
             "source": "/(.*)", "destination": "/index.html" 
         }
     ]

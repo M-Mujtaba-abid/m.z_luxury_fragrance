@@ -115,6 +115,12 @@ const LayoutAll = () => {
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="compare" element={<Compare />} />
             <Route path=":category" element={<Products />} />
+            {/* SEO-friendly product URL */}
+            <Route
+              path="product/:slug"
+              element={<UserProductDetailPage />}
+            />
+            {/* Legacy route — kept for backward compatibility with old links */}
             <Route
               path="product-detail/:productId"
               element={<UserProductDetailPage />}

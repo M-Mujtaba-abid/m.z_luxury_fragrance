@@ -22,6 +22,7 @@ import compareRoute from "./routes/compare.route.js";
 import contactRoute from "./routes/contact.route.js";
 import testimonialRoute from "./routes/testimonial.route.js";
 import newsletterRoute from "./routes/newsletter.route.js";
+import sitemapRoute from "./routes/sitemap.route.js";
 
 const app = express();
 dotenv.config();
@@ -56,6 +57,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 // ------------------- Routes -------------------
+
+// Sitemap & robots.txt (root-level, no prefix — served before API routes)
+app.use(sitemapRoute);
 
 app.use("/user", UserRoute);
 app.use("/product", ProductRoute);

@@ -8,6 +8,7 @@ export interface RecentlyViewedProduct {
   price: number;
   discountPrice?: number;
   isOnSale?: boolean;
+  slug?: string;
 }
 
 export const addRecentlyViewed = (product: RecentlyViewedProduct) => {
